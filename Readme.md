@@ -1,16 +1,68 @@
-# MajorHelp
+# Project Name
 
-MajorHelp is a web application that helps students find universities, majors, and related information to assist them in making informed decisions. It includes features like user reviews, tuition calculators, and saved colleges for a personalized experience. For detailed descriptions and design decisions, refer to our [wiki pages](#link-to-wiki).
+This first paragraph should be a short description of the app. You can add links
+to your wiki pages that have more detailed descriptions.
 
-To run the web application locally, use `python manage.py runserver`. This will start the server at `http://127.0.0.1:8000/`.
+Your audience for the Readme.md are other developers who are joining your team.
+Specifically, the file should contain detailed instructions that any developer
+can follow to install, compile, run, and test your project. These are not only
+useful to new developers, but also to you when you have to re-install everything
+because your old laptop crashed. Also, the teachers of this class will be
+following your instructions.
 
-For deployment, choose a hosting provider like Heroku, AWS, or DigitalOcean. Set up environment variables such as `DJANGO_SECRET_KEY`, `DATABASE_URL`, and other production-related variables. Migrate the database with `python manage.py migrate --noinput`, and collect static files using `python manage.py collectstatic --noinput`. Follow your hosting provider’s deployment steps, ensuring that sensitive credentials like passwords are not pushed to your Git repository.
+## External Requirements
 
-Testing for the application is done using Django’s built-in testing framework. To run all the automated tests, use the command `python manage.py test`. This will execute the unit and integration tests within the application.
+List all the stuff the reader will need to install in order to get you app to
+run in their laptop. For example:
+
+In order to build this project you first have to install:
+
+-   [Node.js](https://nodejs.org/en/)
+-   [MongoDB](https://www.mongodb.com/)
+
+If possible, list the actual commands you used to install these, so the reader
+can just cut-n-paste the commands and get everything setup.
+
+You only need to add instructions for the OS you are using.
+
+## Setup
+
+Here you list all the one-time things the developer needs to do after cloning
+your repo. Sometimes there is no need for this section, but some apps require
+some first-time configuration from the developer, for example: setting up a
+database for running your webapp locally.
+
+## Running
+
+Specify the commands for a developer to run the app from the cloned repo.
+
+# Deployment
+
+Webapps need a deployment section that explains how to get it deployed on the
+Internet. These should be detailed enough so anyone can re-deploy if needed
+. Note that you **do not put passwords in git**.
+
+Mobile apps will also sometimes need some instructions on how to build a
+"release" version, maybe how to sign it, and how to run that binary in an
+emulator or in a physical phone.
+
+# Testing
+
+In 492 you will write automated tests. When you do you will need to add a
+section that explains how to run them.
+
+The unit tests are in `/test/unit`.
+
+The behavioral tests are in `/test/casper/`.
+
+## Testing Technology
+
+In some cases you need to install test runners, etc. Explain how.
+
+## Running Tests
+
+Explain how to run the automated tests.
 
 # Authors
-- Alex Phakdy - aphakdy@email.sc.edu
-- Brandon [add email]
-- Corey [add email]
-- Druv [add email]
-- Joseph [add email]
+
+Your names and emails
