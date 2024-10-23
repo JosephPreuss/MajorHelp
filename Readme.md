@@ -10,8 +10,8 @@ Testing for the application is done using Django’s built-in testing framework.
 Testing for the application is done using Django’s built-in testing framework. To run all the automated tests, use the command `python manage.py test`. This will execute the unit and integration tests within the application.
 
 # Authors
-- Alex Phakdy - aphakdy@email.sc.edu
-- Brandon [add email]
-- Corey coreysr@email.sc.edu
+- Alex Phakdy - aphakdy@email.sc.edu 
+- Brandon - boriley@email.sc.edu
+- Corey - coreysr@email.sc.edu 
 - Druv - druv@email.sc.edu
 - Joseph [add email]
