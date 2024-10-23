@@ -10,6 +10,6 @@ Testing for the application is done using Django’s built-in testing framework.
 Authors
 Alex Phakdy - aphakdy@email.sc.edu
 Brandon [add email]
-Corey 0 coreysr@email.sc.edu
+Corey - coreysr@email.sc.edu
 Druv [add email]
 Joseph [add email]
