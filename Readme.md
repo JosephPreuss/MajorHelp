@@ -1,6 +1,14 @@
-# MajorHelp
+# Project Name
 
-MajorHelp is a web application that helps students find universities, majors, and related information to assist them in making informed decisions. It includes features like user reviews, tuition calculators, and saved colleges for a personalized experience. For detailed descriptions and design decisions, refer to our [wiki pages](#link-to-wiki).
+This first paragraph should be a short description of the app. You can add links
+to your wiki pages that have more detailed descriptions.
+
+Your audience for the Readme.md are other developers who are joining your team.
+Specifically, the file should contain detailed instructions that any developer
+can follow to install, compile, run, and test your project. These are not only
+useful to new developers, but also to you when you have to re-install everything
+because your old laptop crashed. Also, the teachers of this class will be
+following your instructions.
 
 ## External Requirements
 
@@ -57,8 +65,4 @@ Explain how to run the automated tests.
 
 # Authors
 
-- Alex Phakdy - aphakdy@email.sc.edu
-- Brandon [add email]
-- Corey [add email]
-- Druv [add email]
-- Joseph [add email]
+Your names and emails
