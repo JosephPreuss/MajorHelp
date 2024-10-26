@@ -1,0 +1,18 @@
+I was busy when most of my team did their individual projects so in order to be complete with my individual work I am going to set up a merge conflict on my own.
+
+I have created two branches, each with a file called 'a'.
+
+in branch one, it just contains "Hello World!", in branch two, it contains what you see now.
+
+
+Technically, all you need to do is resolve a merge conflict, doesn't matter if you start one yourself (most of the time I only get merge conflicts by myself anyway!)
+
+
+I will then merge these branches.
+
+
+After a bit, I will archive all related branches.
+https://stackoverflow.com/questions/1307114/how-can-i-archive-git-branches
+
+
+-Joseph
