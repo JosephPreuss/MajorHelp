@@ -28,6 +28,7 @@ __pycache__/
 .vscode/
 .idea/
 *.sublime-workspace
+*.swp
 
 # Environment variables
 .env
