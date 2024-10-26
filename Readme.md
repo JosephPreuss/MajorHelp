@@ -14,4 +14,4 @@ Testing for the application is done using Django’s built-in testing framework.
 - Brandon - boriley@email.sc.edu
 - Corey - coreysr@email.sc.edu 
 - Druv - druv@email.sc.edu
-- Joseph [add email]
+- Joseph jpreuss@email.sc.edu
