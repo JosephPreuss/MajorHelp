@@ -9,24 +9,25 @@ from django.utils import timezone
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import JsonResponse
-from django.contrib.auth.forms import UserCreationForm
-from django.views import View
-from django.shortcuts import render, redirect
-from django.contrib.auth import login
+from django.views.generic import *
 from .forms import CustomUserCreationForm 
 from django import forms
 from django.contrib.auth.models import User
-
-
-
+from .models import Post, Reply, University
 from .models import Post, Reply
 
 # HomeView displays a list of posts on the homepage
-class HomeView(generic.ListView):
+class HomeView(TemplateView):
     template_name = "MajorHelp/HomePage.html"
-    context_object_name = "latest_post_list"
-    def get_queryset(self):
-        return Post.objects.filter(pub_date__lte=timezone.now()).order_by("-pub_date")
+    
+class UniversityOverviewView(DetailView):
+    model = University
+    template_name = "MajorHelp/UniOverviewPage.html"
+    context_object_name = "university"
+
+
+# EVERYTHING BELOW HERE WAS IMPORTED FROM MY RESEARCH APP
+# Should keep because we can use these for replies and posts
 
 # add LoginRequiredMixin parameter when ready
 # PostView displays the details of a single post
