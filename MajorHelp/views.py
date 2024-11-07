@@ -9,16 +9,18 @@ from django.utils import timezone
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import JsonResponse
+from django.views.generic import TemplateView
 
 from .models import Post, Reply
-# Imported from my research milestone for skeleton of file - Brandon 
+
 
 # HomeView displays a list of posts on the homepage
-class HomeView(generic.ListView):
+class HomeView(TemplateView):
     template_name = "MajorHelp/HomePage.html"
-    context_object_name = "latest_post_list"
-    def get_queryset(self):
-        return Post.objects.filter(pub_date__lte=timezone.now()).order_by("-pub_date")
+    
+
+# EVERYTHING BELOW HERE WAS IMPORTED FROM MY RESEARCH APP
+# Should keep because we can use these for replies and posts
 
 # add LoginRequiredMixin parameter when ready
 # PostView displays the details of a single post

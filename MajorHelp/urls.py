@@ -9,7 +9,10 @@ from . import views
 
 app_name = "MajorHelp"
 urlpatterns = [    
-    path("", views.HomeView.as_view(), name="home"),
+    path("", views.HomeView.as_view(), name="HomePage"),
+    
+    
+    
     path("<int:pk>/", views.PostView.as_view(), name="post"),
     path("like/post/<int:post_id>/", views.likePost, name="like_post"),
     path("like/reply/<int:reply_id>/", views.likeReply, name="like_reply"),
