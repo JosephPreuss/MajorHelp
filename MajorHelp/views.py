@@ -14,7 +14,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.views import View
 from django.shortcuts import render, redirect
 from django.contrib.auth import login
-from .forms import CustomUserCreationForm 
+from .forms import CustomUserCreationForm
 from django import forms
 from django.contrib.auth.models import User
 
@@ -25,7 +25,7 @@ from .models import Post, Reply, University
 
 
 from django.views.generic import *
-from .forms import CustomUserCreationForm 
+from .forms import CustomUserCreationForm
 from django import forms
 from django.contrib.auth.models import User
 from .models import Post, Reply, University
@@ -35,7 +35,7 @@ from .models import Post, Reply
 # HomeView displays a list of posts on the homepage
 class HomeView(TemplateView):
     template_name = "MajorHelp/HomePage.html"
-    
+
 class UniversityOverviewView(DetailView):
     model = University
     template_name = "MajorHelp/UniOverviewPage.html"
@@ -52,7 +52,7 @@ class PostView(LoginRequiredMixin, generic.DetailView):
     login_url = "/accounts/login/"
     def get_queryset(self):
         return Post.objects.filter(pub_date__lte=timezone.now())
-        
+
 # Function to handle liking a post, increments count for a post
 def likePost(request, post_id):
     if request.method == "POST":
@@ -63,12 +63,12 @@ def likePost(request, post_id):
         post.refresh_from_db()
         return JsonResponse({'likes': post.likes})
 
-    return JsonResponse({'error': 'Invalid request'}, status=400)   
+    return JsonResponse({'error': 'Invalid request'}, status=400)
 
 # Function to handle liking a reply
 def likeReply(request, reply_id):
     if request.method == "POST":
-        reply = get_object_or_404(Reply, pk=reply_id)        
+        reply = get_object_or_404(Reply, pk=reply_id)
         reply.likes = F('likes') + 1
         reply.save()
         # Reload the instance to get the updated like count after the increment
@@ -118,8 +118,8 @@ class CustomUserCreationForm(forms.ModelForm):
 
     # Customizing the validation message for the username field
     username = forms.CharField(
-        max_length=150, 
-        help_text="", 
+        max_length=150,
+        help_text="",
         error_messages={
             'required': 'Please enter a username.',
             'max_length': 'Username should not exceed 150 characters.',
@@ -129,10 +129,10 @@ class CustomUserCreationForm(forms.ModelForm):
     def clean_confirm_password(self):
         password = self.cleaned_data.get("password")
         confirm_password = self.cleaned_data.get("confirm_password")
-        
+
         if password != confirm_password:
             raise forms.ValidationError("Passwords do not match.")
-        
+
         return confirm_password
 
     def save(self, commit=True):
