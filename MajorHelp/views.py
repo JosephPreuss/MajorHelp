@@ -9,6 +9,7 @@ from django.utils import timezone
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import JsonResponse
+<<<<<<< HEAD
 from django.views.generic import TemplateView
 from django.contrib.auth.forms import UserCreationForm
 from django.views import View
@@ -19,13 +20,25 @@ from django import forms
 from django.contrib.auth.models import User
 
 
+=======
+from django.views.generic import *
+>>>>>>> 4f38917fe0bf0394b0ed689626e10b1bbbc60117
 
-from .models import Post, Reply
+from .models import Post, Reply, University
 
 
 # HomeView displays a list of posts on the homepage
 class HomeView(TemplateView):
     template_name = "MajorHelp/HomePage.html"
+    
+class UniversityOverviewView(DetailView):
+    model = University
+    template_name = "MajorHelp/UniOverviewPage.html"
+    context_object_name = "university"
+
+
+
+
     
 
 # EVERYTHING BELOW HERE WAS IMPORTED FROM MY RESEARCH APP
