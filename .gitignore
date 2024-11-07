@@ -23,6 +23,7 @@ media/
 staticfiles/
 __pycache__/
 *.log
+venv/
 
 # IDEs
 .vscode/
