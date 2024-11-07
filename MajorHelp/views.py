@@ -10,6 +10,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import JsonResponse
 <<<<<<< HEAD
+<<<<<<< HEAD
 from django.views.generic import TemplateView
 from django.contrib.auth.forms import UserCreationForm
 from django.views import View
@@ -26,6 +27,14 @@ from django.views.generic import *
 
 from .models import Post, Reply, University
 
+=======
+from django.views.generic import *
+from .forms import CustomUserCreationForm 
+from django import forms
+from django.contrib.auth.models import User
+from .models import Post, Reply, University
+from .models import Post, Reply
+>>>>>>> alex
 
 # HomeView displays a list of posts on the homepage
 class HomeView(TemplateView):
@@ -37,10 +46,13 @@ class UniversityOverviewView(DetailView):
     context_object_name = "university"
 
 
+<<<<<<< HEAD
 
 
     
 
+=======
+>>>>>>> alex
 # EVERYTHING BELOW HERE WAS IMPORTED FROM MY RESEARCH APP
 # Should keep because we can use these for replies and posts
 
