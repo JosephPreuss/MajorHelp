@@ -9,8 +9,6 @@ from django.utils import timezone
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import JsonResponse
-<<<<<<< HEAD
-<<<<<<< HEAD
 from django.views.generic import TemplateView
 from django.contrib.auth.forms import UserCreationForm
 from django.views import View
@@ -20,21 +18,19 @@ from .forms import CustomUserCreationForm
 from django import forms
 from django.contrib.auth.models import User
 
-
-=======
 from django.views.generic import *
->>>>>>> 4f38917fe0bf0394b0ed689626e10b1bbbc60117
+
 
 from .models import Post, Reply, University
 
-=======
+
 from django.views.generic import *
 from .forms import CustomUserCreationForm 
 from django import forms
 from django.contrib.auth.models import User
 from .models import Post, Reply, University
 from .models import Post, Reply
->>>>>>> alex
+
 
 # HomeView displays a list of posts on the homepage
 class HomeView(TemplateView):
@@ -45,14 +41,6 @@ class UniversityOverviewView(DetailView):
     template_name = "MajorHelp/UniOverviewPage.html"
     context_object_name = "university"
 
-
-<<<<<<< HEAD
-
-
-    
-
-=======
->>>>>>> alex
 # EVERYTHING BELOW HERE WAS IMPORTED FROM MY RESEARCH APP
 # Should keep because we can use these for replies and posts
 
