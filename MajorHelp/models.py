@@ -6,6 +6,7 @@ from django.contrib import admin
 
 # Create your models here.
 
+# Model for a post
 class Post(models.Model):
     username = models.CharField(max_length=50)
     post_text = models.CharField(max_length=500)
@@ -14,7 +15,7 @@ class Post(models.Model):
     def __str__(self):
         return f"{self.username}: {self.post_text}"
     
-    
+# Model for a reply to a post   
 class Reply(models.Model):
     userpost = models.ForeignKey(Post, on_delete=models.CASCADE)
     username = models.CharField(max_length=50)

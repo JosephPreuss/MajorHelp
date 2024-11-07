@@ -15,7 +15,7 @@ from .models import Post, Reply
 
 # HomeView displays a list of posts on the homepage
 class HomeView(generic.ListView):
-    template_name = "MajorHelp/index.html"
+    template_name = "MajorHelp/HomePage.html"
     context_object_name = "latest_post_list"
     def get_queryset(self):
         return Post.objects.filter(pub_date__lte=timezone.now()).order_by("-pub_date")
