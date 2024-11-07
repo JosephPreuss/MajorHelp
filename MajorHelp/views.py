@@ -10,6 +10,15 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import JsonResponse
 from django.views.generic import TemplateView
+from django.contrib.auth.forms import UserCreationForm
+from django.views import View
+from django.shortcuts import render, redirect
+from django.contrib.auth import login
+from .forms import CustomUserCreationForm 
+from django import forms
+from django.contrib.auth.models import User
+
+
 
 from .models import Post, Reply
 
@@ -84,3 +93,52 @@ def create_reply(request, username, post_id):
 
     # If something goes wrong, redirect back to the post detail page
     return redirect("MajorHelp:post", pk=post_id)
+
+# Custom form for SignUp with 'Password' and 'Confirm password'
+class CustomUserCreationForm(forms.ModelForm):
+    password = forms.CharField(widget=forms.PasswordInput, label="Password")
+    confirm_password = forms.CharField(widget=forms.PasswordInput, label="Confirm password")
+
+    class Meta:
+        model = User
+        fields = ['username', 'password', 'confirm_password']
+
+    # Customizing the validation message for the username field
+    username = forms.CharField(
+        max_length=150, 
+        help_text="", 
+        error_messages={
+            'required': 'Please enter a username.',
+            'max_length': 'Username should not exceed 150 characters.',
+        }
+    )
+
+    def clean_confirm_password(self):
+        password = self.cleaned_data.get("password")
+        confirm_password = self.cleaned_data.get("confirm_password")
+        
+        if password != confirm_password:
+            raise forms.ValidationError("Passwords do not match.")
+        
+        return confirm_password
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        user.set_password(self.cleaned_data["password"])  # Hash the password
+        if commit:
+            user.save()
+        return user
+
+
+# SignUpView for user registration
+class SignUpView(View):
+    def get(self, request):
+        form = CustomUserCreationForm()  # Use the custom form here
+        return render(request, 'registration/signup.html', {'form': form})
+
+    def post(self, request):
+        form = CustomUserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()  # Save the new user
+            return redirect('MajorHelp:login')  # Redirect to home page after successful signup
+        return render(request, 'registration/signup.html', {'form': form})
