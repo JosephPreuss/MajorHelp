@@ -9,14 +9,23 @@ from django.utils import timezone
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import JsonResponse
-from django.views.generic import TemplateView
+from django.views.generic import *
 
-from .models import Post, Reply
+from .models import Post, Reply, University
 
 
 # HomeView displays a list of posts on the homepage
 class HomeView(TemplateView):
     template_name = "MajorHelp/HomePage.html"
+    
+class UniversityOverviewView(DetailView):
+    model = University
+    template_name = "MajorHelp/UniOverviewPage.html"
+    context_object_name = "university"
+
+
+
+
     
 
 # EVERYTHING BELOW HERE WAS IMPORTED FROM MY RESEARCH APP

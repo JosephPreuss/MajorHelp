@@ -10,9 +10,10 @@ from . import views
 app_name = "MajorHelp"
 urlpatterns = [    
     path("", views.HomeView.as_view(), name="HomePage"),
+    path("UniversityOverview/<int:pk>/", views.UniversityOverviewView.as_view(), name="UniOverview"),
     
     
-    
+    # URLs used in research project for viewing posts and replying
     path("<int:pk>/", views.PostView.as_view(), name="post"),
     path("like/post/<int:post_id>/", views.likePost, name="like_post"),
     path("like/reply/<int:reply_id>/", views.likeReply, name="like_reply"),

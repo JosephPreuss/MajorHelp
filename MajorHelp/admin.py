@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Post, Reply
+from .models import Post, Reply, University
 # Imported from my research milestone for skeleton of file - Brandon 
 
 class ReplyInline(admin.TabularInline): 
@@ -18,3 +18,4 @@ class PostAdmin(admin.ModelAdmin):
     search_fields = ["post_text"]
 
 admin.site.register(Post, PostAdmin)
+admin.site.register(University)

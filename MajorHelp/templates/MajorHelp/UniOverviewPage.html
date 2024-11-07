@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ university.name }}</title>
+</head>
+<body>
+    <h1>{{ university.name }}</h1>
+    <p>{{ university.aboutText }}</p>
+    
+    <h3>Ratings</h3>
+    <ul>
+        <li>Campus: {{ university.CampusRating }}</li>
+        <li>Athletics: {{ university.AthleticsRating }}</li>
+        <li>Safety: {{ university.SafteyRating }}</li>
+        <li>Social Life: {{ university.SocialRating }}</li>
+        <li>Professors: {{ university.ProffesorRating }}</li>
+        <li>Dorms: {{ university.DormRating }}</li>
+        <li>Dining: {{ university.DiningRating }}</li>
+    </ul>
+
+    <h3>Statistics</h3>
+    <p>Graduation Rate: {{ university.GraduationRate }}%</p>
+    <p>Total Undergrad Students: {{ university.TotalUndergradStudents }}</p>
+    <p>Total Grad Students: {{ university.TotalGradStudents }}</p>
+</body>
+</html>
