@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+{% load static %}
+
+
+    <h1> Twitter v2.0 </h1>
+
+    <div class="user-info">
+        <!-- If user is logged in -->
+        {% if user.is_authenticated %}
+        <p>Welcome, {{ user.username }}!</p>
+        <!-- option to log out -->
+        <form id="logout-form" method="post" action="{% url 'logout' %}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-link">Logout</button>
+        </form>
+        {% else %}
+        <!-- option to log in -->
+        <a href="{% url 'login' %}" class="btn btn-link">Login</a>
+        {% endif %}
+    </div>
+    
+    <!-- If user is logged in -->
+    {% if user.is_authenticated %}
+    <div class="new-post-form">
+        <h2>Create a new post</h2>
+        <!-- Form to create a new post -->
+        <form action="{% url 'MajorHelp:create_post' user.username %}" method="post">
+        {% csrf_token %}
+        <textarea name="post_text" id="post_text" placeholder="What's on your mind?" required></textarea>
+        <p></p>
+        <input type="submit">
+        </form>
+    </div>
+    {% endif %}
+
+
+    {% if latest_post_list %}
+    <ul>
+    <h5>Posts:</h5>
+    <!-- This loop produces a link for every post with post.id once the link is clicked the id is passed to the detail.html page-->
+    {% for post in latest_post_list %}
+        <li>
+            <a href="{% url 'MajorHelp:post' post.id %}">{{ post.post_text }}</a>
+            <p5> {{post.pub_date}}</p5>
+        </li>
+    {% endfor %}
+    </ul>
+    {% else %}
+    <p>Please Login to Access Posts.</p>
+    {% endif %}

@@ -1,0 +1,43 @@
+# Python
+*.pyc
+*.pyo
+__pycache__/
+*.pyd
+*.db
+*.sqlite3
+*.egg-info/
+dist/
+build/
+eggs/
+*.egg
+MANIFEST
+
+# Django
+*.log
+*.pot
+*.pyc
+*.pyo
+*.db
+*.sqlite3
+media/
+staticfiles/
+__pycache__/
+*.log
+
+# IDEs
+.vscode/
+.idea/
+*.sublime-workspace
+*.swp
+
+# Environment variables
+.env
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# MacOS
+.DS_Store
+
+# Windows
+Thumbs.db
