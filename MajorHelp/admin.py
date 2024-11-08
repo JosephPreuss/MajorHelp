@@ -16,6 +16,3 @@ class UniversityRatingAdmin(admin.ModelAdmin):
 # Registering models
 admin.site.register(University, UniversityAdmin)
 admin.site.register(UniversityRating, UniversityRatingAdmin)
-
-# Optional: Uncomment if you want to hide `Post` model
-# admin.site.unregister(Post)

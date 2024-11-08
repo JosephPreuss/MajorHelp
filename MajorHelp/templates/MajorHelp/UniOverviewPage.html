@@ -10,6 +10,8 @@
     
     <h3>Average Ratings</h3>
     <ul>
+        <!-- List of the ratings catagories for the university and buttons for each -->
+         <!-- will need to be updated when making website look pretty -->
         <li>Campus: {{ university.campus_rating }}</li>
             <form action="{% url 'MajorHelp:submit-rating' university.id %}" method="post">
                 {% csrf_token %}
@@ -86,5 +88,6 @@
     <p>Graduation Rate: {{ university.GraduationRate }}%</p>
     <p>Total Undergrad Students: {{ university.TotalUndergradStudents }}</p>
     <p>Total Grad Students: {{ university.TotalGradStudents }}</p>
+    
 </body>
 </html>

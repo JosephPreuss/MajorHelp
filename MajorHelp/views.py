@@ -24,16 +24,17 @@ from .models import *
 
 
 
-# HomeView displays a list of posts on the homepage
+# HomeView displays the homepage
 class HomeView(TemplateView):
     template_name = "MajorHelp/HomePage.html"
 
+#University overview page 
 class UniversityOverviewView(DetailView):
     model = University
     template_name = "MajorHelp/UniOverviewPage.html"
     context_object_name = "university"  
     
-    
+# View for submitting a rating to a specific catagory of a cartain university    
 class SubmitRatingView(View):
     def post(self, request, pk):
         university = get_object_or_404(University, pk=pk)
