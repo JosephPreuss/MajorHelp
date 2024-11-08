@@ -1,12 +1,21 @@
 from django.contrib import admin
-
 from .models import Post, Reply, University, UniversityRating
-# Imported from my research milestone for skeleton of file - Brandon 
 
-class ReplyInline(admin.TabularInline): 
-    model = Reply
-    extra = 3
+# Inline for displaying University Ratings in University admin
+class UniversityRatingInline(admin.TabularInline):
+    model = UniversityRating
+    extra = 1
 
+class UniversityAdmin(admin.ModelAdmin):
+    inlines = [UniversityRatingInline]  # Display ratings inline
 
-admin.site.register(University)
-admin.site.register(UniversityRating)
+class UniversityRatingAdmin(admin.ModelAdmin):
+    list_display = ('university', 'category', 'rating')
+    list_filter = ('university', 'category')
+
+# Registering models
+admin.site.register(University, UniversityAdmin)
+admin.site.register(UniversityRating, UniversityRatingAdmin)
+
+# Optional: Uncomment if you want to hide `Post` model
+# admin.site.unregister(Post)
