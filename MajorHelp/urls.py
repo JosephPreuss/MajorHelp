@@ -6,9 +6,13 @@ from . import views
 app_name = "MajorHelp"
 
 urlpatterns = [
-    # Your existing paths
+    # Path for Home Page
     path("", views.HomeView.as_view(), name="home"),
+    
+    # Uni overview views urls
     path('UniversityOverview/<int:pk>/', views.UniversityOverviewView.as_view(), name='university-detail'),
+    path('SubmitRating/<int:pk>/', views.SubmitRatingView.as_view(), name='submit-rating'),
+    
     
     # Adding login and signup views
     path('accounts/login/', auth_views.LoginView.as_view(), name='login'),  # Login view

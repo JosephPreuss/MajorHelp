@@ -8,15 +8,78 @@
     <h1>{{ university.name }}</h1>
     <p>{{ university.aboutText }}</p>
     
-    <h3>Ratings</h3>
+    <h3>Average Ratings</h3>
     <ul>
-        <li>Campus: {{ university.CampusRating }}</li>
-        <li>Athletics: {{ university.AthleticsRating }}</li>
-        <li>Safety: {{ university.SafteyRating }}</li>
-        <li>Social Life: {{ university.SocialRating }}</li>
-        <li>Professors: {{ university.ProffesorRating }}</li>
-        <li>Dorms: {{ university.DormRating }}</li>
-        <li>Dining: {{ university.DiningRating }}</li>
+        <li>Campus: {{ university.campus_rating }}</li>
+            <form action="{% url 'MajorHelp:submit-rating' university.id %}" method="post">
+                {% csrf_token %}
+                <input type="hidden" name="category" value="campus">
+                <button type="submit" name="rating" value="1">1</button>
+                <button type="submit" name="rating" value="2">2</button>
+                <button type="submit" name="rating" value="3">3</button>
+                <button type="submit" name="rating" value="4">4</button>
+                <button type="submit" name="rating" value="5">5</button>
+            </form>
+        <li>Athletics: {{ university.athletics_rating }}</li>
+            <form action="{% url 'MajorHelp:submit-rating' university.id %}" method="post">
+                {% csrf_token %}
+                <input type="hidden" name="category" value="athletics">
+                <button type="submit" name="rating" value="1">1</button>
+                <button type="submit" name="rating" value="2">2</button>
+                <button type="submit" name="rating" value="3">3</button>
+                <button type="submit" name="rating" value="4">4</button>
+                <button type="submit" name="rating" value="5">5</button>
+            </form>
+        <li>Safety: {{ university.safety_rating }}</li>
+            <form action="{% url 'MajorHelp:submit-rating' university.id %}" method="post">
+                {% csrf_token %}
+                <input type="hidden" name="category" value="safety">
+                <button type="submit" name="rating" value="1">1</button>
+                <button type="submit" name="rating" value="2">2</button>
+                <button type="submit" name="rating" value="3">3</button>
+                <button type="submit" name="rating" value="4">4</button>
+                <button type="submit" name="rating" value="5">5</button>
+            </form>
+        <li>Social Life: {{ university.social_rating }}</li>
+            <form action="{% url 'MajorHelp:submit-rating' university.id %}" method="post">
+                {% csrf_token %}
+                <input type="hidden" name="category" value="social">
+                <button type="submit" name="rating" value="1">1</button>
+                <button type="submit" name="rating" value="2">2</button>
+                <button type="submit" name="rating" value="3">3</button>
+                <button type="submit" name="rating" value="4">4</button>
+                <button type="submit" name="rating" value="5">5</button>
+            </form>
+        <li>Professors: {{ university.professor_rating }}</li>
+            <form action="{% url 'MajorHelp:submit-rating' university.id %}" method="post">
+                {% csrf_token %}
+                <input type="hidden" name="category" value="professor">
+                <button type="submit" name="rating" value="1">1</button>
+                <button type="submit" name="rating" value="2">2</button>
+                <button type="submit" name="rating" value="3">3</button>
+                <button type="submit" name="rating" value="4">4</button>
+                <button type="submit" name="rating" value="5">5</button>
+            </form>
+        <li>Dorms: {{ university.dorm_rating }}</li>
+            <form action="{% url 'MajorHelp:submit-rating' university.id %}" method="post">
+                {% csrf_token %}
+                <input type="hidden" name="category" value="dorm">
+                <button type="submit" name="rating" value="1">1</button>
+                <button type="submit" name="rating" value="2">2</button>
+                <button type="submit" name="rating" value="3">3</button>
+                <button type="submit" name="rating" value="4">4</button>
+                <button type="submit" name="rating" value="5">5</button>
+            </form>
+        <li>Dining: {{ university.dining_rating }}</li>
+            <form action="{% url 'MajorHelp:submit-rating' university.id %}" method="post">
+                {% csrf_token %}
+                <input type="hidden" name="category" value="dining">
+                <button type="submit" name="rating" value="1">1</button>
+                <button type="submit" name="rating" value="2">2</button>
+                <button type="submit" name="rating" value="3">3</button>
+                <button type="submit" name="rating" value="4">4</button>
+                <button type="submit" name="rating" value="5">5</button>
+            </form>
     </ul>
 
     <h3>Statistics</h3>

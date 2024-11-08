@@ -12,15 +12,15 @@ from django.http import JsonResponse
 from django.views.generic import TemplateView
 from django.contrib.auth.forms import UserCreationForm
 from django.views import View
-from django.shortcuts import render, redirect
 from django.contrib.auth import login
 from .forms import CustomUserCreationForm
 from django import forms
 from django.contrib.auth.models import User
 from django.views.generic import *
+from django.contrib import messages
 
 
-from .models import Post, Reply, University
+from .models import *
 
 
 
@@ -31,7 +31,28 @@ class HomeView(TemplateView):
 class UniversityOverviewView(DetailView):
     model = University
     template_name = "MajorHelp/UniOverviewPage.html"
-    context_object_name = "university"
+    context_object_name = "university"  
+    
+    
+class SubmitRatingView(View):
+    def post(self, request, pk):
+        university = get_object_or_404(University, pk=pk)
+        
+        # Get the category and rating from the submitted form data
+        category = request.POST.get('category')
+        rating_value = int(request.POST.get('rating'))
+        
+        # Ensure the rating is between 1 and 5
+        if category in ['campus', 'athletics', 'safety', 'social', 'professor', 'dorm', 'dining'] and 1 <= rating_value <= 5:
+            UniversityRating.objects.create(
+                university=university,
+                category=category,  # Use the selected category
+                rating=rating_value
+            )
+        else:
+            messages.error(request, 'Invalid rating. Please select a value between 1 and 5.')
+
+        return redirect('MajorHelp:university-detail', pk=pk)
 
 
 # Custom form for SignUp with 'Password' and 'Confirm password'
