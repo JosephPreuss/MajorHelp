@@ -16,9 +16,11 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import include, path
+from MajorHelp.views import about 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path("MajorHelp/", include("MajorHelp.urls")),
     path('accounts/', include('django.contrib.auth.urls')),
+    path('about/', about, name='about'),
 ]

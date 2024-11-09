@@ -176,3 +176,7 @@ def create_reply(request, username, post_id):
 
     # If something goes wrong, redirect back to the post detail page
     return redirect("MajorHelp:post", pk=post_id)
+
+def about(request):
+    return render(request, 'About/about.html')
+    
