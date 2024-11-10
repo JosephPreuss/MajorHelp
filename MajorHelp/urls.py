@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.urls import path
 from django.contrib.auth import views as auth_views
 from . import views
-from MajorHelp.views import about 
+from MajorHelp.views import about,contact 
 app_name = "MajorHelp"
 
 urlpatterns = [
@@ -25,5 +25,7 @@ urlpatterns = [
     path("create/post/<str:username>/", views.create_post, name="create_post"),
     path("create/reply/<str:username>/<int:post_id>/", views.create_reply, name="create_reply"),
     
+    # URLS for the Contact and About page
     path('about/', about, name='about'),
+    path('contact/', contact, name='contact'),
 ]

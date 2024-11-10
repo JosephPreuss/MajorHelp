@@ -180,3 +180,5 @@ def create_reply(request, username, post_id):
 def about(request):
     return render(request, 'About/about.html')
     
+def contact(request):
+    return render(request,'Contact/contact.html')
