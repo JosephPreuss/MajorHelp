@@ -182,3 +182,38 @@ def about(request):
     
 def contact(request):
     return render(request,'Contact/contact.html')
+
+#the search function
+class SearchView(View):
+    def get(self, request):
+        query = request.GET.get('query', '')
+        filter_type = request.GET.get('filter', 'department')
+        
+        # If the query is empty, reload the search page without redirecting
+        if not query:
+            return render(request, 'search/search.html', {'query': query, 'filter_type': filter_type})
+        
+        # Redirect based on the filter type if query is provided
+        if filter_type == 'school':
+            return redirect('school_results', query=query)
+        elif filter_type == 'department':
+            return redirect('department_results', query=query)
+        
+        # Default behavior (in case of other filter types)
+        return render(request, 'search/search.html', {'query': query, 'filter_type': filter_type})
+
+class SchoolResultsView(View):
+    def get(self, request, query):
+        # Placeholder for actual search logic (replace with database query if available)
+        results = []  # Replace with real data, e.g., School.objects.filter(name__icontains=query)
+        
+        # Render the template with the search query and any results
+        return render(request, 'search/school_results.html', {'query': query, 'results': results})
+    
+class DepartmentResultsView(View):
+    def get(self, request, query):
+        # Placeholder for actual search logic (replace with database query if available)
+        results = []  # Replace with actual query, e.g., Department.objects.filter(name__icontains=query)
+        
+        # Render the department_results.html template with the search query and results
+        return render(request, 'search/department_results.html', {'query': query, 'results': results})
