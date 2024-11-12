@@ -19,3 +19,4 @@ class CustomUserCreationForm(UserCreationForm):
         password1 = self.cleaned_data.get("password1")
         # You can add your own password validation here if neede
         return password1
+
