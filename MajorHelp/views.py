@@ -18,15 +18,12 @@ from django import forms
 from django.contrib.auth.models import User
 from django.views.generic import *
 from django.contrib import messages
+from .models import *
 from django.shortcuts import render
 
 
-from .models import *
-
-# settings 
 def settings_view(request):
-    # Placeholder view for user settings
-    return render(request, 'settings.html')
+    return render(request, 'settings.html')  # Make sure you have a 'settings.html' template, or adjust accordingly
 
 # HomeView displays the homepage
 class HomeView(TemplateView):
