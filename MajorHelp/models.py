@@ -74,25 +74,14 @@ class UniversityRating(models.Model):
     def __str__(self):
         return f"{self.university.name} - {self.category}: {self.rating}"
 
-
-
 # Imported from my research milestone for skeleton of file - Brandon 
 # Model for a post
-class Post(models.Model):
+class Review(models.Model):
     username = models.CharField(max_length=50)
-    post_text = models.CharField(max_length=500)
-    pub_date = models.DateTimeField("date published")
-    likes = models.IntegerField(default=0)
-    def __str__(self):
-        return f"{self.username}: {self.post_text}"
+    review_text = models.CharField(max_length=500)
+    pub_date = models.DateTimeField(auto_now_add=True)
+    university = models.ForeignKey(University, on_delete=models.CASCADE, related_name='review')
     
-# Model for a reply to a post   
-class Reply(models.Model):
-    userpost = models.ForeignKey(Post, on_delete=models.CASCADE)
-    username = models.CharField(max_length=50)
-    reply_text = models.CharField(max_length=500)
-    pub_date = models.DateTimeField("date published")
-    likes = models.IntegerField(default=0)
     def __str__(self):
-        return f"{self.username}: {self.reply_text}"
+        return f"{self.username}: {self.review_text}"
     

@@ -89,5 +89,32 @@
     <p>Total Undergrad Students: {{ university.TotalUndergradStudents }}</p>
     <p>Total Grad Students: {{ university.TotalGradStudents }}</p>
     
+    <!-- Form for leaving a review, visible only to logged-in users -->
+    {% if user.is_authenticated %}
+    <div class="new-post-form">
+        <h2>Leave a Review</h2>
+        <form action="{% url 'MajorHelp:create_review' user.username %}" method="post">
+            {% csrf_token %}
+            <input type="hidden" name="university_id" value="{{ university.id }}">
+            <textarea name="review_text" placeholder="Leave your review..." required></textarea>
+            <p></p>
+            <button type="submit">Submit Review</button>
+        </form>
+    </div>
+    {% endif %}
+    
+    <!-- Display all reviews (visible to all users) -->
+    <h3>Reviews</h3>
+    {% if latest_post_list %}
+        <ul>
+            {% for post in latest_post_list %}
+                <li>
+                    <p>"{{ post.review_text }}" <strong>By:</strong> {{ post.username }} on {{ post.pub_date }}</p>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No reviews yet. Be the first to leave a review!</p>
+    {% endif %}
 </body>
 </html>
