@@ -13,10 +13,22 @@ class UniversityRatingAdmin(admin.ModelAdmin):
     list_display = ('university', 'category', 'rating')
     list_filter = ('university', 'category')
     
+class ReviewAdmin(admin.ModelAdmin):
+    list_display = ('username', 'university', 'review_text')
+    list_filter = ('university',)
+    
+    fieldsets = (
+        (None, {
+            'fields': ('username', 'university', 'review_text', 'pub_date')
+        }),
+    )
 
+    readonly_fields = ('pub_date',)
+    
+    
     
 
 # Registering models
 admin.site.register(University, UniversityAdmin)
 admin.site.register(UniversityRating, UniversityRatingAdmin)
-admin.site.register(Review)
+admin.site.register(Review, ReviewAdmin)
