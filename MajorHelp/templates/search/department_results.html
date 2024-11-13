@@ -1,10 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
-{% include "navbar.html" %}
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Department Results</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f4f4f4; }
+        .results-container { background-color: #fff; padding: 20px; width: 400px; margin: auto; }
+        .university-name { font-size: 20px; font-weight: bold; margin-top: 15px; color: #333; }
+        .major-item { padding-left: 15px; font-size: 16px; color: #555; }
+    </style>
 </head>
 <body>
 
@@ -12,9 +17,11 @@
     <h2>Search by Dept: {{ query }}</h2>
     {% if results %}
         {% for university, majors in results.items %}
-            <div class="university-name">{{ university }}</div>
+            <div class="university-name">
+                <a href="{% url 'MajorHelp:university-detail' university.pk %}">{{ university.name }}</a>
+            </div>
             {% for major in majors %}
-                <div class="major-item">{{ major.name }}</div>
+                <div class="major-item">{{ major.major_name }}</div>
             {% endfor %}
         {% endfor %}
     {% else %}

@@ -184,17 +184,16 @@ class DepartmentResultsView(View):
         # Fetch all majors in the specified department
         majors = Major.objects.filter(department=query)
         
-        # Group majors by school
+        # Group majors by university
         results = {}
         for major in majors:
-            school_name = major.university.name  # Adjust based on your model relationships
-            if school_name not in results:
-                results[school_name] = []
-            results[school_name].append(major)
+            university_name = major.university  # Use university instead of school
+            if university_name not in results:
+                results[university_name] = []
+            results[university_name].append(major)
         
         # Render the template with grouped results
         return render(request, 'search/department_results.html', {'query': query, 'results': results})
-    
 class MajorResultsView(View):
     def get(self, request, query):
         # Placeholder for actual search logic (replace with database query if available)
