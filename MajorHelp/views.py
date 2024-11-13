@@ -166,9 +166,11 @@ class SearchView(View):
         
         # Redirect based on the filter type if query is provided
         if filter_type == 'school':
-            return redirect('school_results', query=query)
+            return redirect('MajorHelp:school_results', query=query)
         elif filter_type == 'department':
-            return redirect('department_results', query=query)
+            return redirect('MajorHelp:department_results', query=query)
+        elif filter_type == 'major':
+            return redirect('MajorHelp:major_results', query=query)
         
         # Default behavior (in case of other filter types)
         return render(request, 'search/search.html', {'query': query, 'filter_type': filter_type})
@@ -183,10 +185,24 @@ class SchoolResultsView(View):
     
 class DepartmentResultsView(View):
     def get(self, request, query):
-        # Placeholder for actual search logic (replace with database query if available)
-        results = []  # Replace with actual query, e.g., Department.objects.filter(name__icontains=query)
+        # Fetch all majors in the specified department
+        majors = Major.objects.filter(department=query)
         
-        # Render the department_results.html template with the search query and results
+        # Group majors by school
+        results = {}
+        for major in majors:
+            school_name = major.university.name  # Adjust based on your model relationships
+            if school_name not in results:
+                results[school_name] = []
+            results[school_name].append(major)
+        
+        # Render the template with grouped results
         return render(request, 'search/department_results.html', {'query': query, 'results': results})
     
-    
+class MajorResultsView(View):
+    def get(self, request, query):
+        # Placeholder for actual search logic (replace with database query if available)
+        results = []  # Replace with actual query, e.g., Major.objects.filter(name__icontains=query)
+        
+        # Render the major_results.html template with the search query and results
+        return render(request, 'search/major_results.html', {'query': query, 'results': results})

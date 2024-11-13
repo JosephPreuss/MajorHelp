@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>School Search Results</title>
+    <title>Major Search Results</title>
 </head>
 <body>
 
@@ -13,14 +13,14 @@
     
     <div class="results">
         {% if results %}
-            {% for school in results %}
+            {% for major in results %}
                 <div class="result-item">
-                    <h3>{{ school.name }}</h3>
-                    <p>{{ school.description }}</p>
+                    <h3>{{ major.name }}</h3>
+                    <p>{{ major.description }}</p>
                 </div>
             {% endfor %}
         {% else %}
-            <p class="no-results">No schools found for your search query.</p>
+            <p class="no-results">No majors found for your search query.</p>
         {% endif %}
     </div>
 </div>

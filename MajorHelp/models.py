@@ -11,6 +11,8 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 # Model for university
 class University(models.Model):
     name = models.TextField()
+    location = models.CharField(max_length=255)  # City and State
+    is_public = models.BooleanField(default=True, help_text="Check if the university is public; leave unchecked for private")
     aboutText = models.TextField()
     TotalUndergradStudents = models.IntegerField()
     TotalGradStudents = models.IntegerField()
@@ -84,4 +86,27 @@ class Review(models.Model):
     
     def __str__(self):
         return f"{self.username}: {self.review_text}"
+    
+class Major(models.Model):
+    DEPARTMENT_CHOICES = [
+        ('Humanities and Social Sciences', 'Humanities and Social Sciences'),
+        ('Natural Sciences and Mathematics', 'Natural Sciences and Mathematics'),
+        ('Business and Economics', 'Business and Economics'),
+        ('Education', 'Education'),
+        ('Engineering and Technology', 'Engineering and Technology'),
+        ('Health Sciences', 'Health Sciences'),
+        ('Arts and Design', 'Arts and Design'),
+        ('Agriculture and Environmental Studies', 'Agriculture and Environmental Studies'),
+        ('Communication and Media', 'Communication and Media'),
+        ('Law and Criminal Justice', 'Law and Criminal Justice'),
+    ]
+
+    university = models.ForeignKey(University, on_delete=models.CASCADE, related_name="majors")  # Link to University
+    major_name = models.CharField(max_length=255)
+    department = models.CharField(max_length=50, choices=DEPARTMENT_CHOICES)
+    in_state_tuition = models.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(0)])
+    out_of_state_tuition = models.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(0)])
+
+    def __str__(self):
+        return f"{self.major_name} at {self.university.name}"
     

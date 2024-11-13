@@ -16,6 +16,8 @@ urlpatterns = [
     # Uni overview views urls
     path('UniversityOverview/<int:pk>/', views.UniversityOverviewView.as_view(), name='university-detail'),
     path('SubmitRating/<int:pk>/', views.SubmitRatingView.as_view(), name='submit-rating'),
+        # Leave review for University
+    path("create/review/<str:username>/", LeaveReview.as_view(), name="create_review"),
     
     # Adding login and signup views
     path('accounts/login/', auth_views.LoginView.as_view(), name='login'),  # Login view
@@ -34,5 +36,6 @@ urlpatterns = [
     path('search/', SearchView.as_view(), name='search'),
     path('search/school/<str:query>/', SchoolResultsView.as_view(), name='school_results'),
     path('search/department/<str:query>/', DepartmentResultsView.as_view(), name='department_results'),
+    path('search/major/<str:query>/', views.MajorResultsView.as_view(), name='major_results'),
 
 ]
