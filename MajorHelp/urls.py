@@ -15,7 +15,7 @@ urlpatterns = [
     # Uni overview views urls
     path('UniversityOverview/<int:pk>/', views.UniversityOverviewView.as_view(), name='university-detail'),
     path('SubmitRating/<int:pk>/', views.SubmitRatingView.as_view(), name='submit-rating'),
-        # Leave review for Uni
+        # Leave review for University
     path("create/review/<str:username>/", LeaveReview.as_view(), name="create_review"),
     
     # Adding login and signup views
