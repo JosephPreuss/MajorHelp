@@ -20,8 +20,9 @@
             border-radius: 8px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
             width: 300px;
+            text-align: center;
         }
-        .search-container input[type="text"] {
+        .search-container input[type="text"], .search-container select {
             width: 100%;
             padding: 10px;
             margin-top: 10px;
@@ -29,15 +30,26 @@
             border-radius: 4px;
             font-size: 16px;
         }
-        .search-container select {
-            width: 100%;
-            padding: 10px;
-            margin-top: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            font-size: 16px;
+        .search-container select option:first-child {
+            color: #999; /* Grey out the default option */
         }
-        .search-container button {
+        .filter-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+        }
+        .filter-buttons button {
+            background: none;
+            border: none;
+            font-size: 16px;
+            cursor: pointer;
+            padding: 10px;
+        }
+        .filter-buttons button.active {
+            text-decoration: underline;
+            font-weight: bold;
+        }
+        .search-container button[type="submit"] {
             width: 100%;
             padding: 10px;
             margin-top: 15px;
@@ -48,34 +60,77 @@
             font-size: 16px;
             cursor: pointer;
         }
-        .search-container button:hover {
+        .search-container button[type="submit"]:hover {
             background-color: #0056b3;
         }
     </style>
     <script>
-        // Function to dynamically update the placeholder text
-        function updatePlaceholder() {
-            const filter = document.getElementById("filter").value;
-            const searchInput = document.getElementById("search-query");
-            searchInput.placeholder = filter === "department" ? "Searching by department..." : "Searching by school...";
+        const departmentOptions = [
+            'Humanities and Social Sciences',
+            'Natural Sciences and Mathematics',
+            'Business and Economics',
+            'Education',
+            'Engineering and Technology',
+            'Health Sciences',
+            'Arts and Design',
+            'Agriculture and Environmental Studies',
+            'Communication and Media',
+            'Law and Criminal Justice'
+        ];
+
+        function setActiveFilter(filter) {
+            document.getElementById("filter").value = filter;
+
+            const buttons = document.querySelectorAll(".filter-buttons button");
+            buttons.forEach(button => button.classList.remove("active"));
+            document.getElementById(filter + "-button").classList.add("active");
+
+            const searchFieldContainer = document.getElementById("search-field-container");
+
+            if (filter === 'department') {
+                const select = document.createElement("select");
+                select.name = "query";
+                select.id = "search-query";
+
+                // Add "Pick a Department" as the default greyed-out option
+                select.innerHTML = `<option value="" disabled selected>Pick a Department</option>` +
+                    departmentOptions.map(option => `<option value="${option}">${option}</option>`).join('');
+
+                searchFieldContainer.innerHTML = ''; 
+                searchFieldContainer.appendChild(select);
+            } else {
+                const input = document.createElement("input");
+                input.type = "text";
+                input.id = "search-query";
+                input.name = "query";
+                input.placeholder = `Enter ${filter} name...`;
+                searchFieldContainer.innerHTML = ''; 
+                searchFieldContainer.appendChild(input);
+            }
         }
 
-        // Set initial placeholder on page load
-        window.onload = updatePlaceholder;
+        window.onload = function () {
+            const filter = "{{ filter_type }}";
+            setActiveFilter(filter);
+        };
     </script>
 </head>
 <body>
 
 <div class="search-container">
     <h2>Search</h2>
-    <form action="/search" method="get">
-        <input type="text" id="search-query" name="query" placeholder="Enter your search term...">
+    <form action="/search/" method="get">
+        <div id="search-field-container">
+            <input type="text" id="search-query" name="query" placeholder="Enter your search term..." value="{{ query }}">
+        </div>
         
-        <label for="filter">Filter by:</label>
-        <select name="filter" id="filter" onchange="updatePlaceholder()">
-            <option value="department" {% if filter_type == "department" %}selected{% endif %}>Department</option>
-            <option value="school" {% if filter_type == "school" %}selected{% endif %}>School</option>
-        </select>
+        <div class="filter-buttons">
+            <button type="button" id="department-button" onclick="setActiveFilter('department')">Department</button>
+            <button type="button" id="school-button" onclick="setActiveFilter('school')">School</button>
+            <button type="button" id="major-button" onclick="setActiveFilter('major')">Major</button>
+        </div>
+
+        <input type="hidden" id="filter" name="filter" value="department">
         
         <button type="submit">Search</button>
     </form>
