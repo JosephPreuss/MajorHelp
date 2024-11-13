@@ -31,4 +31,4 @@ class ReviewAdmin(admin.ModelAdmin):
 # Registering models
 admin.site.register(University, UniversityAdmin)
 admin.site.register(UniversityRating, UniversityRatingAdmin)
-admin.site.register(Review, ReviewAdmin)
+admin.site.register(Review)
