@@ -4,7 +4,7 @@ from MajorHelp.views import about, contact, SearchView, SchoolResultsView, Depar
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include("MajorHelp.urls")),  # This removes the "MajorHelp" prefix from all URLs in MajorHelp
+    path('', include("MajorHelp.urls", namespace="MajorHelp")),  # This removes the "MajorHelp" prefix from all URLs in MajorHelp
     path('accounts/', include('django.contrib.auth.urls')),
     path('about/', about, name='about'),
     path('contact/', contact, name='contact'),

@@ -6,6 +6,8 @@ from django.contrib.auth import views as auth_views
 from . import views
 from MajorHelp.views import about,contact
 
+app_name = "MajorHelp"
+
 urlpatterns = [
     # Path for Home Page
     path("", views.HomeView.as_view(), name="home"),
