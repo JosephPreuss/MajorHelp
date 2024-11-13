@@ -4,7 +4,7 @@ from django.contrib import admin
 from django.urls import path
 from django.contrib.auth import views as auth_views
 from . import views
-from MajorHelp.views import about,contact
+from MajorHelp.views import about,contact, SearchView, SchoolResultsView, DepartmentResultsView
 
 app_name = "MajorHelp"
 
@@ -31,5 +31,9 @@ urlpatterns = [
     # URLS for the Contact and About page
     path('about/', about, name='about'),
     path('contact/', contact, name='contact'),
+    
+    path('search/', SearchView.as_view(), name='search'),
+    path('search/school/<str:query>/', SchoolResultsView.as_view(), name='school_results'),
+    path('search/department/<str:query>/', DepartmentResultsView.as_view(), name='department_results'),
 
 ]
