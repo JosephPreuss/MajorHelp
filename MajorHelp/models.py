@@ -108,5 +108,5 @@ class Major(models.Model):
     out_of_state_tuition = models.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(0)])
 
     def __str__(self):
-        return f"{self.name} at {self.university.name}"
+        return f"{self.major_name} at {self.university.name}"
     
