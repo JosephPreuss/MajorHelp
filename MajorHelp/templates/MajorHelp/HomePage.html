@@ -1,13 +1,9 @@
-<!DOCTYPE html>
+<!-- templates/home.html -->
+{% extends 'base.html' %}
 
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home</title>
-</head>
-<body>
+{% block title %}Home{% endblock %}
+
+{% block content %}
     <h1>Welcome to the Home Page</h1>
     <p>This is the main landing page of the website.</p>
-</body>
-</html>
+{% endblock %}

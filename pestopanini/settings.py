@@ -38,7 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'MajorHelp.apps.MajorhelpConfig'
+    'MajorHelp.apps.MajorhelpConfig',
 ]
 
 MIDDLEWARE = [
@@ -131,7 +131,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Where to go after successfully logging in (landing page/home page).
-LOGIN_REDIRECT_URL = '/MajorHelp/'
+LOGIN_REDIRECT_URL = '/'
 
 # Where to go when not logged in (login page).
 LOGIN_URL = '/accounts/login/'
