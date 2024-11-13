@@ -1,12 +1,9 @@
 <!-- templates/registration/signup.html -->
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sign Up</title>
-</head>
-<body>
+{% extends 'base.html' %}
+
+{% block title %}Sign Up{% endblock %}
+
+{% block content %}
     <h2>Sign Up</h2>
     <form method="post">
         {% csrf_token %}
@@ -14,6 +11,5 @@
         <button type="submit">Sign Up</button>
     </form>
 
-    <p>Already have an account? <a href="{% url 'login' %}">Login here</a></p>
-</body>
-</html>
+    <p>Already have an account? <a href="{% url 'MajorHelp:login' %}">Login here</a></p>
+{% endblock %}

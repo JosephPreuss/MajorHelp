@@ -32,13 +32,38 @@
     background-color: #45a049;
 }
 
+/* static/your_app/styles.css */
 nav {
-    background-color: #f8f9fa;
+    background-color: #ffffff;
     padding: 10px;
-    text-align: right; /* Moves all items to the right */
+    text-align: right;
 }
 
 nav a {
-    color: black;       /* Customize link color */
     text-decoration: none;
+    color: #333;
+    padding: 10px;
+    margin: 0 10px;
+}
+
+nav a:hover {
+    color: #007bff;
+}
+
+
+
+.navbar a {
+    margin-right: 15px;
+}
+
+/* For mobile responsiveness */
+@media screen and (max-width: 768px) {
+    nav {
+        flex-direction: column;
+        text-align: left;
+    }
+
+    .navbar a {
+        margin: 5px 0;
+    }
 }
