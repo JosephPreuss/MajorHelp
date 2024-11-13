@@ -1,20 +1,97 @@
-{% extends "base.html" %}  <!-- Extending base.html -->
+{% extends "base.html" %} <!-- Extending base.html -->
 
 {% load static %}
 
-{% block title %}About Us{% endblock %}  <!-- Title block for the page -->
+{% block title %}About Us{% endblock %} <!-- Title block for the page -->
 
 {% block content %}
+
+<!-- Inline CSS -->
+<style>
+    /* Centered container for the About Us and Mission Statement sections */
+    .content-box {
+        max-width: 900px; /* Limits the width of the content box */
+        background-color: #fff; /* White background for the content box */
+        padding: 20px; /* Adds padding inside the box */
+        margin: 0 auto; /* Centers the box on the page */
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1); /* External shadow for depth */
+        border-radius: 10px; /* Rounded corners */
+    }
+
+    .content-box h1, .content-box h2 {
+        font-family: Arial, sans-serif;
+    }
+
+    /* Adjusting the image to be on the right side and allow text to wrap around it */
+    .right-image {
+        width: 250px; /* Desired image width */
+        height: 250px; /* Set height equal to width for a circular image */
+        border-radius: 50%; /* Makes the image circular */
+        object-fit: cover; /* Ensures image fills the circular area without distortion */
+        float: right; /* Floats the image to the right */
+        margin: 80px 0 20px 80px; /* Adds top margin to move image down */
+    }
+
+    .content-section {
+        margin-bottom: 20px; /* Adds spacing between sections */
+    }
+
+    .content-section p {
+        margin: 0;
+    }
+
+    .middle-image {
+        display: block; /* Makes the image a block element */
+        margin: 0 auto; /* Centers the image horizontally */
+        width: 250px; /* Set desired width */
+        height: auto; /* Set height to match the width for a square image */
+        object-fit: contain;
+    }
+</style>
+
 <div class="container">
     <div class="row">
         <div class="col-md-8 card mb-4 mt-3 left top">
-            <div class="card-body">
-                <h1>About Us</h1>
-                <p>This is a test to see if this page works.</p>
-                <p>If you have any features, suggestions, etc., please email us.</p>
-                <p>This is the email to do so: ____________</p>
+            <div class="content-box">
+                <!-- Image Positioned on the Right of the Content Box -->
+                <img src="{% static 'images/about_image1.png' %}" alt="Student using laptop" class="right-image">
+
+                <!-- About Us Section -->
+                <h1>About <span style="color: #4fc7cf;">Us</span></h1>
+                <div class="content-section">
+                    <p>MajorHelp is here to save the day and assist you with your search for your dream university. Even if you're an upcoming freshman, new transfer, or a late starter, MajorHelp is here to help you.</p>
+                </div>
+
+                <!-- Mission Statement Section -->
+                <h2>Mission <span style="color: #4fc7cf;">Statement</span></h2>
+                <div class="content-section">
+                    <p>At MajorHelp, we empower students by sharing real experiences and feedback to help choose the right university. Our goal is to build a transparent, supportive community that enhances academic life and drives improvement in education.</p>
+                </div>
+
+                <!-- We Offer Section -->
+                <h2>We <span style="color: #4fc7cf;">Offer</span></h2>
+                <div class="content-section">
+                    <ul>
+                        <li><strong>University Ratings</strong>: See how different universities stack up in areas like academic quality, campus life, support services, and more.</li>
+                        <li><strong>Student Experience</strong>: From social life to housing, find out how students feel about their overall experience on and off campus.</li>
+                        <li><strong>Peer Recommendations</strong>: Benefit from real-world recommendations and advice from fellow students who have been in your shoes.</li>
+                    </ul>
+                </div>
+
+                <!-- Why Choose Us Section -->
+                <h2>Why Choose<span style="color: #4fc7cf;"> Us?</span> </h2>
+                <div class="content-section">
+                    <ul>
+                        <li><strong>Authentic Reviews</strong>: All of our reviews come from real students who have firsthand experience with the universities listed.</li>
+                        <li><strong>Comprehensive Insights</strong>: We cover everything from academics and campus facilities to student well-being and career support, so you can get a full picture.</li>
+                        <li><strong>Community Driven</strong>: Built by students, for students.</li>
+                        <img src="{% static 'images/logo.png' %}" alt="logo for project" class="middle-image">
+
+                    </ul>
+                </div>
             </div>
         </div>
     </div>
 </div>
+
 {% endblock %}
