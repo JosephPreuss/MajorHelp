@@ -136,4 +136,4 @@ LOGIN_REDIRECT_URL = '/'
 # Where to go when not logged in (login page).
 LOGIN_URL = '/accounts/login/'
 
-LOGOUT_REDIRECT_URL = '/MajorHelp/'
+LOGOUT_REDIRECT_URL = '/'

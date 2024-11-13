@@ -32,27 +32,30 @@
     background-color: #45a049;
 }
 
-/* static/your_app/styles.css */
+/* Navbar styling */
 nav {
     background-color: #ffffff;
     padding: 10px;
     text-align: right;
 }
 
-nav a {
+nav a, .logout-link {
     text-decoration: none;
     color: #333;
     padding: 10px;
     margin: 0 10px;
+    cursor: pointer;
+    background: none;
+    border: none;
+    font: inherit;
 }
 
-nav a:hover {
+nav a:hover, .logout-link:hover {
     color: #007bff;
 }
 
-
-
-.navbar a {
+/* Align navbar items */
+.navbar a, .logout-link {
     margin-right: 15px;
 }
 
@@ -63,7 +66,7 @@ nav a:hover {
         text-align: left;
     }
 
-    .navbar a {
+    .navbar a, .logout-link {
         margin: 5px 0;
     }
 }

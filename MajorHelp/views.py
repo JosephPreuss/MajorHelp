@@ -18,11 +18,15 @@ from django import forms
 from django.contrib.auth.models import User
 from django.views.generic import *
 from django.contrib import messages
+from django.shortcuts import render
 
 
 from .models import *
 
-
+# settings 
+def settings_view(request):
+    # Placeholder view for user settings
+    return render(request, 'settings.html')
 
 # HomeView displays the homepage
 class HomeView(TemplateView):
@@ -184,3 +188,5 @@ class DepartmentResultsView(View):
         
         # Render the department_results.html template with the search query and results
         return render(request, 'search/department_results.html', {'query': query, 'results': results})
+    
+    

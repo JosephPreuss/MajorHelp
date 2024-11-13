@@ -4,6 +4,7 @@ from django.contrib import admin
 from django.urls import path
 from django.contrib.auth import views as auth_views
 from . import views
+from django.contrib.auth.views import LogoutView
 from MajorHelp.views import about,contact, SearchView, SchoolResultsView, DepartmentResultsView, LeaveReview
 
 app_name = "MajorHelp"
@@ -18,8 +19,10 @@ urlpatterns = [
     
     # Adding login and signup views
     path('accounts/login/', auth_views.LoginView.as_view(), name='login'),  # Login view
+    path('accounts/logout/', LogoutView.as_view(), name='logout'),
     path('accounts/signup/', views.SignUpView.as_view(), name='signup'),  # Custom signup view
-    
+    path('accounts/settings/', views.settings_view, name='settings'),
+
     
     # URLs for my research milestone could maybe use them later
     path("create/review/<str:username>/", LeaveReview.as_view(), name="create_review"),
