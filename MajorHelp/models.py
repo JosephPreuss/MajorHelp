@@ -40,8 +40,9 @@ class UniversityRating(models.Model):
         return f"{self.university.name} - {self.category}: {self.rating}"
 
 
+# Imported from my research milestone for skeleton of file - Brandon 
 # Model for a post
-class Post(models.Model):
+class Review(models.Model):
     username = models.CharField(max_length=50)
     post_text = models.CharField(max_length=500)
     pub_date = models.DateTimeField("date published")
@@ -86,3 +87,10 @@ class Major(models.Model):
 
     def __str__(self):
         return f"{self.name} at {self.university.name}"
+    review_text = models.CharField(max_length=500)
+    pub_date = models.DateTimeField(auto_now_add=True)
+    university = models.ForeignKey(University, on_delete=models.CASCADE, related_name='review')
+    
+    def __str__(self):
+        return f"{self.username}: {self.review_text}"
+    
