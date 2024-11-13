@@ -15,14 +15,12 @@ urlpatterns = [
     # Uni overview views urls
     path('UniversityOverview/<int:pk>/', views.UniversityOverviewView.as_view(), name='university-detail'),
     path('SubmitRating/<int:pk>/', views.SubmitRatingView.as_view(), name='submit-rating'),
+        # Leave review for Uni
+    path("create/review/<str:username>/", LeaveReview.as_view(), name="create_review"),
     
     # Adding login and signup views
     path('accounts/login/', auth_views.LoginView.as_view(), name='login'),  # Login view
     path('accounts/signup/', views.SignUpView.as_view(), name='signup'),  # Custom signup view
-    
-    
-    # URLs for my research milestone could maybe use them later
-    path("create/review/<str:username>/", LeaveReview.as_view(), name="create_review"),
     
     # URLS for the Contact and About page
     path('about/', about, name='about'),
