@@ -32,7 +32,13 @@ class HomeView(TemplateView):
 class UniversityOverviewView(DetailView):
     model = University
     template_name = "MajorHelp/UniOverviewPage.html"
-    context_object_name = "university"  
+    context_object_name = "university" 
+    
+    def get_context_data(self, **kwargs):
+       context = super().get_context_data(**kwargs)
+       # Filter reviews related to the specific university
+       context['latest_post_list'] = Review.objects.filter(university=self.object)
+       return context
     
 # View for submitting a rating to a specific catagory of a cartain university    
 class SubmitRatingView(View):
@@ -55,7 +61,40 @@ class SubmitRatingView(View):
 
         return redirect('MajorHelp:university-detail', pk=pk)
 
+class LeaveReview(View):
+    def post(self, request, *args, **kwargs):
+        university_id = kwargs.get("university_id")  # Get university ID from URL arguments
+        post_text = request.POST.get("post_text")
 
+        if post_text:
+            # Create the review
+            Review.objects.create(
+                username=request.user.username,
+                text=post_text,
+                pub_date=timezone.now()
+            )
+            messages.success(request, "Your review has been submitted.")
+            return redirect("MajorHelp:university-detail", pk=university_id)
+        else:
+            messages.error(request, "Failed to submit the review.")
+            return redirect("MajorHelp:university-detail", pk=university_id)
+
+class LeaveReview(View):
+    def post(self, request, username):
+        review_text = request.POST.get("review_text", "")
+        if review_text:
+            university_id = request.POST.get("university_id")  # Make sure university_id is passed in the form
+            university = get_object_or_404(University, pk=university_id)
+            Review.objects.create(
+                username=request.user.username,
+                review_text=review_text,
+                university=university
+            )
+            # Redirect to the specific university's detail page
+            return redirect("MajorHelp:university-detail", pk=university_id)
+        return redirect("MajorHelp:university-detail", pk=university_id)
+    
+    
 # Custom form for SignUp with 'Password' and 'Confirm password'
 class CustomUserCreationForm(forms.ModelForm):
     password = forms.CharField(widget=forms.PasswordInput, label="Password")
@@ -104,78 +143,6 @@ class SignUpView(View):
             user = form.save()  # Save the new user
             return redirect('MajorHelp:login')  # Redirect to home page after successful signup
         return render(request, 'registration/signup.html', {'form': form})
-    
-    
-    
-    
-    
-    
-    
-    
-# EVERYTHING BELOW HERE WAS IMPORTED FROM MY RESEARCH APP
-# Should keep because we can use these for replies and posts
-
-# PostView displays the details of a single post
-class PostView(LoginRequiredMixin, generic.DetailView):
-    model = Post
-    template_name = "MajorHelp/detail.html"
-    login_url = "/accounts/login/"
-    def get_queryset(self):
-        return Post.objects.filter(pub_date__lte=timezone.now())
-
-# Function to handle liking a post, increments count for a post
-def likePost(request, post_id):
-    if request.method == "POST":
-        post = get_object_or_404(Post, pk=post_id)
-        post.likes = F('likes') + 1
-        post.save()
-        # Reload the instance to get the updated like count after the increment
-        post.refresh_from_db()
-        return JsonResponse({'likes': post.likes})
-
-    return JsonResponse({'error': 'Invalid request'}, status=400)
-
-# Function to handle liking a reply
-def likeReply(request, reply_id):
-    if request.method == "POST":
-        reply = get_object_or_404(Reply, pk=reply_id)
-        reply.likes = F('likes') + 1
-        reply.save()
-        # Reload the instance to get the updated like count after the increment
-        reply.refresh_from_db()
-        return JsonResponse({'likes': reply.likes})
-
-    return JsonResponse({'error': 'Invalid request'}, status=400)
-
-# Function to create a new post
-# Only logged-in users can create a post
-def create_post(request, username):
-    if request.method == "POST":
-        post_text = request.POST.get("post_text", "")
-        pub_date = timezone.now()
-
-        if post_text:
-            # Use request.user.username instead of the username argument to ensure consistency
-            Post.objects.create(username=request.user.username, post_text=post_text, pub_date=pub_date)
-            return redirect("MajorHelp:home")
-
-    return redirect("MajorHelp:home")
-
-# Function to create a new reply associated with a specific post
-# Only logged-in users can create a reply
-def create_reply(request, username, post_id):
-    if request.method == "POST":
-        post = get_object_or_404(Post, pk=post_id)
-        reply_text = request.POST.get("reply_text", "")
-        pub_date = timezone.now()
-
-        if reply_text:
-            Reply.objects.create(userpost=post, username=request.user.username, reply_text=reply_text, pub_date=pub_date)
-            # Redirect to the post detail page after creating a reply
-            return redirect("MajorHelp:post", pk=post_id)
-
-    # If something goes wrong, redirect back to the post detail page
-    return redirect("MajorHelp:post", pk=post_id)
 
 def about(request):
     return render(request, 'About/about.html')
