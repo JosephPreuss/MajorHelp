@@ -18,6 +18,7 @@
     {% if results %}
         {% for university, majors in results.items %}
             <div class="university-name">
+                <!-- URL for university overview page using slugs-->
                 <a href="{% url 'MajorHelp:university-detail' slug=university.slug %}">{{ university.name }}</a>
             </div>
             {% for major in majors %}
