@@ -35,6 +35,10 @@ class UniversityOverviewView(DetailView):
     template_name = "MajorHelp/UniOverviewPage.html"
     context_object_name = "university" 
     
+    def get_object(self):
+        name = self.kwargs['name']
+        return get_object_or_404(University, name=name)
+    
     def get_context_data(self, **kwargs):
        context = super().get_context_data(**kwargs)
        # Filter reviews related to the specific university
