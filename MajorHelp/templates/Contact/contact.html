@@ -1,20 +1,102 @@
-{% extends "base.html" %}  <!-- Extending base.html -->
+{% extends "base.html" %} <!-- Extending base.html -->
 
 {% load static %}
 
-{% block title %}Contact Us{% endblock %}  <!-- Title block for the page -->
+{% block title %}Contact Us{% endblock %} <!-- Title block for the page -->
 
 {% block content %}
+
+<style>
+    .content-box {
+        max-width: 900px; 
+        background-color: #fff; /* White background for the content box */
+        padding: 20px; 
+        margin: 0 auto; 
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1); 
+        border-radius: 10px; 
+    }
+
+    .content-box h1, .content-box p {
+        font-family: Arial, sans-serif;
+    }
+
+    .content-section {
+        margin-bottom: 20px; 
+    }
+
+    .content-section p {
+        margin: 0;
+    }
+
+    .right-image {
+        width: 250px;
+        height: 250px;
+        border-radius: 50%; 
+        object-fit: contain; 
+        float: right; 
+        margin: 0 0 20px 40px; /* Adjusted margin to move the image up */
+    }
+
+    .columns-container {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 20px;
+    }
+
+    .column {
+        width: 45%; /* Set equal width for both columns */
+    }
+
+    .column h2 {
+        margin-top: 0;
+    }
+
+    .text-left {
+        text-align: left;
+    }
+
+    .text-right {
+        text-align: right;
+    }
+</style>
+
 <div class="container">
     <div class="row">
         <div class="col-md-8 card mb-4 mt-3 left top">
-            <div class="card-body">
-                <h1>Contact Us</h1>
-                <p>This is a test to see if this page works.</p>
-                <p>To stay in touch with us and reach us outside of our email, please follow us on any of the social media pages.</p>
-                <p>Here they are: ______, ________, ______</p>
+            <div class="content-box"> <!-- Applying the content-box styling -->
+                <img src="{% static 'images/contact_1.png' %}" alt="image for contact page" class="right-image">
+                <h1>Wanna Reach <span style="color: #4fc7cf;">Us</span></h1>
+
+                <div class="content-section">
+                    <p>We'd love to hear from you! Whether you have questions, feedback, or suggestions, feel free to reach out. 
+                       We're here to help and always looking for ways to improve your experience.
+                       For any inquiries or support, please email us at <a href="mailto:majorhelp.project@gmail.com">majorhelp.project@gmail.com</a>. 
+                       Our team will get back to you within 3-5 business days.</p>
+                </div>
+
+                <!-- Flex container for social media and feedback columns -->
+                <div class="columns-container">
+                    <!-- Social media text column (left) -->
+                    <div class="column text-left">
+                        <h2><span style="color: #4fc7cf;">Social Media</span></h2>
+                        <p>Stay in touch with us on:</p>
+                        <ul>
+                            <li>Twitter: ________</li>
+                            <li>Instagram: ________</li>
+                            <li>Facebook: ________</li>
+                        </ul>
+                    </div>
+
+                    <!-- Feedback text column (right) -->
+                    <div class="column text-right">
+                        <h2><span style="color: #4fc7cf;">Feedback</span></h2>
+                        <p>We'd love to hear from you! Send us your thoughts and feedback at:</p>
+                        <p><strong>Email:</strong> majorhelp.project@gmail.com</p>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
+
 {% endblock %}

@@ -2,18 +2,16 @@
 
 {% load static %}
 
-{% block title %}About Us{% endblock %} <!-- Title block for the page -->
+{% block title %}About Us{% endblock %} 
 
 {% block content %}
 
-<!-- Inline CSS -->
 <style>
-    /* Centered container for the About Us and Mission Statement sections */
     .content-box {
-        max-width: 900px; /* Limits the width of the content box */
+        max-width: 900px; 
         background-color: #fff; /* White background for the content box */
         padding: 20px; /* Adds padding inside the box */
-        margin: 0 auto; /* Centers the box on the page */
+        margin: 0 auto; /* Centers the box */
         box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1); /* External shadow for depth */
         border-radius: 10px; /* Rounded corners */
     }
@@ -22,10 +20,10 @@
         font-family: Arial, sans-serif;
     }
 
-    /* Adjusting the image to be on the right side and allow text to wrap around it */
+    /* Adjusting the image to be on the right side & to wrap around the text */
     .right-image {
-        width: 250px; /* Desired image width */
-        height: 250px; /* Set height equal to width for a circular image */
+        width: 250px; /* image width */
+        height: 250px; /* image height */
         border-radius: 50%; /* Makes the image circular */
         object-fit: cover; /* Ensures image fills the circular area without distortion */
         float: right; /* Floats the image to the right */
@@ -33,7 +31,7 @@
     }
 
     .content-section {
-        margin-bottom: 20px; /* Adds spacing between sections */
+        margin-bottom: 20px; /* spacing between sections */
     }
 
     .content-section p {
@@ -43,8 +41,8 @@
     .middle-image {
         display: block; /* Makes the image a block element */
         margin: 0 auto; /* Centers the image horizontally */
-        width: 250px; /* Set desired width */
-        height: auto; /* Set height to match the width for a square image */
+        width: 250px; /* image width */
+        height: auto; /* image height */
         object-fit: contain;
     }
 </style>
@@ -53,7 +51,6 @@
     <div class="row">
         <div class="col-md-8 card mb-4 mt-3 left top">
             <div class="content-box">
-                <!-- Image Positioned on the Right of the Content Box -->
                 <img src="{% static 'images/about_image1.png' %}" alt="Student using laptop" class="right-image">
 
                 <!-- About Us Section -->
@@ -62,13 +59,13 @@
                     <p>MajorHelp is here to save the day and assist you with your search for your dream university. Even if you're an upcoming freshman, new transfer, or a late starter, MajorHelp is here to help you.</p>
                 </div>
 
-                <!-- Mission Statement Section -->
+                <!-- Mission Statement -->
                 <h2>Mission <span style="color: #4fc7cf;">Statement</span></h2>
                 <div class="content-section">
                     <p>At MajorHelp, we empower students by sharing real experiences and feedback to help choose the right university. Our goal is to build a transparent, supportive community that enhances academic life and drives improvement in education.</p>
                 </div>
 
-                <!-- We Offer Section -->
+                <!-- We Offer -->
                 <h2>We <span style="color: #4fc7cf;">Offer</span></h2>
                 <div class="content-section">
                     <ul>
@@ -78,7 +75,7 @@
                     </ul>
                 </div>
 
-                <!-- Why Choose Us Section -->
+                <!-- Why Choose Us -->
                 <h2>Why Choose<span style="color: #4fc7cf;"> Us?</span> </h2>
                 <div class="content-section">
                     <ul>
