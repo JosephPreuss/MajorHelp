@@ -24,10 +24,6 @@ urlpatterns = [
     path('accounts/logout/', LogoutView.as_view(), name='logout'),
     path('accounts/signup/', views.SignUpView.as_view(), name='signup'),  # Custom signup view
     path('accounts/settings/', views.settings_view, name='settings'),
-
-    
-    # URLs for my research milestone could maybe use them later
-    path("create/review/<str:username>/", LeaveReview.as_view(), name="create_review"),
     
     # URLS for the Contact and About page
     path('about/', about, name='about'),
