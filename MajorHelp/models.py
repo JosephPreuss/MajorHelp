@@ -4,6 +4,7 @@ from django.db import models
 from django.utils import timezone
 from django.contrib import admin
 from django.db.models import Avg
+from django.utils.text import slugify
 from django.core.validators import MinValueValidator, MaxValueValidator
 
 # Create your models here.
@@ -17,6 +18,13 @@ class University(models.Model):
     TotalUndergradStudents = models.IntegerField()
     TotalGradStudents = models.IntegerField()
     GraduationRate = models.DecimalField(max_digits=4, decimal_places=1)
+    
+    slug = models.SlugField(default="", null=False, unique=True)
+    
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.name)
+        super().save(*args, **kwargs)
     
     # Calculate the average rating for a given category
     def get_average_rating(self, category):
@@ -47,7 +55,7 @@ class University(models.Model):
         return self.get_average_rating('dining')
     
     def __str__(self):
-        return f"{self.name}"
+        return self.name
     
 # instance of a rating for a university, uses foreign key to refrence that university    
 class UniversityRating(models.Model):

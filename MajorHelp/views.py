@@ -35,9 +35,13 @@ class UniversityOverviewView(DetailView):
     template_name = "MajorHelp/UniOverviewPage.html"
     context_object_name = "university"
 
+    # Use slug as the lookup field
+    slug_field = 'slug'
+    slug_url_kwarg = 'slug'
+
     def get_object(self):
-        name = self.kwargs['name']
-        return get_object_or_404(University, name=name)
+        slug = self.kwargs['slug']
+        return get_object_or_404(University, slug=slug)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
