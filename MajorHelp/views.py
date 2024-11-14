@@ -75,24 +75,6 @@ class SubmitRatingView(View):
         return redirect('MajorHelp:university-detail', slug=university.slug)
 
 class LeaveReview(View):
-    def post(self, request, *args, **kwargs):
-        university_id = kwargs.get("university_id")  # Get university ID from URL arguments
-        post_text = request.POST.get("post_text")
-
-        if post_text:
-            # Create the review
-            Review.objects.create(
-                username=request.user.username,
-                text=post_text,
-                pub_date=timezone.now()
-            )
-            messages.success(request, "Your review has been submitted.")
-            return redirect("MajorHelp:university-detail", pk=university_id)
-        else:
-            messages.error(request, "Failed to submit the review.")
-            return redirect("MajorHelp:university-detail", pk=university_id)
-
-class LeaveReview(View):
     def post(self, request, username):
         review_text = request.POST.get("review_text", "")
         if review_text:
@@ -104,8 +86,8 @@ class LeaveReview(View):
                 university=university
             )
             # Redirect to the specific university's detail page
-            return redirect("MajorHelp:university-detail", pk=university_id)
-        return redirect("MajorHelp:university-detail", pk=university_id)
+            return redirect("MajorHelp:university-detail", slug=university.slug)
+        return redirect("MajorHelp:university-detail", slug=university.slug)
     
     
 # Custom form for SignUp with 'Password' and 'Confirm password'
