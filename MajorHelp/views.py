@@ -59,15 +59,20 @@ class SubmitRatingView(View):
         
         # Ensure the rating is between 1 and 5
         if category in ['campus', 'athletics', 'safety', 'social', 'professor', 'dorm', 'dining'] and 1 <= rating_value <= 5:
-            UniversityRating.objects.create(
+            rating, created = UniversityRating.objects.update_or_create(
                 university=university,
                 category=category,  # Use the selected category
-                rating=rating_value
+                user=request.user,
+                defaults={'rating': rating_value}
             )
+            if created:
+                messages.success(request, 'Your rating has been submitted.')
+            else:
+                messages.success(request, 'Your rating has been updated.')
         else:
             messages.error(request, 'Invalid rating. Please select a value between 1 and 5.')
 
-        return redirect('MajorHelp:university-detail', pk=pk)
+        return redirect('MajorHelp:university-detail', slug=university.slug)
 
 class LeaveReview(View):
     def post(self, request, *args, **kwargs):
