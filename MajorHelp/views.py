@@ -33,13 +33,16 @@ class HomeView(TemplateView):
 class UniversityOverviewView(DetailView):
     model = University
     template_name = "MajorHelp/UniOverviewPage.html"
-    context_object_name = "university" 
-    
+    context_object_name = "university"
+
+    def get_object(self):
+        name = self.kwargs['name']
+        return get_object_or_404(University, name=name)
+
     def get_context_data(self, **kwargs):
-       context = super().get_context_data(**kwargs)
-       # Filter reviews related to the specific university
-       context['latest_post_list'] = Review.objects.filter(university=self.object)
-       return context
+        context = super().get_context_data(**kwargs)
+        context['latest_post_list'] = Review.objects.filter(university=self.object)
+        return context
     
 # View for submitting a rating to a specific catagory of a cartain university    
 class SubmitRatingView(View):

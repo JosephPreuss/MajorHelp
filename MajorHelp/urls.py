@@ -14,7 +14,7 @@ urlpatterns = [
     path("", views.HomeView.as_view(), name="home"),
     
     # Uni overview views urls
-    path('UniversityOverview/<int:pk>/', views.UniversityOverviewView.as_view(), name='university-detail'),
+    path('UniversityOverview/<str:name>/', views.UniversityOverviewView.as_view(), name='university-detail'),
     path('SubmitRating/<int:pk>/', views.SubmitRatingView.as_view(), name='submit-rating'),
         # Leave review for University
     path("create/review/<str:username>/", LeaveReview.as_view(), name="create_review"),

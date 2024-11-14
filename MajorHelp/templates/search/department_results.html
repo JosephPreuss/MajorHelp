@@ -18,7 +18,7 @@
     {% if results %}
         {% for university, majors in results.items %}
             <div class="university-name">
-                <a href="{% url 'MajorHelp:university-detail' university.pk %}">{{ university.name }}</a>
+                <a href="{% url 'MajorHelp:university-detail' name=university.name %}">{{ university.name }}</a>
             </div>
             {% for major in majors %}
                 <div class="major-item">{{ major.major_name }}</div>
