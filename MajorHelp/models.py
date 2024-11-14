@@ -6,6 +6,7 @@ from django.contrib import admin
 from django.db.models import Avg
 from django.utils.text import slugify
 from django.core.validators import MinValueValidator, MaxValueValidator
+from django.contrib.auth.models import User
 
 # Create your models here.
 
@@ -72,6 +73,11 @@ class UniversityRating(models.Model):
     university = models.ForeignKey(University, on_delete=models.CASCADE, related_name='ratings')
     category = models.CharField(max_length=20, choices=CATEGORY_CHOICES)
     rating = models.DecimalField(max_digits=2, decimal_places=1, validators=[MinValueValidator(1), MaxValueValidator(5)])
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='university_ratings')
+
+    # Ensure one rating per category per user
+    class Meta:
+        unique_together = ('university', 'category', 'user')
 
     # Ensure the rating is within the 1-5 range
     def save(self, *args, **kwargs):
