@@ -26,11 +26,17 @@ class ReviewAdmin(admin.ModelAdmin):
     readonly_fields = ('pub_date',)
     
 class MajorAdmin(admin.ModelAdmin):
-    list_display = ('major_name', 'university', 'department', 'in_state_tuition', 'out_of_state_tuition')
+    list_display = (
+        'major_name',
+        'university',
+        'department',
+        'in_state_min_tuition',
+        'in_state_max_tuition',
+        'out_of_state_min_tuition',
+        'out_of_state_max_tuition'
+    )
     list_filter = ('university', 'department')
     search_fields = ('major_name',)
-    
-    
 
 # Registering models
 admin.site.register(University, UniversityAdmin)

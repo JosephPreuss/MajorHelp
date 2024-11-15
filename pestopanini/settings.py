@@ -120,7 +120,7 @@ USE_TZ = True
 STATIC_URL = 'static/MajorHelp/'
 
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'MajorHelp/static/MajorHelp'),
+    os.path.join(BASE_DIR, 'MajorHelp/static/'),
 ]
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')

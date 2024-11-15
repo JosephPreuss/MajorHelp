@@ -168,31 +168,69 @@ class SearchView(View):
 
 class SchoolResultsView(View):
     def get(self, request, query):
-        # Placeholder for actual search logic (replace with database query if available)
-        results = []  # Replace with real data, e.g., School.objects.filter(name__icontains=query)
+        # Fetch universities matching the query (case-insensitive, partial matches)
+        universities = University.objects.filter(name__icontains=query)
         
-        # Render the template with the search query and any results
+        results = {}
+        for university in universities:
+            departments = {}
+            # Group majors by department
+            for major in university.majors.all():
+                if major.department not in departments:
+                    departments[major.department] = []
+                departments[major.department].append(major)
+            
+            # Add university details and grouped departments to results
+            results[university] = {
+                'location': university.location,
+                'type': 'Public' if university.is_public else 'Private',
+                'departments': departments
+            }
+        
         return render(request, 'search/school_results.html', {'query': query, 'results': results})
-    
 class DepartmentResultsView(View):
     def get(self, request, query):
         # Fetch all majors in the specified department
-        majors = Major.objects.filter(department=query)
-        
-        # Group majors by university
+        majors = Major.objects.filter(department__icontains=query)
+
+        # Group majors by university and department
         results = {}
         for major in majors:
-            university_name = major.university  # Use university instead of school
-            if university_name not in results:
-                results[university_name] = []
-            results[university_name].append(major)
-        
-        # Render the template with grouped results
+            university = major.university
+            if university not in results:
+                results[university] = {
+                    'location': university.location,
+                    'type': 'Public' if university.is_public else 'Private',
+                    'departments': {}
+                }
+            
+            if major.department not in results[university]['departments']:
+                results[university]['departments'][major.department] = []
+            
+            results[university]['departments'][major.department].append(major)
+
+        # Render the results page with grouped data
         return render(request, 'search/department_results.html', {'query': query, 'results': results})
 class MajorResultsView(View):
     def get(self, request, query):
-        # Placeholder for actual search logic (replace with database query if available)
-        results = []  # Replace with actual query, e.g., Major.objects.filter(name__icontains=query)
-        
-        # Render the major_results.html template with the search query and results
+        # Fetch majors that match the query (case-insensitive and partial matches)
+        majors = Major.objects.filter(major_name__icontains=query)
+
+        # Group majors by university and department
+        results = {}
+        for major in majors:
+            university = major.university
+            if university not in results:
+                results[university] = {
+                    'location': university.location,
+                    'type': 'Public' if university.is_public else 'Private',
+                    'departments': {}
+                }
+            
+            if major.department not in results[university]['departments']:
+                results[university]['departments'][major.department] = []
+            
+            results[university]['departments'][major.department].append(major)
+
+        # Render the template with grouped data
         return render(request, 'search/major_results.html', {'query': query, 'results': results})

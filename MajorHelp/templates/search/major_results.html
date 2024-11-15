@@ -1,29 +1,85 @@
 <!DOCTYPE html>
 <html lang="en">
-{% include "navbar.html" %}
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Major Search Results</title>
+    <title>Major Results</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+        }
+        .results-container {
+            background-color: #fff;
+            padding: 20px;
+            width: 600px;
+            margin: auto;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        .university-header {
+            font-size: 20px;
+            font-weight: bold;
+            margin-top: 20px;
+            color: #333;
+        }
+        .university-details {
+            font-size: 14px;
+            color: #666;
+            display: inline-block;
+            margin-left: 10px;
+        }
+        .department-header {
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 10px;
+            padding-left: 15px;
+            color: #444;
+        }
+        .major-item {
+            padding-left: 30px;
+            font-size: 16px;
+            color: #555;
+        }
+        .tuition-details {
+            font-size: 14px;
+            color: #666;
+            margin-left: 15px;
+        }
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+    </style>
 </head>
 <body>
 
-<div class="container">
-    <h1>Search Results for: "{{ query }}"</h1>
-    
-    <div class="results">
-        {% if results %}
-            {% for major in results %}
-                <div class="result-item">
-                    <h3>{{ major.name }}</h3>
-                    <p>{{ major.description }}</p>
-                </div>
-            {% endfor %}
-        {% else %}
-            <p class="no-results">No majors found for your search query.</p>
-        {% endif %}
-    </div>
-</div>
+<div class="results-container">
+    <h2>Search for Major: "{{ query }}"</h2>
+    {% if results %}
+        {% for university, details in results.items %}
+            <div class="university-header">
+                <a href="{% url 'MajorHelp:university-detail' slug=university.slug %}">{{ university.name }}</a>
+                <span class="university-details">| {{ details.location }} | {{ details.type }}</span>
+            </div>
 
+            {% for department, majors in details.departments.items %}
+                <div class="department-header">{{ department }}</div>
+                {% for major in majors %}
+                    <div class="major-item">
+                        {{ major.major_name }}
+                        <span class="tuition-details">
+                            (In-State: ${{ major.in_state_min_tuition }} - ${{ major.in_state_max_tuition }},
+                            Out-of-State: ${{ major.out_of_state_min_tuition }} - ${{ major.out_of_state_max_tuition }})
+                        </span>
+                    </div>
+                {% endfor %}
+            {% endfor %}
+        {% endfor %}
+    {% else %}
+        <p>No majors found for your search query.</p>
+    {% endif %}
+</div>
+    
 </body>
 </html>

@@ -1,6 +1,7 @@
 import datetime
 
 from django.db import models
+from django.forms import ValidationError
 from django.utils import timezone
 from django.contrib import admin
 from django.db.models import Avg
@@ -118,9 +119,33 @@ class Major(models.Model):
     university = models.ForeignKey(University, on_delete=models.CASCADE, related_name="majors")  # Link to University
     major_name = models.CharField(max_length=255)
     department = models.CharField(max_length=50, choices=DEPARTMENT_CHOICES)
-    in_state_tuition = models.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(0)])
-    out_of_state_tuition = models.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(0)])
+    in_state_min_tuition = models.IntegerField(
+        validators=[MinValueValidator(0)],
+        default=0,
+    )
+    in_state_max_tuition = models.IntegerField(
+        validators=[MinValueValidator(0)],
+        default=0,
+    )
+    out_of_state_min_tuition = models.IntegerField(
+        validators=[MinValueValidator(0)],
+        default=0,
+    )
+    out_of_state_max_tuition = models.IntegerField(
+        validators=[MinValueValidator(0)],
+        default=0,
+    )
+
+    def clean(self):
+        if self.in_state_max_tuition < self.in_state_min_tuition:
+            raise ValidationError("In-state max tuition cannot be less than in-state min tuition.")
+        if self.out_of_state_max_tuition < self.out_of_state_min_tuition:
+            raise ValidationError("Out-of-state max tuition cannot be less than out-of-state min tuition.")
 
     def __str__(self):
-        return f"{self.major_name} at {self.university.name}"
+        return (
+            f"{self.major_name} at {self.university.name} "
+            f"(In-state: ${self.in_state_min_tuition} - ${self.in_state_max_tuition}, "
+            f"Out-of-state: ${self.out_of_state_min_tuition} - ${self.out_of_state_max_tuition})"
+        )
     
