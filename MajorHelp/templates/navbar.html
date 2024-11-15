@@ -7,6 +7,7 @@
     <a href="{% url 'MajorHelp:search' %}"> Search </a> |
     <a href="{% url 'MajorHelp:about' %}">About</a> |
     <a href="{% url 'MajorHelp:contact' %}">Contact</a> |
+    <a href="{% url 'MajorHelp:calc' %}">Tuition Calculator</a> |
 
     {% if user.is_authenticated %}
         <form action="{% url 'logout' %}" method="post" style="display: inline;">

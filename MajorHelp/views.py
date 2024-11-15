@@ -196,3 +196,7 @@ class MajorResultsView(View):
         
         # Render the major_results.html template with the search query and results
         return render(request, 'search/major_results.html', {'query': query, 'results': results})
+
+class CalcView(View):
+    def get(self, request):
+        return render(request, 'calc/calc.html')

@@ -5,7 +5,7 @@ from django.urls import path
 from django.contrib.auth import views as auth_views
 from . import views
 from django.contrib.auth.views import LogoutView
-from MajorHelp.views import about,contact, SearchView, SchoolResultsView, DepartmentResultsView, LeaveReview
+from MajorHelp.views import * # about,contact, SearchView, SchoolResultsView, DepartmentResultsView, LeaveReview
 
 app_name = "MajorHelp"
 
@@ -34,4 +34,6 @@ urlpatterns = [
     path('search/department/<str:query>/', DepartmentResultsView.as_view(), name='department_results'),
     path('search/major/<str:query>/', views.MajorResultsView.as_view(), name='major_results'),
 
+    # URLS for the Tuition Calculator
+    path('calc/', CalcView.as_view(), name='calc')
 ]
