@@ -1,1 +1,3 @@
-/* Currently unused but may be used for later */
+/* Extend css changes from the main stylesheet */
+@import url("styles.css");
+
