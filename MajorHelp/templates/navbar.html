@@ -1,12 +1,13 @@
 <!-- templates/navbar.html -->
 {% load static %}
-<link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}">
+<!-- <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}">-->
 
 <nav class="navbar">
     <a href="{% url 'MajorHelp:home' %}">Home</a> |
     <a href="{% url 'MajorHelp:search' %}"> Search </a> |
     <a href="{% url 'MajorHelp:about' %}">About</a> |
     <a href="{% url 'MajorHelp:contact' %}">Contact</a> |
+    <a href="{% url 'MajorHelp:calc' %}">Tuition Calculator</a> |
 
     {% if user.is_authenticated %}
         <form action="{% url 'logout' %}" method="post" style="display: inline;">
