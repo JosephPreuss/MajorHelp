@@ -22,31 +22,114 @@
 
 <br>
 
-<div id="input">
-    <div id="majors">
-        <h2>Great, now lets talk majors.</h2>
-        (placeholder text)
+<div id="inputOutput">
+    <div id="input">
+        <div id="majors">
+            <h2>Great, now lets talk majors.</h2>
+            (placeholder text)
+        </div>
+
+        <div id="minors">
+            <h2>Are you interested in enrolling in any minors?</h2>
+            (placeholder text)
+        </div>
+
+        <div id="scholarships">
+            <h2>Do you have any scholarships?</h2>
+            (placeholder text)
+        </div>
+
+        <div id="extraAid">
+            <h2>Enter any other estimated external aids</h2>
+            (placeholder text)
+        </div>
     </div>
 
-    <div id="minors">
-        <h2>Are you interested in enrolling in any minors?</h2>
-        (placeholder text)
-    </div>
+    <div id="output">
+        <h2>Estimated Total</h2>
+        <h1>{{ total | default:"$XX,XXX - $XXX,XXX"}}</h1>
+        
+        <h2>Details:</h2>
 
-    <div id="scholarships">Yeah, if you guys want 
-        <h2>Do you have any scholarships?</h2>
-        (placeholder text)
-    </div>
+        <!--
+            A for loop could be placed through here to iterate through university, major, scholarship, etc
+            and thier costs, credits, notes, etc
+        -->
 
-    <div id="extraAid">
-        <h2>Enter any other estimated external aids</h2>
-        (placeholder text)
-    </div>
-</div>
+        <h3>University Related Costs</h3>
+        <!--The name of the University/Major/Scholarship can go here-->
+        University of South Carolina 
+        <ul class="outputList">
+            <!--
+                For future reference, this can probably be replaced with a for loop containing all applicable
+                items (meaning the left side will be replaced with a variable and presumably the right side 
+                would be something like variableName.amount)
+            -->
+            <li>
+                Base Tuition <span>{{ baseTuition | default:"$X,XXX" }}</span>
+            </li>
+            <li>
+                Fees <span>{{ baseTuition | default:"$X,XXX" }}</span>
+            </li>
+            <li>
+                Housing <span>{{ baseTuition | default:"$X,XXX" }}</span>
+            </li>
+            
+            <br>
 
-<div id="output">
-    (placeholder text for the output, should be aligned to the right of queries)
-    <br>
-    (right now it isn't and it looks like its under the same header, but its not)
+            <!--
+                Notes section
+                Can be surrounded by a for to include any notes
+            -->
+            <small>
+                <li class="outputNote">
+                    Alumni have reported that this university requires students to live on campus housing for freshman year.
+                </li>
+            </small>
+
+            
+        </ul>
+ 
+        <h4>Subtotal</h4>
+        <h4 style="margin-left:2.5em">$X,XXX - $XX,XXX</h4>
+
+
+
+
+
+        <h3>Major Related Costs</h3>
+        Computer Science
+        <ul class="outputList">
+            <li>
+                Base Tuition <span>{{ baseTuition | default:"$X,XXX" }}</span>
+            </li>
+            <li>
+                Fees <span>{{ baseTuition | default:"$X,XXX" }}</span>
+            </li>
+
+            <!--
+                Notes section
+                Can be surrounded by a for to include any notes
+            -->
+            <small>
+                <li class="outputNote">
+                    Alumini have reported that this university has a hidden lab fee specific to this Major.
+                </li>
+            </small>
+            
+
+
+        </ul>
+
+
+        
+        <h4>Subtotal</h4>
+        <h4 style="margin-left:2.5em">$X,XXX - $XX,XXX
+
+
+        <!-- Just repeat the estimated total again for readability-->
+        <h2>Estimated Total</h2>
+        <h1>{{ total | default:"$XX,XXX - $XXX,XXX"}}</h1>
+    </div>
 </div>
 {% endblock content %}
