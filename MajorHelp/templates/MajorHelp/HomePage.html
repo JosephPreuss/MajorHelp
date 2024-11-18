@@ -1,9 +1,17 @@
-<!-- templates/home.html -->
-{% extends 'base.html' %}
+{% extends "base.html" %}
+{% load static %}
 
 {% block title %}Home{% endblock %}
 
 {% block content %}
-    <h1>Welcome to the Home Page</h1>
-    <p>This is the main landing page of the website.</p>
+<div class="home-page-container">
+    <div class="text-section">
+        <h1>Welcome to MajorHelp</h1>
+        <p>Your journey to finding the right university starts here.</p>
+    </div>
+    <div class="image-section">
+        <img src="{% static 'images/home2.png' %}" alt="Testing Image" style="width:100%;">
+        <div class="overlay"></div>
+    </div>
+</div>
 {% endblock %}
