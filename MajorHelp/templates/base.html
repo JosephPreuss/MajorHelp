@@ -5,12 +5,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}My Site{% endblock %}</title>
-    <link rel="stylesheet" href="{% block stylesheet %}{% static 'css/styles.css' %}{% endblock %}">
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <link rel="stylesheet" href="{% static 'css/navbar.css' %}">
+    <link rel="stylesheet" href="{% static 'css/footer.css' %}">
+    <link rel="stylesheet" href="{% static 'css/home.css' %}">
+
 </head>
 <body>
-    {% include "navbar.html" %}
+    {% block navbar %}
+        {% include "navbar.html" %}
+    {% endblock %}
+    
     <div class="content">
         {% block content %}{% endblock %}
     </div>
+    
+    <footer class="footer">
+        <p>&copy; 2024 MajorHelp. All rights reserved.</p>
+    </footer>
 </body>
 </html>
