@@ -20,15 +20,16 @@ class University(models.Model):
     TotalUndergradStudents = models.IntegerField()
     TotalGradStudents = models.IntegerField()
     GraduationRate = models.DecimalField(max_digits=4, decimal_places=1)
-    
-    slug = models.SlugField(default="", null=False, unique=True)
-    
+
+    # Automatically populated slug
+    slug = models.SlugField(default="", editable=False, null=False, unique=True)
+
     def save(self, *args, **kwargs):
-        if not self.slug:
-            self.slug = slugify(self.name)
+        if not self.slug:  # Only generate slug if it's not already set
+            # Remove spaces and create a slug
+            self.slug = slugify(self.name).replace('-', '')
         super().save(*args, **kwargs)
-    
-    # Calculate the average rating for a given category
+
     def get_average_rating(self, category):
         average = self.ratings.filter(category=category).aggregate(Avg('rating'))['rating__avg']
         if average is not None:
@@ -55,7 +56,7 @@ class University(models.Model):
 
     def dining_rating(self):
         return self.get_average_rating('dining')
-    
+
     def __str__(self):
         return self.name
     
@@ -116,8 +117,14 @@ class Major(models.Model):
         ('Law and Criminal Justice', 'Law and Criminal Justice'),
     ]
 
-    university = models.ForeignKey(University, on_delete=models.CASCADE, related_name="majors")  # Link to University
+    university = models.ForeignKey(
+        University,
+        on_delete=models.CASCADE,
+        related_name="majors"
+    )
     major_name = models.CharField(max_length=255)
+    major_description = models.TextField(blank=True)  # Add this line
+    slug = models.SlugField(default="", editable=False, null=False, unique=True)
     department = models.CharField(max_length=50, choices=DEPARTMENT_CHOICES)
     in_state_min_tuition = models.IntegerField(
         validators=[MinValueValidator(0)],
@@ -142,10 +149,16 @@ class Major(models.Model):
         if self.out_of_state_max_tuition < self.out_of_state_min_tuition:
             raise ValidationError("Out-of-state max tuition cannot be less than out-of-state min tuition.")
 
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            university_slug = slugify(self.university.name).replace('-', '')
+            major_slug = slugify(self.major_name).replace('-', '')
+            self.slug = f"{university_slug}/{major_slug}"
+        super().save(*args, **kwargs)
+
     def __str__(self):
         return (
             f"{self.major_name} at {self.university.name} "
             f"(In-state: ${self.in_state_min_tuition} - ${self.in_state_max_tuition}, "
             f"Out-of-state: ${self.out_of_state_min_tuition} - ${self.out_of_state_max_tuition})"
         )
-    

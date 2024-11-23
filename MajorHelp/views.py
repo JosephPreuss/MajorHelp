@@ -234,3 +234,13 @@ class MajorResultsView(View):
 
         # Render the template with grouped data
         return render(request, 'search/major_results.html', {'query': query, 'results': results})
+    
+#major overview view
+class MajorOverviewView(DetailView):
+    model = Major
+    template_name = "major/MajorOverviewPage.html"  
+    context_object_name = "major"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return context

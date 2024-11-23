@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+{% include "navbar.html" %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ major.major_name }}</title>
+</head>
+<body>
+    <h1>{{ major.major_name }}</h1>
+    <h2>
+        <a href="{% url 'MajorHelp:university-detail' slug=major.university.slug %}">
+            {{ major.university.name }}
+        </a>
+    </h2>
+    
+    <h3>Description</h3>
+    <p>{{ major.major_description }}</p>
+    
+    <h3>Department</h3>
+    <p>{{ major.department }}</p>
+    
+    <h3>Tuition</h3>
+    <ul>
+        <li>In-State Tuition: ${{ major.in_state_min_tuition }} - ${{ major.in_state_max_tuition }}</li>
+        <li>Out-of-State Tuition: ${{ major.out_of_state_min_tuition }} - ${{ major.out_of_state_max_tuition }}</li>
+    </ul>
+    
+    <h3>University Information</h3>
+    <p>Location: {{ major.university.location }}</p>
+    <p>Type: 
+        {% if major.university.is_public %}
+            Public
+        {% else %}
+            Private
+        {% endif %}
+    </p>
+    
+    <h3>University Statistics</h3>
+    <ul>
+        <li>Graduation Rate: {{ major.university.GraduationRate }}%</li>
+        <li>Total Undergrad Students: {{ major.university.TotalUndergradStudents }}</li>
+        <li>Total Grad Students: {{ major.university.TotalGradStudents }}</li>
+    </ul>
+</body>
+</html>

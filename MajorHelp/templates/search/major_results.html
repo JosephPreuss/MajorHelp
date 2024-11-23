@@ -1,85 +1,105 @@
 <!DOCTYPE html>
 <html lang="en">
+{% include "navbar.html" %}
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Major Results</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
+    <title>Major Search Results</title>
+    <script>
+        const departmentOptions = [
+            'Humanities and Social Sciences',
+            'Natural Sciences and Mathematics',
+            'Business and Economics',
+            'Education',
+            'Engineering and Technology',
+            'Health Sciences',
+            'Arts and Design',
+            'Agriculture and Environmental Studies',
+            'Communication and Media',
+            'Law and Criminal Justice'
+        ];
+
+        function setActiveFilter(filter) {
+            document.getElementById("filter").value = filter;
+
+            const searchFieldContainer = document.getElementById("search-field-container");
+
+            if (filter === 'department') {
+                const select = document.createElement("select");
+                select.name = "query";
+                select.id = "search-query";
+
+                // Add default "Select a Department" option
+                select.innerHTML = `<option value="" disabled selected>Select a Department</option>` +
+                    departmentOptions.map(option => `<option value="${option}">${option}</option>`).join('');
+
+                searchFieldContainer.innerHTML = ''; 
+                searchFieldContainer.appendChild(select);
+            } else {
+                const input = document.createElement("input");
+                input.type = "text";
+                input.id = "search-query";
+                input.name = "query";
+                input.placeholder = `Enter ${filter} name...`;
+                searchFieldContainer.innerHTML = ''; 
+                searchFieldContainer.appendChild(input);
+            }
         }
-        .results-container {
-            background-color: #fff;
-            padding: 20px;
-            width: 600px;
-            margin: auto;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        }
-        .university-header {
-            font-size: 20px;
-            font-weight: bold;
-            margin-top: 20px;
-            color: #333;
-        }
-        .university-details {
-            font-size: 14px;
-            color: #666;
-            display: inline-block;
-            margin-left: 10px;
-        }
-        .department-header {
-            font-size: 18px;
-            font-weight: bold;
-            margin-top: 10px;
-            padding-left: 15px;
-            color: #444;
-        }
-        .major-item {
-            padding-left: 30px;
-            font-size: 16px;
-            color: #555;
-        }
-        .tuition-details {
-            font-size: 14px;
-            color: #666;
-            margin-left: 15px;
-        }
-        h2 {
-            text-align: center;
-            color: #333;
-        }
-    </style>
+
+        window.onload = function () {
+            const filter = "major"; // Set Major as the default filter
+            setActiveFilter(filter);
+        };
+    </script>
 </head>
 <body>
 
-<div class="results-container">
-    <h2>Search for Major: "{{ query }}"</h2>
-    {% if results %}
-        {% for university, details in results.items %}
-            <div class="university-header">
-                <a href="{% url 'MajorHelp:university-detail' slug=university.slug %}">{{ university.name }}</a>
-                <span class="university-details">| {{ details.location }} | {{ details.type }}</span>
-            </div>
-
-            {% for department, majors in details.departments.items %}
-                <div class="department-header">{{ department }}</div>
-                {% for major in majors %}
-                    <div class="major-item">
-                        {{ major.major_name }}
-                        <span class="tuition-details">
-                            (In-State: ${{ major.in_state_min_tuition }} - ${{ major.in_state_max_tuition }},
-                            Out-of-State: ${{ major.out_of_state_min_tuition }} - ${{ major.out_of_state_max_tuition }})
-                        </span>
-                    </div>
-                {% endfor %}
-            {% endfor %}
-        {% endfor %}
-    {% else %}
-        <p>No majors found for your search query.</p>
-    {% endif %}
+<!-- Search Again Section -->
+<div>
+    <h1 style="display: inline;">Search Again</h1>
+    <form action="/search/" method="get" style="display: inline;">
+        <div id="search-field-container" style="display: inline;">
+            <!-- Default input for Major search -->
+            <input type="text" id="search-query" name="query" placeholder="Enter Major name..." value="{{ query }}">
+        </div>
+        <input type="hidden" id="filter" name="filter" value="major">
+        <button type="submit">Search</button>
+    </form>
 </div>
-    
+
+<!-- Filter Buttons -->
+<div>
+    <div>
+        <button type="button" id="department-button" onclick="setActiveFilter('department')">Department</button>
+        <button type="button" id="school-button" onclick="setActiveFilter('school')">School</button>
+        <button type="button" id="major-button" class="active" onclick="setActiveFilter('major')">Major</button>
+    </div>
+</div>
+
+<!-- Search Results -->
+<h2>Search Results for "{{ query }}"</h2>
+{% if results %}
+    {% for university, details in results.items %}
+        <h3>
+            <a href="{% url 'MajorHelp:university-detail' slug=university.slug %}">{{ university.name }}</a>
+            | {{ details.location }} | {{ details.type }}
+        </h3>
+
+        {% for department, majors in details.departments.items %}
+            <h4>{{ department }}</h4>
+            <ul>
+                {% for major in majors %}
+                    <li>
+                        <a href="{% url 'MajorHelp:major-detail' slug=major.slug %}">{{ major.major_name }}</a>
+                        (In-State: ${{ major.in_state_min_tuition }} - ${{ major.in_state_max_tuition }},
+                        Out-of-State: ${{ major.out_of_state_min_tuition }} - ${{ major.out_of_state_max_tuition }})
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endfor %}
+    {% endfor %}
+{% else %}
+    <p>No majors found matching your request.</p>
+{% endif %}
+
 </body>
 </html>
