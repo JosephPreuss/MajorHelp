@@ -213,6 +213,7 @@ class DepartmentResultsView(View):
         return render(request, 'search/department_results.html', {'query': query, 'results': results})
 class MajorResultsView(View):
     def get(self, request, query):
+
         # Fetch majors that match the query (case-insensitive and partial matches)
         majors = Major.objects.filter(major_name__icontains=query)
 
@@ -244,3 +245,8 @@ class MajorOverviewView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         return context
+
+class CalcView(View):
+    def get(self, request):
+        return render(request, 'calc/calc.html')
+
