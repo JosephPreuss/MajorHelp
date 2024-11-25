@@ -3,9 +3,17 @@
 
 {% load static %}
 
-{% block stylesheet %}{% static 'css/calc.css' %}{% endblock %}
+{% block title %}Tuition Calc{% endblock %}
 
-{% block title %}Tuition Calc {% endblock %}
+{% block stylesheet %}{% static 'css/calc.css' %}{% endblock stylesheet %}
+
+{% block script %}
+<script>
+    function helloWorld() {
+        alert("HelloWorld!")
+    }
+</script>
+{% endblock script %}
 
 
 {% block content %}
@@ -16,8 +24,13 @@
     <p>Let's start by choosing your school.</p>
 </div>
 
-<div id="intro">
-    (placeholder for a search box, might be a lil complicated)
+<div id="uniInput">
+    <!--The "; return false" prevents the form from actually submitting via post or get
+        thus refreshing the page... which clears the form.-->
+    <form onsubmit="helloWorld(); return false">
+        <input type="text" id="uni-query" placeholder="Enter your university." value="">
+    </form>
+
 </div>
 
 <br>
