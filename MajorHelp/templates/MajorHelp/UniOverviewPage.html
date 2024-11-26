@@ -11,7 +11,6 @@
     
     <p>{{ university.aboutText }}</p>
 
-    
     <h3>Average Ratings</h3>
 
     {% if not user.is_authenticated and user.role != 'alumni' or user.role != 'current_student' %}
@@ -136,7 +135,6 @@
     <h4>Please <a href="{% url 'MajorHelp:login' %}">log in</a> to leave a review.</h4>
     {% endif %}
 
-    
     <!-- Display all reviews (visible to all users) -->
     <h3>Reviews</h3>
     {% if latest_post_list %}
