@@ -29,9 +29,9 @@ urlpatterns = [
     # Uni overview views urls
     path('UniversityOverview/<str:slug>/', views.UniversityOverviewView.as_view(), name='university-detail'),
     path('SubmitRating/<int:pk>/', views.SubmitRatingView.as_view(), name='submit-rating'),
-        # Leave review for University
-    path("create/review/<str:username>/", LeaveReview.as_view(), name="create_review"),
-    
+    # Leave review for University
+    path('create/review/<str:username>/', LeaveReview.as_view(), name="create_review"),
+   
     # Adding login and signup views
     path('accounts/login/', auth_views.LoginView.as_view(), name='login'),  # Login view
     path('accounts/logout/', LogoutView.as_view(), name='logout'),
@@ -50,6 +50,10 @@ urlpatterns = [
 
     #urls for major overviews
     path('MajorOverview/<slashslug:slug>/', views.MajorOverviewView.as_view(), name='major-detail'),
+    # Leave review for Major
+    path('MajorOverview/<slashslug:slug>/review/', views.LeaveMajorReview, name='leave-major-review'),
+
+    
     # URLS for the Tuition Calculator
     path('calc/', CalcView.as_view(), name='calc')
 ]

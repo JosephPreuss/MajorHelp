@@ -94,6 +94,7 @@ class UniversityRating(models.Model):
 
 # Imported from my research milestone for skeleton of file - Brandon 
 # Model for a post
+# on 11-25-24, changed it to be able to be used in both major and univserity review 
 class Review(models.Model):
     username = models.CharField(max_length=50)
     review_text = models.CharField(max_length=500)
@@ -162,3 +163,15 @@ class Major(models.Model):
             f"(In-state: ${self.in_state_min_tuition} - ${self.in_state_max_tuition}, "
             f"Out-of-state: ${self.out_of_state_min_tuition} - ${self.out_of_state_max_tuition})"
         )
+def get_default_user():
+    return User.objects.first().id
+
+class MajorReview(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, default=get_default_user)
+    review_text = models.TextField(max_length=500)
+    pub_date = models.DateTimeField(auto_now_add=True)
+    major = models.ForeignKey('Major', on_delete=models.CASCADE, related_name='major_reviews')
+    university = models.ForeignKey('University', on_delete=models.CASCADE, default=1)  # Assuming 1 is a valid University ID
+
+    def __str__(self):
+        return f"{self.user.username}: {self.review_text}"

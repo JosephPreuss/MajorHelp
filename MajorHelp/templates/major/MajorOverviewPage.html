@@ -4,42 +4,77 @@
 <head>
     <meta charset="UTF-8">
     <title>{{ major.major_name }}</title>
+    <style>
+        /* Style for Major Overview Content */
+        .major-overview-content {
+            padding: 20px;       /* Add spacing around the content */
+            padding-bottom: 100px; /* Ensure there is enough space for the footer */
+            box-sizing: border-box;
+        }
+    </style>
 </head>
 <body>
-    <h1>{{ major.major_name }}</h1>
-    <h2>
-        <a href="{% url 'MajorHelp:university-detail' slug=major.university.slug %}">
-            {{ major.university.name }}
-        </a>
-    </h2>
-    
-    <h3>Description</h3>
-    <p>{{ major.major_description }}</p>
-    
-    <h3>Department</h3>
-    <p>{{ major.department }}</p>
-    
-    <h3>Tuition</h3>
-    <ul>
-        <li>In-State Tuition: ${{ major.in_state_min_tuition }} - ${{ major.in_state_max_tuition }}</li>
-        <li>Out-of-State Tuition: ${{ major.out_of_state_min_tuition }} - ${{ major.out_of_state_max_tuition }}</li>
-    </ul>
-    
-    <h3>University Information</h3>
-    <p>Location: {{ major.university.location }}</p>
-    <p>Type: 
-        {% if major.university.is_public %}
-            Public
+    <div class="major-overview-content">
+        <h1>{{ major.major_name }}</h1>
+        <h2>
+            <a href="{% url 'MajorHelp:university-detail' slug=major.university.slug %}">
+                {{ major.university.name }}
+            </a>
+        </h2>
+        
+        <h3>Description</h3>
+        <p>{{ major.major_description }}</p>
+        
+        <h3>Department</h3>
+        <p>{{ major.department }}</p>
+        
+        <h3>Tuition</h3>
+        <ul>
+            <li>In-State Tuition: ${{ major.in_state_min_tuition }} - ${{ major.in_state_max_tuition }}</li>
+            <li>Out-of-State Tuition: ${{ major.out_of_state_min_tuition }} - ${{ major.out_of_state_max_tuition }}</li>
+        </ul>
+        
+        <h3>University Information</h3>
+        <p>Location: {{ major.university.location }}</p>
+        <p>Type: 
+            {% if major.university.is_public %}
+                Public
+            {% else %}
+                Private
+            {% endif %}
+        </p>
+        
+        <h3>University Statistics</h3>
+        <ul>
+            <li>Graduation Rate: {{ major.university.GraduationRate }}%</li>
+            <li>Total Undergrad Students: {{ major.university.TotalUndergradStudents }}</li>
+            <li>Total Grad Students: {{ major.university.TotalGradStudents }}</li>
+        </ul>
+
+        <!-- Display Reviews -->
+        <h3>Reviews</h3>
+        <ul>
+            {% for review in major.major_reviews.all %}
+                <li>
+                    <strong>{{ review.user.username }}</strong>: {{ review.review_text }} <br>
+                    <em>{{ review.pub_date|date:"F j, Y, g:i a" }}</em>
+                </li>
+            {% empty %}
+                <li>No reviews yet. Be the first to leave a review!</li>
+            {% endfor %}
+        </ul>
+
+        <!-- Form for Leaving a Review -->
+        {% if user.is_authenticated %}
+            <h3>Leave a Review</h3>
+            <form method="POST" action="{% url 'MajorHelp:leave-major-review' slug=major.slug %}">
+                {% csrf_token %}
+                <textarea name="review_text" placeholder="Write your review here..." required></textarea>
+                <button type="submit">Submit Review</button>
+            </form>
         {% else %}
-            Private
+            <p>You must be logged in to leave a review. <a href="{% url 'MajorHelp:login' %}">Log in</a> or <a href="{% url 'MajorHelp:signup' %}">Sign up</a>.</p>
         {% endif %}
-    </p>
-    
-    <h3>University Statistics</h3>
-    <ul>
-        <li>Graduation Rate: {{ major.university.GraduationRate }}%</li>
-        <li>Total Undergrad Students: {{ major.university.TotalUndergradStudents }}</li>
-        <li>Total Grad Students: {{ major.university.TotalGradStudents }}</li>
-    </ul>
+    </div>
 </body>
 </html>

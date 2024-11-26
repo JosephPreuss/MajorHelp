@@ -20,6 +20,7 @@ from django.views.generic import *
 from django.contrib import messages
 from .models import *
 from django.shortcuts import render
+from django.utils.decorators import method_decorator
 
 
 def settings_view(request):
@@ -78,16 +79,19 @@ class LeaveReview(View):
     def post(self, request, username):
         review_text = request.POST.get("review_text", "")
         if review_text:
-            university_id = request.POST.get("university_id")  # Make sure university_id is passed in the form
+            university_id = request.POST.get("university_id")
             university = get_object_or_404(University, pk=university_id)
             Review.objects.create(
                 username=request.user.username,
                 review_text=review_text,
                 university=university
             )
-            # Redirect to the specific university's detail page
-            return redirect("MajorHelp:university-detail", slug=university.slug)
-        return redirect("MajorHelp:university-detail", slug=university.slug)
+            messages.success(request, 'Your review has been submitted successfully!')
+        else:
+            messages.error(request, 'Review text cannot be empty.')
+
+        return redirect('MajorHelp:university-detail', slug=university.slug)
+
     
     
 # Custom form for SignUp with 'Password' and 'Confirm password'
@@ -239,14 +243,44 @@ class MajorResultsView(View):
 #major overview view
 class MajorOverviewView(DetailView):
     model = Major
-    template_name = "major/MajorOverviewPage.html"  
+    template_name = "major/MajorOverviewPage.html"
     context_object_name = "major"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        # Fetch all reviews related to the major
+        context['reviews'] = self.object.major_reviews.all()
+        print(f"Reviews: {context['reviews']}")  # Debug: print reviews
+        
         return context
+
 
 class CalcView(View):
     def get(self, request):
         return render(request, 'calc/calc.html')
 
+# LeaveMajorReview View - Exclusive for leaving reviews for a major at a specific school
+
+@login_required
+def LeaveMajorReview(request, slug):
+    # Fetch the major based on the slug
+    major = Major.objects.get(slug=slug)
+
+    # Check if the form is submitted via POST
+    if request.method == 'POST':
+        # Get the review text from the form
+        review_text = request.POST.get('review_text')
+
+        # Create and save the review using the MajorReview model
+        MajorReview.objects.create(
+            major=major,
+            user=request.user,  # Use request.user which is a User object
+            review_text=review_text,
+            university=major.university  # Link the university associated with the major
+        )
+
+        # Redirect to the same major overview page after the review is saved
+    return redirect('MajorHelp:major-detail', slug=slug)
+
+    # If the request is not a POST, render the review form (this is optional)
+    return render(request, 'leave_review.html', {'major': major})
