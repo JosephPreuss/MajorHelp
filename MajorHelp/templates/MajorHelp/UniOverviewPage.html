@@ -14,14 +14,14 @@
     
     <h3>Average Ratings</h3>
 
-    {% if not user.is_authenticated %}
-    <p> Please log-in to leave a rating! </p>
+    {% if not user.is_authenticated and user.role != 'alumni' or user.role != 'current_student' %}
+    <h4> Please log-in as a Current student or Alumni to leave a rating! </h4>
     {% endif %}
 
     <ul>
         <!-- List of the ratings catagories for the university and buttons for each -->
         <li>Campus: {{ university.campus_rating }}</li>
-            {% if user.is_authenticated %}
+            {% if user.is_authenticated and user.role == 'alumni' or user.role == 'current_student' %}
             <form action="{% url 'MajorHelp:submit-rating' university.id %}" method="post">
                 {% csrf_token %}
                 <input type="hidden" name="category" value="campus">
@@ -34,7 +34,7 @@
             {% endif %}
 
         <li>Athletics: {{ university.athletics_rating }}</li>
-            {% if user.is_authenticated %}
+            {% if user.is_authenticated and user.role == 'alumni' or user.role == 'current_student' %}  
             <form action="{% url 'MajorHelp:submit-rating' university.id %}" method="post">
                 {% csrf_token %}
                 <input type="hidden" name="category" value="athletics">
@@ -47,7 +47,7 @@
             {% endif %}
 
         <li>Safety: {{ university.safety_rating }}</li>
-            {% if user.is_authenticated %}
+            {% if user.is_authenticated and user.role == 'alumni' or user.role == 'current_student' %}
             <form action="{% url 'MajorHelp:submit-rating' university.id %}" method="post">
                 {% csrf_token %}
                 <input type="hidden" name="category" value="safety">
@@ -60,7 +60,7 @@
             {% endif %}
 
         <li>Social Life: {{ university.social_rating }}</li>
-            {% if user.is_authenticated %}
+            {% if user.is_authenticated and user.role == 'alumni' or user.role == 'current_student' %}
             <form action="{% url 'MajorHelp:submit-rating' university.id %}" method="post">
                 {% csrf_token %}
                 <input type="hidden" name="category" value="social">
@@ -73,7 +73,7 @@
             {% endif %}
 
         <li>Professors: {{ university.professor_rating }}</li>
-            {% if user.is_authenticated %}
+            {% if user.is_authenticated and user.role == 'alumni' or user.role == 'current_student' %}
             <form action="{% url 'MajorHelp:submit-rating' university.id %}" method="post">
                 {% csrf_token %}
                 <input type="hidden" name="category" value="professor">
@@ -86,7 +86,7 @@
             {% endif %}
 
         <li>Dorms: {{ university.dorm_rating }}</li>
-            {% if user.is_authenticated %}
+            {% if user.is_authenticated and user.role == 'alumni' or user.role == 'current_student' %}
             <form action="{% url 'MajorHelp:submit-rating' university.id %}" method="post">
                 {% csrf_token %}
                 <input type="hidden" name="category" value="dorm">
@@ -99,7 +99,7 @@
             {% endif %}
 
         <li>Dining: {{ university.dining_rating }}</li>
-            {% if user.is_authenticated %}
+            {% if user.is_authenticated and user.role == 'alumni' or user.role == 'current_student' %}
             <form action="{% url 'MajorHelp:submit-rating' university.id %}" method="post">
                 {% csrf_token %}
                 <input type="hidden" name="category" value="dining">
@@ -119,7 +119,7 @@
     <p>Total Grad Students: {{ university.TotalGradStudents }}</p>
     
     <!-- Form for leaving a review, visible only to logged-in users -->
-    {% if user.is_authenticated %}
+    {% if user.is_authenticated and user.role == 'alumni' or user.role == 'current_student' %}
     <div class="new-post-form">
         <h2>Leave a Review</h2>
         <form action="{% url 'MajorHelp:create_review' user.username %}" method="post">
@@ -130,7 +130,12 @@
             <button type="submit">Submit Review</button>
         </form>
     </div>
+    {% elif user.is_authenticated %}
+    <h4>You must be an Alumni or a Current Student to leave a review.</h4>
+    {% else %}
+    <h4>Please <a href="{% url 'MajorHelp:login' %}">log in</a> to leave a review.</h4>
     {% endif %}
+
     
     <!-- Display all reviews (visible to all users) -->
     <h3>Reviews</h3>
@@ -143,7 +148,7 @@
             {% endfor %}
         </ul>
     {% else %}
-        <p>No reviews yet. Be the first to leave a review!</p>
+        <p>No reviews yet. Add your own if your a Student or Alumni!</p>
     {% endif %}
 </body>
 </html>

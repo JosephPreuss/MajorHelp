@@ -104,6 +104,7 @@ class CustomUserCreationForm(forms.ModelForm):
         choices=[('', 'Select a role')] + [choice for choice in CustomUser.ROLE_CHOICES if choice[0] != 'admin'],
         widget=forms.Select()
     )
+    #NEED TO ADD FIRST NAME AND LAST NAME FIELDS
     
     class Meta:
         model = get_user_model()  # Use the custom user model dynamically

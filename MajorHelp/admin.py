@@ -50,10 +50,14 @@ class MajorAdmin(admin.ModelAdmin):
     list_filter = ('university', 'department')
     search_fields = ('major_name', 'major_description')  
 
+class UserAdmin(admin.ModelAdmin):
+    list_display = ('username', 'email', 'role')
+    list_filter = ('role',)
+
 # Registering models
 admin.site.register(University, UniversityAdmin)
 admin.site.register(UniversityRating, UniversityRatingAdmin)
 admin.site.register(UniversityReview, UniversityReviewAdmin)
 admin.site.register(Major, MajorAdmin)
 admin.site.register(MajorReview, MajorReviewAdmin)
-admin.site.register(CustomUser)
+admin.site.register(CustomUser, UserAdmin)
