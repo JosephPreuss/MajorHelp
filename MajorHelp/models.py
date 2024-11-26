@@ -8,6 +8,8 @@ from django.db.models import Avg
 from django.utils.text import slugify
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.contrib.auth.models import User
+from django.contrib.auth.models import AbstractUser, BaseUserManager
+from pestopanini import settings
 
 # Create your models here.
 
@@ -75,7 +77,7 @@ class UniversityRating(models.Model):
     university = models.ForeignKey(University, on_delete=models.CASCADE, related_name='ratings')
     category = models.CharField(max_length=20, choices=CATEGORY_CHOICES)
     rating = models.DecimalField(max_digits=2, decimal_places=1, validators=[MinValueValidator(1), MaxValueValidator(5)])
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='university_ratings')
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='university_ratings')
 
     # Ensure one rating per category per user
     class Meta:
@@ -165,7 +167,7 @@ def get_default_user():
     return User.objects.first().id
 
 class MajorReview(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, default=get_default_user)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, default=get_default_user)
     review_text = models.TextField(max_length=500)
     pub_date = models.DateTimeField(auto_now_add=True)
     major = models.ForeignKey('Major', on_delete=models.CASCADE, related_name='major_reviews')
@@ -173,3 +175,42 @@ class MajorReview(models.Model):
 
     def __str__(self):
         return f"{self.user.username}: {self.review_text}"
+
+class CustomUserManager(BaseUserManager):
+    def create_user(self, username, password=None, **extra_fields):
+        if not username:
+            raise ValueError('The Username field must be set')
+        user = self.model(username=username, **extra_fields)
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
+
+    def create_superuser(self, username, password=None, **extra_fields):
+        extra_fields.setdefault('is_staff', True)
+        extra_fields.setdefault('is_superuser', True)
+
+        if extra_fields.get('is_staff') is not True:
+            raise ValueError('Superuser must have is_staff=True.')
+        if extra_fields.get('is_superuser') is not True:
+            raise ValueError('Superuser must have is_superuser=True.')
+
+        return self.create_user(username, password, **extra_fields)
+
+class CustomUser(AbstractUser):
+    ROLE_CHOICES = [
+        ('prospective_student', 'Prospective Student'),
+        ('current_student', 'Current Student'),
+        ('alumni', 'Alumni'),
+        ('university_staff', 'University Staff'),
+        ('admin', 'Admin')
+   ]
+    role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='prospective_student')
+    email = models.EmailField(unique=True)  # Ensure email is unique
+    
+    REQUIRED_FIELDS = ['email']  # Require email during user creation
+    
+    objects = CustomUserManager()
+    
+    def __str__(self):
+        return self.username
+    

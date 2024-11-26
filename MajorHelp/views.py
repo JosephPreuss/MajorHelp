@@ -21,6 +21,7 @@ from django.contrib import messages
 from .models import *
 from django.shortcuts import render
 from django.utils.decorators import method_decorator
+from django.contrib.auth import get_user_model
 
 
 def settings_view(request):
@@ -96,22 +97,26 @@ class LeaveUniversityReview(View):
     
 # Custom form for SignUp with 'Password' and 'Confirm password'
 class CustomUserCreationForm(forms.ModelForm):
-    password = forms.CharField(widget=forms.PasswordInput, label="Password")
-    confirm_password = forms.CharField(widget=forms.PasswordInput, label="Confirm password")
-
-    class Meta:
-        model = User
-        fields = ['username', 'password', 'confirm_password']
-
-    # Customizing the validation message for the username field
-    username = forms.CharField(
-        max_length=150,
-        help_text="",
-        error_messages={
-            'required': 'Please enter a username.',
-            'max_length': 'Username should not exceed 150 characters.',
-        }
+    password = forms.CharField(widget=forms.PasswordInput(attrs={'placeholder': 'Enter your Password'}), label="Password")
+    confirm_password = forms.CharField(widget=forms.PasswordInput(attrs={'placeholder': 'Confirm your Password'}), label="Confirm password")
+    email = forms.EmailField(required=True, widget=forms.EmailInput(attrs={'placeholder': 'Enter your Email'}))
+    role = forms.ChoiceField(
+        choices=[('', 'Select a role')] + [choice for choice in CustomUser.ROLE_CHOICES if choice[0] != 'admin'],
+        widget=forms.Select()
     )
+    
+    class Meta:
+        model = get_user_model()  # Use the custom user model dynamically
+        fields = ['username', 'email', 'password', 'confirm_password', 'role']
+        widgets = {
+            'username': forms.TextInput(attrs={'placeholder': 'Enter your Username'}), #placeholder text in username box
+        }
+        labels = {
+            'username': 'Username', # change the labe of the username entry box
+        }
+        help_texts = {
+            'username': '', # help text by username entry box if we want to add
+        }
 
     def clean_confirm_password(self):
         password = self.cleaned_data.get("password")
@@ -119,11 +124,12 @@ class CustomUserCreationForm(forms.ModelForm):
 
         if password != confirm_password:
             raise forms.ValidationError("Passwords do not match.")
-
         return confirm_password
 
     def save(self, commit=True):
         user = super().save(commit=False)
+        user.email = self.cleaned_data['email']
+        user.role = self.cleaned_data['role']
         user.set_password(self.cleaned_data["password"])  # Hash the password
         if commit:
             user.save()
@@ -133,14 +139,16 @@ class CustomUserCreationForm(forms.ModelForm):
 # SignUpView for user registration
 class SignUpView(View):
     def get(self, request):
-        form = CustomUserCreationForm()  # Use the custom form here
+        form = CustomUserCreationForm()
         return render(request, 'registration/signup.html', {'form': form})
 
     def post(self, request):
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
             user = form.save()  # Save the new user
-            return redirect('MajorHelp:login')  # Redirect to home page after successful signup
+            login(request, user)  # Log the user in immediately after signup
+            messages.success(request, 'Account created successfully.')
+            return redirect('MajorHelp:home')  # Redirect to home page after successful signup
         return render(request, 'registration/signup.html', {'form': form})
 
 def about(request):
