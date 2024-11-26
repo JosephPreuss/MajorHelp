@@ -5,10 +5,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}My Site{% endblock %}</title>
+
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
     <link rel="stylesheet" href="{% static 'css/navbar.css' %}">
     <link rel="stylesheet" href="{% static 'css/footer.css' %}">
     <link rel="stylesheet" href="{% static 'css/home.css' %}">
+
+
+    <link rel="stylesheet" href="{% block stylesheet %}{% static 'css/styles.css' %}{% endblock %}">
+    {# for use in script overriding #}
+    {% block script %}{% endblock script %}
 
 </head>
 <body>
@@ -17,7 +23,7 @@
     {% endblock %}
     
     <div class="content">
-        {% block content %}{% endblock %}
+        {% block content %}{% endblock content %}
     </div>
     
     <footer class="footer">
