@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import UniversityReview, University, UniversityRating, Major, MajorReview
+from .models import *
 
 # Inline for displaying University Ratings in University admin
 class UniversityRatingInline(admin.TabularInline):
@@ -56,3 +56,4 @@ admin.site.register(UniversityRating, UniversityRatingAdmin)
 admin.site.register(UniversityReview, UniversityReviewAdmin)
 admin.site.register(Major, MajorAdmin)
 admin.site.register(MajorReview, MajorReviewAdmin)
+admin.site.register(CustomUser)
