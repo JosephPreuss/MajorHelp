@@ -46,7 +46,7 @@ class UniversityOverviewView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['latest_post_list'] = Review.objects.filter(university=self.object)
+        context['latest_post_list'] = UniversityReview.objects.filter(university=self.object)
         return context
     
 # View for submitting a rating to a specific catagory of a cartain university    
@@ -75,13 +75,13 @@ class SubmitRatingView(View):
 
         return redirect('MajorHelp:university-detail', slug=university.slug)
 
-class LeaveReview(View):
+class LeaveUniversityReview(View):
     def post(self, request, username):
         review_text = request.POST.get("review_text", "")
         if review_text:
             university_id = request.POST.get("university_id")
             university = get_object_or_404(University, pk=university_id)
-            Review.objects.create(
+            UniversityReview.objects.create(
                 username=request.user.username,
                 review_text=review_text,
                 university=university

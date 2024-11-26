@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Review, University, UniversityRating, Major
+from .models import UniversityReview, University, UniversityRating, Major, MajorReview
 
 # Inline for displaying University Ratings in University admin
 class UniversityRatingInline(admin.TabularInline):
@@ -13,13 +13,25 @@ class UniversityRatingAdmin(admin.ModelAdmin):
     list_display = ('university', 'category', 'rating')
     list_filter = ('university', 'category')
     
-class ReviewAdmin(admin.ModelAdmin):
+class UniversityReviewAdmin(admin.ModelAdmin):
     list_display = ('username', 'university', 'review_text')
     list_filter = ('university',)
     
     fieldsets = (
         (None, {
             'fields': ('username', 'university', 'review_text', 'pub_date')
+        }),
+    )
+
+    readonly_fields = ('pub_date',)
+    
+class MajorReviewAdmin(admin.ModelAdmin):
+    list_display = ('user', 'university', 'review_text')
+    list_filter = ('university',)
+    
+    fieldsets = (
+        (None, {
+            'fields': ('user', 'university', 'review_text', 'pub_date')
         }),
     )
 
@@ -41,5 +53,6 @@ class MajorAdmin(admin.ModelAdmin):
 # Registering models
 admin.site.register(University, UniversityAdmin)
 admin.site.register(UniversityRating, UniversityRatingAdmin)
-admin.site.register(Review, ReviewAdmin)
+admin.site.register(UniversityReview, UniversityReviewAdmin)
 admin.site.register(Major, MajorAdmin)
+admin.site.register(MajorReview, MajorReviewAdmin)
