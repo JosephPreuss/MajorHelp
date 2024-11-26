@@ -9,8 +9,16 @@
 
 {% block script %}
 <script>
-    function helloWorld() {
-        alert("HelloWorld!")
+    function uniInput() {
+        alert(document.getElementById("uni-query").value)
+    }
+
+    function deptInput() {
+        alert(document.getElementById("dept-query").value)
+    }
+
+    function majorInput() {
+        alert(document.getElementById("major-query").value)
     }
 </script>
 {% endblock script %}
@@ -27,8 +35,9 @@
 <div id="uniInput">
     <!--The "; return false" prevents the form from actually submitting via post or get
         thus refreshing the page... which clears the form.-->
-    <form onsubmit="helloWorld(); return false">
-        <input type="text" id="uni-query" placeholder="Enter your university." value="">
+    <form onsubmit="uniInput(); return false">
+        <input type="text" id="uni-query" name="university" placeholder="Enter your university."
+            value="">
     </form>
 
 </div>
@@ -37,11 +46,30 @@
 
 <div id="inputOutput">
     <div id="input">
-        <div id="majors">
-            <h2>Great, now lets talk majors.</h2>
-            (placeholder text)
+        <div id="department">
+            <h2>Now select the department</h2>
+                <select id="dept-query" name="department" onchange="deptInput()">
+                    <option value="" disabled="" selected="">Pick a Department</option>
+                    <option value="Humanities and Social Sciences">Humanities and Social Sciences</option>
+                    <option value="Natural Sciences and Mathematics">Natural Sciences and Mathematics</option>
+                    <option value="Business and Economics">Business and Economics</option>
+                    <option value="Education">Education</option>
+                    <option value="Engineering and Technology">Engineering and Technology</option>
+                    <option value="Health Sciences">Health Sciences</option>
+                    <option value="Arts and Design">Arts and Design</option>
+                    <option value="Agriculture and Environmental Studies">Agriculture and Environmental Studies</option>
+                    <option value="Communication and Media">Communication and Media</option>
+                    <option value="Law and Criminal Justice">Law and Criminal Justice</option>
+                </select>       
         </div>
 
+        <div id="majors">
+            <h2>Great, now lets talk majors.</h2>
+            <form onsubmit="majorInput(); return false">
+                <input type="text" name="major" id="major-query" placeholder="" value="">
+            </form> 
+        </div>
+        <!--
         <div id="minors">
             <h2>Are you interested in enrolling in any minors?</h2>
             (placeholder text)
@@ -56,6 +84,7 @@
             <h2>Enter any other estimated external aids</h2>
             (placeholder text)
         </div>
+        -->
     </div>
 
     <div id="output">
