@@ -30,7 +30,7 @@ urlpatterns = [
     path('UniversityOverview/<str:slug>/', views.UniversityOverviewView.as_view(), name='university-detail'),
     path('SubmitRating/<int:pk>/', views.SubmitRatingView.as_view(), name='submit-rating'),
     # Leave review for University
-    path('create/review/<str:username>/', LeaveReview.as_view(), name="create_review"),
+    path('create/review/<str:username>/', LeaveUniversityReview.as_view(), name="create_review"),
    
     # Adding login and signup views
     path('accounts/login/', auth_views.LoginView.as_view(), name='login'),  # Login view

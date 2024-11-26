@@ -92,14 +92,12 @@ class UniversityRating(models.Model):
     def __str__(self):
         return f"{self.university.name} - {self.category}: {self.rating}"
 
-# Imported from my research milestone for skeleton of file - Brandon 
-# Model for a post
-# on 11-25-24, changed it to be able to be used in both major and univserity review 
-class Review(models.Model):
+# Model for a uni review
+class UniversityReview(models.Model):
     username = models.CharField(max_length=50)
     review_text = models.CharField(max_length=500)
     pub_date = models.DateTimeField(auto_now_add=True)
-    university = models.ForeignKey(University, on_delete=models.CASCADE, related_name='review')
+    university = models.ForeignKey(University, on_delete=models.CASCADE, related_name='university_review')
     
     def __str__(self):
         return f"{self.username}: {self.review_text}"

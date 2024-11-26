@@ -13,10 +13,15 @@
 
     
     <h3>Average Ratings</h3>
+
+    {% if not user.is_authenticated %}
+    <p> Please log-in to leave a rating! </p>
+    {% endif %}
+
     <ul>
         <!-- List of the ratings catagories for the university and buttons for each -->
-         <!-- will need to be updated when making website look pretty -->
         <li>Campus: {{ university.campus_rating }}</li>
+            {% if user.is_authenticated %}
             <form action="{% url 'MajorHelp:submit-rating' university.id %}" method="post">
                 {% csrf_token %}
                 <input type="hidden" name="category" value="campus">
@@ -26,7 +31,10 @@
                 <button type="submit" name="rating" value="4">4</button>
                 <button type="submit" name="rating" value="5">5</button>
             </form>
+            {% endif %}
+
         <li>Athletics: {{ university.athletics_rating }}</li>
+            {% if user.is_authenticated %}
             <form action="{% url 'MajorHelp:submit-rating' university.id %}" method="post">
                 {% csrf_token %}
                 <input type="hidden" name="category" value="athletics">
@@ -36,7 +44,10 @@
                 <button type="submit" name="rating" value="4">4</button>
                 <button type="submit" name="rating" value="5">5</button>
             </form>
+            {% endif %}
+
         <li>Safety: {{ university.safety_rating }}</li>
+            {% if user.is_authenticated %}
             <form action="{% url 'MajorHelp:submit-rating' university.id %}" method="post">
                 {% csrf_token %}
                 <input type="hidden" name="category" value="safety">
@@ -46,7 +57,10 @@
                 <button type="submit" name="rating" value="4">4</button>
                 <button type="submit" name="rating" value="5">5</button>
             </form>
+            {% endif %}
+
         <li>Social Life: {{ university.social_rating }}</li>
+            {% if user.is_authenticated %}
             <form action="{% url 'MajorHelp:submit-rating' university.id %}" method="post">
                 {% csrf_token %}
                 <input type="hidden" name="category" value="social">
@@ -56,7 +70,10 @@
                 <button type="submit" name="rating" value="4">4</button>
                 <button type="submit" name="rating" value="5">5</button>
             </form>
+            {% endif %}
+
         <li>Professors: {{ university.professor_rating }}</li>
+            {% if user.is_authenticated %}
             <form action="{% url 'MajorHelp:submit-rating' university.id %}" method="post">
                 {% csrf_token %}
                 <input type="hidden" name="category" value="professor">
@@ -66,7 +83,10 @@
                 <button type="submit" name="rating" value="4">4</button>
                 <button type="submit" name="rating" value="5">5</button>
             </form>
+            {% endif %}
+
         <li>Dorms: {{ university.dorm_rating }}</li>
+            {% if user.is_authenticated %}
             <form action="{% url 'MajorHelp:submit-rating' university.id %}" method="post">
                 {% csrf_token %}
                 <input type="hidden" name="category" value="dorm">
@@ -76,7 +96,10 @@
                 <button type="submit" name="rating" value="4">4</button>
                 <button type="submit" name="rating" value="5">5</button>
             </form>
+            {% endif %}
+
         <li>Dining: {{ university.dining_rating }}</li>
+            {% if user.is_authenticated %}
             <form action="{% url 'MajorHelp:submit-rating' university.id %}" method="post">
                 {% csrf_token %}
                 <input type="hidden" name="category" value="dining">
@@ -86,6 +109,8 @@
                 <button type="submit" name="rating" value="4">4</button>
                 <button type="submit" name="rating" value="5">5</button>
             </form>
+            {% endif %}
+
     </ul>
 
     <h3>Statistics</h3>
