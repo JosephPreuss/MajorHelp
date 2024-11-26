@@ -95,7 +95,7 @@ class LeaveUniversityReview(View):
 
     
     
-# Custom form for SignUp with 'Password' and 'Confirm password'
+# Custom form for SignUp
 class CustomUserCreationForm(forms.ModelForm):
     password = forms.CharField(widget=forms.PasswordInput(attrs={'placeholder': 'Enter your Password'}), label="Password")
     confirm_password = forms.CharField(widget=forms.PasswordInput(attrs={'placeholder': 'Confirm your Password'}), label="Confirm password")
