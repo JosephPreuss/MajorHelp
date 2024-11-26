@@ -97,14 +97,19 @@ class LeaveUniversityReview(View):
     
 # Custom form for SignUp with 'Password' and 'Confirm password'
 class CustomUserCreationForm(forms.ModelForm):
-    password = forms.CharField(widget=forms.PasswordInput, label="Password")
-    confirm_password = forms.CharField(widget=forms.PasswordInput, label="Confirm password")
-
+    password = forms.CharField(widget=forms.PasswordInput(attrs={'placeholder': 'Enter your Password'}), label="Password")
+    confirm_password = forms.CharField(widget=forms.PasswordInput(attrs={'placeholder': 'Confirm your Password'}), label="Confirm password")
+    email = forms.EmailField(required=True, widget=forms.EmailInput(attrs={'placeholder': 'Enter your Email'}))
+    role = forms.ChoiceField(
+        choices=[('', 'Select a role')] + [choice for choice in CustomUser.ROLE_CHOICES if choice[0] != 'admin'],
+        widget=forms.Select()
+    )
+    
     class Meta:
         model = get_user_model()  # Use the custom user model dynamically
-        fields = ['username', 'password', 'confirm_password']
+        fields = ['username', 'email', 'password', 'confirm_password', 'role']
         widgets = {
-            'username': forms.TextInput(attrs={'placeholder': ''}), #placeholder text in username box
+            'username': forms.TextInput(attrs={'placeholder': 'Enter your Username'}), #placeholder text in username box
         }
         labels = {
             'username': 'Username', # change the labe of the username entry box
@@ -123,6 +128,8 @@ class CustomUserCreationForm(forms.ModelForm):
 
     def save(self, commit=True):
         user = super().save(commit=False)
+        user.email = self.cleaned_data['email']
+        user.role = self.cleaned_data['role']
         user.set_password(self.cleaned_data["password"])  # Hash the password
         if commit:
             user.save()

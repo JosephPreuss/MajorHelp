@@ -205,6 +205,9 @@ class CustomUser(AbstractUser):
         ('admin', 'Admin')
    ]
     role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='prospective_student')
+    email = models.EmailField(unique=True)  # Ensure email is unique
+    
+    REQUIRED_FIELDS = ['email']  # Require email during user creation
     
     objects = CustomUserManager()
     
