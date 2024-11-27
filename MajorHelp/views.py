@@ -282,8 +282,8 @@ class CalcView(View):
         # ...they will just get the json data directly.
 
         return JsonResponse({
-            'Key' : 'Hello World!',
-            'Foo' : 'Bar'        
+            "Key" : "Hello World!",
+            "Foo" : "Bar"
         })
 
 
