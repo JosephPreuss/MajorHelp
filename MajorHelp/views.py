@@ -22,6 +22,9 @@ from .models import *
 from django.shortcuts import render
 from django.utils.decorators import method_decorator
 from django.contrib.auth import get_user_model
+import re
+from django.db.models import F, Value
+from django.db.models.functions import Cast
 
 
 def settings_view(request):
@@ -179,11 +182,22 @@ class SearchView(View):
         # Default behavior (in case of other filter types)
         return render(request, 'search/search.html', {'query': query, 'filter_type': filter_type})
 
+
+
 class SchoolResultsView(View):
     def get(self, request, query):
+        # Get the filter values from the request (default to 'both' for school_type)
+        school_type = request.GET.get('school_type', 'both')
+
         # Fetch universities matching the query (case-insensitive, partial matches)
         universities = University.objects.filter(name__icontains=query)
-        
+
+        # Apply filtering by school type if applicable
+        if school_type != 'both':
+            universities = universities.filter(is_public=(school_type == 'public'))
+
+
+        # Group universities by department and create the results dictionary
         results = {}
         for university in universities:
             departments = {}
@@ -192,19 +206,31 @@ class SchoolResultsView(View):
                 if major.department not in departments:
                     departments[major.department] = []
                 departments[major.department].append(major)
-            
+
             # Add university details and grouped departments to results
             results[university] = {
                 'location': university.location,
                 'type': 'Public' if university.is_public else 'Private',
                 'departments': departments
             }
-        
-        return render(request, 'search/school_results.html', {'query': query, 'results': results})
+
+        # Render the results page and pass the school_type to preserve the filter state
+        return render(request, 'search/school_results.html', {
+            'query': query, 
+            'results': results, 
+            'school_type': school_type,  # Pass school_type to the template
+        })
 class DepartmentResultsView(View):
     def get(self, request, query):
-        # Fetch all majors in the specified department
+        # Get the filter values from the request (default to 'both' for school_type)
+        school_type = request.GET.get('school_type', 'both')  # Default to 'both'
+
+        # Fetch majors matching the query (case-insensitive, partial matches)
         majors = Major.objects.filter(department__icontains=query)
+
+        # Apply filtering by school type if applicable
+        if school_type != 'both':
+            majors = majors.filter(university__is_public=(school_type == 'public'))
 
         # Group majors by university and department
         results = {}
@@ -216,20 +242,32 @@ class DepartmentResultsView(View):
                     'type': 'Public' if university.is_public else 'Private',
                     'departments': {}
                 }
-            
+
             if major.department not in results[university]['departments']:
                 results[university]['departments'][major.department] = []
-            
+
             results[university]['departments'][major.department].append(major)
 
-        # Render the results page with grouped data
-        return render(request, 'search/department_results.html', {'query': query, 'results': results})
+        # Render the results page and pass the school_type to preserve the filter state
+        return render(request, 'search/department_results.html', {
+            'query': query, 
+            'results': results, 
+            'school_type': school_type,  # Pass school_type to the template
+        })
 class MajorResultsView(View):
     def get(self, request, query):
+        # Get filters from the request (default to 'both' for school_type)
+        school_type = request.GET.get('school_type', 'both')  # Default is 'both'
 
         # Fetch majors that match the query (case-insensitive and partial matches)
         majors = Major.objects.filter(major_name__icontains=query)
 
+        # Filter by school type (public/private)
+        if school_type == 'public':
+            majors = majors.filter(university__is_public=True)
+        elif school_type == 'private':
+            majors = majors.filter(university__is_public=False)
+
         # Group majors by university and department
         results = {}
         for major in majors:
@@ -240,16 +278,19 @@ class MajorResultsView(View):
                     'type': 'Public' if university.is_public else 'Private',
                     'departments': {}
                 }
-            
+
             if major.department not in results[university]['departments']:
                 results[university]['departments'][major.department] = []
-            
+
             results[university]['departments'][major.department].append(major)
 
-        # Render the template with grouped data
-        return render(request, 'search/major_results.html', {'query': query, 'results': results})
-    
-#major overview view
+        # Render the template with grouped data and filters
+        return render(request, 'search/major_results.html', {
+            'query': query,
+            'results': results,
+            'school_type': school_type  # Pass the school_type to the template
+        })
+
 class MajorOverviewView(DetailView):
     model = Major
     template_name = "major/MajorOverviewPage.html"
@@ -257,11 +298,19 @@ class MajorOverviewView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        
         # Fetch all reviews related to the major
         context['reviews'] = self.object.major_reviews.all()
-        print(f"Reviews: {context['reviews']}")  # Debug: print reviews
-        
+
+        # Loop through reviews to prepare the filled and empty stars
+        for review in context['reviews']:
+            # Calculate filled and empty stars based on the rating
+            review.filled_stars = list(range(int(review.rating)))  # List of filled stars (rating number)
+            review.empty_stars = list(range(5 - int(review.rating)))  # List of empty stars
+
         return context
+
+
 
 
 class CalcView(View):
@@ -277,19 +326,20 @@ def LeaveMajorReview(request, slug):
 
     # Check if the form is submitted via POST
     if request.method == 'POST':
-        # Get the review text from the form
+        # Get the review text and rating from the form
         review_text = request.POST.get('review_text')
+        rating = request.POST.get('rating')  # Get the selected rating (1-5)
 
         # Create and save the review using the MajorReview model
         MajorReview.objects.create(
             major=major,
             user=request.user,  # Use request.user which is a User object
             review_text=review_text,
-            university=major.university  # Link the university associated with the major
+            university=major.university,  # Link the university associated with the major
+            rating=rating  # Save the rating
         )
 
         # Redirect to the same major overview page after the review is saved
-    return redirect('MajorHelp:major-detail', slug=slug)
+        return redirect('MajorHelp:major-detail', slug=slug)
 
-    # If the request is not a POST, render the review form (this is optional)
     return render(request, 'leave_review.html', {'major': major})

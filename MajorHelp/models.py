@@ -172,6 +172,7 @@ class MajorReview(models.Model):
     pub_date = models.DateTimeField(auto_now_add=True)
     major = models.ForeignKey('Major', on_delete=models.CASCADE, related_name='major_reviews')
     university = models.ForeignKey('University', on_delete=models.CASCADE, default=1)  # Assuming 1 is a valid University ID
+    rating = models.DecimalField(max_digits=2, decimal_places=1, validators=[MinValueValidator(1), MaxValueValidator(5)],default=0)
 
     def __str__(self):
         return f"{self.user.username}: {self.review_text}"

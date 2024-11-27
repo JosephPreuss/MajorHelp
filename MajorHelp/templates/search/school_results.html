@@ -18,6 +18,7 @@
             'Law and Criminal Justice'
         ];
 
+        // Function to handle filter changes (department, major, etc.)
         function setActiveFilter(filter) {
             document.getElementById("filter").value = filter;
 
@@ -46,26 +47,40 @@
         }
 
         window.onload = function () {
-            const filter = "{{ filter_type }}" || "school";
+            const filter = "{{ filter_type }}" || "school"; // Default filter is school
             setActiveFilter(filter);
         };
+
+        // This function will handle the form submission for the filters without page reload
+        function applyFilters() {
+            const schoolType = document.getElementById("school-type").value;
+            const searchQuery = document.getElementById("search-query").value;
+
+            // Update the filter values dynamically in the form
+            document.getElementById("school-type-hidden").value = schoolType;
+            document.getElementById("search-query-hidden").value = searchQuery;
+
+            // Submit the form to filter the results
+            document.getElementById("filter-form").submit();
+        }
     </script>
 </head>
 <body>
 
-<!-- Search Again Section -->
+<!-- Search Again Section (this redirects to the search page) -->
 <div>
     <h1 style="display: inline;">Search Again</h1>
-    <form action="/search/" method="get" style="display: inline;">
+    <form action="{% url 'MajorHelp:search' %}" method="get" style="display: inline;">
         <div id="search-field-container" style="display: inline;">
+            <!-- Default input for Major search -->
             <input type="text" id="search-query" name="query" placeholder="Enter your search term..." value="{{ query }}">
         </div>
-        <input type="hidden" id="filter" name="filter" value="school">
+        <input type="hidden" id="filter" name="filter" value="{{ filter_type }}">
         <button type="submit">Search</button>
     </form>
 </div>
 
-<!-- Filter Buttons -->
+<!-- Filter Buttons for Department, School, and Major -->
 <div>
     <div>
         <button type="button" id="department-button" onclick="setActiveFilter('department')">Department</button>
@@ -74,37 +89,45 @@
     </div>
 </div>
 
+<!-- Filter Dropdown for School Type -->
+<div style="margin-top: 20px;">
+    <label for="school-type">School Type:</label>
+    <select id="school-type" onchange="applyFilters()">
+        <option value="both" {% if school_type is not defined or school_type == 'both' %}selected{% endif %}>Both</option>
+        <option value="public" {% if school_type == 'public' %}selected{% endif %}>Public</option>
+        <option value="private" {% if school_type == 'private' %}selected{% endif %}>Private</option>
+    </select>
+</div>
+
+<!-- Filter Form (hidden, submits without redirecting) -->
+<form id="filter-form" method="get" action="{% url 'MajorHelp:school_results' query=query %}" style="display: none;">
+    <input type="hidden" id="filter-hidden" name="filter" value="{{ filter_type }}">
+    <input type="hidden" id="school-type-hidden" name="school_type" value="{{ school_type }}">
+    <input type="hidden" id="search-query-hidden" name="query" value="{{ query }}">
+</form>
+
 <!-- Search Results -->
 <h2>Search Results for "{{ query }}"</h2>
+
 {% if results %}
     {% for university, details in results.items %}
         <h3>
-            <a href="{% url 'MajorHelp:university-detail' slug=university.slug %}">
-                {{ university.name }}
-            </a>
+            <a href="{% url 'MajorHelp:university-detail' slug=university.slug %}">{{ university.name }}</a>
             | {{ details.location }} | {{ details.type }}
         </h3>
 
-        {% if filter_type == 'department' %}
-            <!-- Display departments for department filter -->
-            {% for department, majors in details.departments.items %}
-                <h4>{{ department }}</h4>
-            {% endfor %}
-        {% else %}
-            <!-- Display majors for school or major filter -->
-            {% for department, majors in details.departments.items %}
-                <h4>{{ department }}</h4>
-                <ul>
-                    {% for major in majors %}
-                        <li>
-                            <a href="{% url 'MajorHelp:major-detail' slug=major.slug %}">{{ major.major_name }}</a>
-                            (In-State: ${{ major.in_state_min_tuition }} - ${{ major.in_state_max_tuition }},
-                            Out-of-State: ${{ major.out_of_state_min_tuition }} - ${{ major.out_of_state_max_tuition }})
-                        </li>
-                    {% endfor %}
-                </ul>
-            {% endfor %}
-        {% endif %}
+        {% for department, majors in details.departments.items %}
+            <h4>{{ department }}</h4>
+            <ul>
+                {% for major in majors %}
+                    <li>
+                        <a href="{% url 'MajorHelp:major-detail' slug=major.slug %}">{{ major.major_name }}</a>
+                        (In-State: ${{ major.in_state_min_tuition }} - ${{ major.in_state_max_tuition }},
+                        Out-of-State: ${{ major.out_of_state_min_tuition }} - ${{ major.out_of_state_max_tuition }})
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endfor %}
     {% endfor %}
 {% else %}
     <p>No results found for your search.</p>

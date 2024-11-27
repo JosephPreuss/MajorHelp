@@ -7,9 +7,36 @@
     <style>
         /* Style for Major Overview Content */
         .major-overview-content {
-            padding: 20px;       /* Add spacing around the content */
-            padding-bottom: 100px; /* Ensure there is enough space for the footer */
+            padding: 20px;
+            padding-bottom: 100px;
             box-sizing: border-box;
+        }
+
+        /* Star Rating Styling */
+        .star-rating {
+            display: inline-block;
+            font-size: 30px;
+            color: #ddd;
+            cursor: pointer;
+        }
+
+        .star-rating .filled {
+            color: #ffbc00;
+        }
+
+        /* Ensuring the stars and text appear on the same line */
+        .review {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .review-text {
+            margin-right: 15px; /* Adds space between text and stars */
+        }
+
+        .review-stars {
+            display: inline-block;
         }
     </style>
 </head>
@@ -17,23 +44,21 @@
     <div class="major-overview-content">
         <h1>{{ major.major_name }}</h1>
         <h2>
-            <a href="{% url 'MajorHelp:university-detail' slug=major.university.slug %}">
-                {{ major.university.name }}
-            </a>
+            <a href="{% url 'MajorHelp:university-detail' slug=major.university.slug %}">{{ major.university.name }}</a>
         </h2>
-        
+
         <h3>Description</h3>
         <p>{{ major.major_description }}</p>
-        
+
         <h3>Department</h3>
         <p>{{ major.department }}</p>
-        
+
         <h3>Tuition</h3>
         <ul>
             <li>In-State Tuition: ${{ major.in_state_min_tuition }} - ${{ major.in_state_max_tuition }}</li>
             <li>Out-of-State Tuition: ${{ major.out_of_state_min_tuition }} - ${{ major.out_of_state_max_tuition }}</li>
         </ul>
-        
+
         <h3>University Information</h3>
         <p>Location: {{ major.university.location }}</p>
         <p>Type: 
@@ -43,7 +68,7 @@
                 Private
             {% endif %}
         </p>
-        
+
         <h3>University Statistics</h3>
         <ul>
             <li>Graduation Rate: {{ major.university.GraduationRate }}%</li>
@@ -55,9 +80,21 @@
         <h3>Reviews</h3>
         <ul>
             {% for review in major.major_reviews.all %}
-                <li>
-                    <strong>{{ review.user.username }}</strong>: {{ review.review_text }} <br>
-                    <em>{{ review.pub_date|date:"F j, Y, g:i a" }}</em>
+                <li class="review">
+                    <div class="review-text">
+                        <strong>{{ review.user.username }}</strong>: {{ review.review_text }} <br>
+                        <em>{{ review.pub_date|date:"F j, Y, g:i a" }}</em> <br>
+                    </div>
+                    <div class="review-stars">
+                        <!-- Loop to display stars based on review.rating (filled or empty) -->
+                        {% for i in 1..5 %}
+                            {% if i <= review.rating %}
+                                <span class="filled">★</span>  <!-- Filled star -->
+                            {% else %}
+                                <span>★</span>  <!-- Empty star -->
+                            {% endif %}
+                        {% endfor %}
+                    </div>
                 </li>
             {% empty %}
                 <li>No reviews yet. Be the first to leave a review!</li>
@@ -70,11 +107,46 @@
             <form method="POST" action="{% url 'MajorHelp:leave-major-review' slug=major.slug %}">
                 {% csrf_token %}
                 <textarea name="review_text" placeholder="Write your review here..." required></textarea>
+
+                <h4>Rate this Major:</h4>
+                <div class="star-rating" id="rating-stars">
+                    <span class="star" data-value="1">★</span>
+                    <span class="star" data-value="2">★</span>
+                    <span class="star" data-value="3">★</span>
+                    <span class="star" data-value="4">★</span>
+                    <span class="star" data-value="5">★</span>
+                </div>
+
+                <input type="hidden" name="rating" id="rating-value" value="">
+
                 <button type="submit">Submit Review</button>
             </form>
         {% else %}
             <p>You must be logged in to leave a review. <a href="{% url 'MajorHelp:login' %}">Log in</a> or <a href="{% url 'MajorHelp:signup' %}">Sign up</a>.</p>
         {% endif %}
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const stars = document.querySelectorAll('.star');
+            const ratingValueInput = document.getElementById('rating-value');
+
+            stars.forEach(star => {
+                star.addEventListener('click', function() {
+                    const rating = this.getAttribute('data-value');
+                    ratingValueInput.value = rating;
+
+                    // Update star colors
+                    stars.forEach(star => {
+                        if (star.getAttribute('data-value') <= rating) {
+                            star.classList.add('filled');
+                        } else {
+                            star.classList.remove('filled');
+                        }
+                    });
+                });
+            });
+        });
+    </script>
 </body>
 </html>

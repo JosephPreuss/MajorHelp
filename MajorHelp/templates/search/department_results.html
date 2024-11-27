@@ -3,7 +3,7 @@
 {% include "navbar.html" %}
 <head>
     <meta charset="UTF-8">
-    <title>Search Results</title>
+    <title>Department Search Results</title>
     <script>
         const departmentOptions = [
             'Humanities and Social Sciences',
@@ -18,6 +18,7 @@
             'Law and Criminal Justice'
         ];
 
+        // Function to handle filter changes (department, major, etc.)
         function setActiveFilter(filter) {
             document.getElementById("filter").value = filter;
 
@@ -28,8 +29,8 @@
                 select.name = "query";
                 select.id = "search-query";
 
-                // Add "Pick a Department" as the default option
-                select.innerHTML = `<option value="" disabled selected>Pick a Department</option>` +
+                // Add "Select a Department" as the default option
+                select.innerHTML = `<option value="" disabled selected>Select a Department</option>` +
                     departmentOptions.map(option => `<option value="${option}">${option}</option>`).join('');
 
                 searchFieldContainer.innerHTML = ''; 
@@ -46,42 +47,68 @@
         }
 
         window.onload = function () {
-            const filter = "department"; // Set department as the default filter
+            const filter = "{{ filter_type }}" || "department"; // Default filter is department
             setActiveFilter(filter);
         };
+
+        // This function will handle the form submission for the filters without page reload
+        function applyFilters() {
+            const schoolType = document.getElementById("school-type").value;
+            const searchQuery = document.getElementById("search-query").value;
+
+            // Update the filter values dynamically in the form
+            document.getElementById("school-type-hidden").value = schoolType;
+            document.getElementById("search-query-hidden").value = searchQuery;
+
+            // Submit the form to filter the results
+            document.getElementById("filter-form").submit();
+        }
     </script>
 </head>
 <body>
 
-<!-- Search Again Section -->
+<!-- Search Again Section (this redirects to the search page) -->
 <div>
     <h1 style="display: inline;">Search Again</h1>
-    <form action="/search/" method="get" style="display: inline;">
+    <form action="{% url 'MajorHelp:search' %}" method="get" style="display: inline;">
         <div id="search-field-container" style="display: inline;">
-            <!-- Default is the department dropdown -->
-            <select name="query" id="search-query">
-                <option value="" disabled selected>Pick a Department</option>
-                {% for option in departmentOptions %}
-                <option value="{{ option }}">{{ option }}</option>
-                {% endfor %}
-            </select>
+            <!-- Default input for Major search -->
+            <input type="text" id="search-query" name="query" placeholder="Enter your search term..." value="{{ query }}">
         </div>
-        <input type="hidden" id="filter" name="filter" value="department">
+        <input type="hidden" id="filter" name="filter" value="{{ filter_type }}">
         <button type="submit">Search</button>
     </form>
 </div>
 
-<!-- Filter Buttons -->
+<!-- Filter Buttons for Department, School, and Major -->
 <div>
     <div>
-        <button type="button" id="department-button" class="active" onclick="setActiveFilter('department')">Department</button>
+        <button type="button" id="department-button" onclick="setActiveFilter('department')">Department</button>
         <button type="button" id="school-button" onclick="setActiveFilter('school')">School</button>
         <button type="button" id="major-button" onclick="setActiveFilter('major')">Major</button>
     </div>
 </div>
 
+<!-- Filter Dropdown for School Type -->
+<div style="margin-top: 20px;">
+    <label for="school-type">School Type:</label>
+    <select id="school-type" onchange="applyFilters()">
+        <option value="both" {% if school_type == 'both' %}selected{% endif %}>Both</option>
+        <option value="public" {% if school_type == 'public' %}selected{% endif %}>Public</option>
+        <option value="private" {% if school_type == 'private' %}selected{% endif %}>Private</option>
+    </select>
+</div>
+
+<!-- Filter Form (hidden, submits without redirecting) -->
+<form id="filter-form" method="get" action="{% url 'MajorHelp:department_results' query=query %}" style="display: none;">
+    <input type="hidden" id="filter-hidden" name="filter" value="{{ filter_type }}">
+    <input type="hidden" id="school-type-hidden" name="school_type" value="{{ school_type }}">
+    <input type="hidden" id="search-query-hidden" name="query" value="{{ query }}">
+</form>
+
 <!-- Search Results -->
 <h2>Search Results for "{{ query }}"</h2>
+
 {% if results %}
     {% for university, details in results.items %}
         <h3>
