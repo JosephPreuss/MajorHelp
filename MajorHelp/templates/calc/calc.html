@@ -9,17 +9,52 @@
 
 {% block script %}
 <script>
-    function uniInput() {
-        alert(document.getElementById("uni-query").value)
+    var inputData = {
+        uni   : null,
+        dept  : null,
+        major : null,
     }
 
-    function deptInput() {
-        alert(document.getElementById("dept-query").value)
+    async function validateInputData() {
+        for (const [ignored, value] of Object.entries(inputData)) {
+            if (value == null) return;
+        }
+        // None of the data values are null, the request is ready.
+
+        // Prepare the GET request string for the url
+        var getStr = "?";
+
+        for (const [key, value] of Object.entries(inputData)) {
+            getStr = getStr.concat(key.toString() + "=" + value.toString() + "&");
+        }
+         
+        // Make a fetch request, the url can just be the get data
+        // Django will automatically prepend /calc/ to it.
+
+        const response = await fetch(getStr,  { 
+            method : 'GET',
+            headers: {"Content-Type": "application/json",},
+        });
+
+        if (!response.ok) {
+            throw new Error(`Response status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        
+        console.log(data.Key);
     }
 
-    function majorInput() {
-        alert(document.getElementById("major-query").value)
+    function Input(entry) {
+
+        // check if the entered data isn't just whitespace via trim and length
+        data = document.getElementById(entry).value.trim();
+        if (data.length == 0) return;
+
+        inputData[entry] = data;
+        validateInputData();
     }
+
 </script>
 {% endblock script %}
 
@@ -35,8 +70,8 @@
 <div id="uniInput">
     <!--The "; return false" prevents the form from actually submitting via post or get
         thus refreshing the page... which clears the form.-->
-    <form onsubmit="uniInput(); return false">
-        <input type="text" id="uni-query" name="university" placeholder="Enter your university."
+    <form onsubmit="Input('uni'); return false">
+        <input type="text" id="uni" name="university" placeholder="Enter your university."
             value="">
     </form>
 
@@ -48,7 +83,7 @@
     <div id="input">
         <div id="department">
             <h2>Now select the department</h2>
-                <select id="dept-query" name="department" onchange="deptInput()">
+                <select id="dept" name="department" onchange="Input('dept')">
                     <option value="" disabled="" selected="">Pick a Department</option>
                     <option value="Humanities and Social Sciences">Humanities and Social Sciences</option>
                     <option value="Natural Sciences and Mathematics">Natural Sciences and Mathematics</option>
@@ -65,8 +100,8 @@
 
         <div id="majors">
             <h2>Great, now lets talk majors.</h2>
-            <form onsubmit="majorInput(); return false">
-                <input type="text" name="major" id="major-query" placeholder="" value="">
+            <form onsubmit="Input('major'); return false">
+                <input type="text" name="major" id="major" placeholder="" value="">
             </form> 
         </div>
         <!--

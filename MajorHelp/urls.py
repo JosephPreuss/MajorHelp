@@ -55,5 +55,5 @@ urlpatterns = [
 
     
     # URLS for the Tuition Calculator
-    path('calc/', CalcView.as_view(), name='calc')
+    path('calc/', CalcView.as_view(), name='calc'),
 ]

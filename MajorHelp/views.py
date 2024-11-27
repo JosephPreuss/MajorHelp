@@ -26,6 +26,8 @@ import re
 from django.db.models import F, Value
 from django.db.models.functions import Cast
 
+# Used to catch an exception if GET tries to get a value that isn't defined.
+from django.utils.datastructures import MultiValueDictKeyError
 
 def settings_view(request):
     return render(request, 'settings.html')  # Make sure you have a 'settings.html' template, or adjust accordingly
@@ -315,7 +317,42 @@ class MajorOverviewView(DetailView):
 
 class CalcView(View):
     def get(self, request):
-        return render(request, 'calc/calc.html')
+        
+        data = {}
+        try: 
+            data = {
+                "university" : request.GET['uni'],
+                "department" : request.GET['dept'],
+                "major"      : request.GET['major'],
+            }
+        
+        # This exception is raised if one of the values (uni, dept, etc) is not defined.
+        # Effectively, this saves me from having to do an if with DeMorgan's law on every
+        # single data value.
+        #
+        # If there isn't a value defined yet, then that means that the user is accessing
+        # the page as normal and has yet to input anything, so just return calc.html.
+        except MultiValueDictKeyError:
+            
+            return render(request, 'calc/calc.html')
+
+        
+        # If all of those values are filled out, then that means that the javascript in
+        # calc.html is making another get request to this view with the data supplied.
+        # 
+        # Don't redirect, instead return a JSON with the resulting tuition data.
+        #
+        # If for some reason the user fills out a get request manually via the url link,
+        #
+        #   (ie http://localhost:8000/calc/?uni=uofsc&dept=Engineering&major=CS)
+        #
+        # ...they will just get the json data directly.
+
+        return JsonResponse({
+            "Key" : "Hello World!",
+            "Foo" : "Bar"
+        })
+
 
 # LeaveMajorReview View - Exclusive for leaving reviews for a major at a specific school
 
