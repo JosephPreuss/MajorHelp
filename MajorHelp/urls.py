@@ -51,5 +51,5 @@ urlpatterns = [
     #urls for major overviews
     path('MajorOverview/<slashslug:slug>/', views.MajorOverviewView.as_view(), name='major-detail'),
     # URLS for the Tuition Calculator
-    path('calc/', CalcView.as_view(), name='calc')
+    path('calc/', CalcView.as_view(), name='calc'),
 ]
