@@ -10,9 +10,10 @@
 {% block script %}
 <script>
     var inputData = {
-        uni   : null,
-        dept  : null,
-        major : null,
+        uni      : null,
+        outstate : false,
+        dept     : null,
+        major    : null,
     }
 
     async function validateInputData() {
@@ -64,24 +65,24 @@
 {{ block.super }} 
 <div>
     <h1>Tuition Calculator</h1>
-    <p>Let's start by choosing your school.</p>
 </div>
-
-<div id="uniInput">
-    <!--The "; return false" prevents the form from actually submitting via post or get
-        thus refreshing the page... which clears the form.-->
-    <form onsubmit="Input('uni'); return false">
-        <input type="text" id="uni" name="university" placeholder="Enter your university."
-            value="">
-    </form>
-
-</div>
-
-<br>
 
 <div id="inputOutput">
     <div id="input">
-        <div id="department">
+        <div>
+            <h2>Let's start by choosing your school.</h2>
+            <!--The "; return false" prevents the form from actually submitting via post or get
+                thus refreshing the page... which clears the form.-->
+            <form onsubmit="Input('uni'); return false">
+                <input type="text" id="uni" name="university" placeholder="Enter your university."
+                    value="">
+            </form>
+            <br>
+            <input type="checkbox" name="outstate" id="outstate" onclick="Input('outstate');">
+            <label>Are you attending this university from out of state?</label>
+        </div>
+        
+        <div>
             <h2>Now select the department</h2>
                 <select id="dept" name="department" onchange="Input('dept')">
                     <option value="" disabled="" selected="">Pick a Department</option>
@@ -98,12 +99,13 @@
                 </select>       
         </div>
 
-        <div id="majors">
+        <div>
             <h2>Great, now lets talk majors.</h2>
             <form onsubmit="Input('major'); return false">
                 <input type="text" name="major" id="major" placeholder="" value="">
             </form> 
         </div>
+
         <!--
         <div id="minors">
             <h2>Are you interested in enrolling in any minors?</h2>
