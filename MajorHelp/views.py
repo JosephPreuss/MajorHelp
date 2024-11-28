@@ -318,10 +318,11 @@ class MajorOverviewView(DetailView):
 class CalcView(View):
     def get(self, request):
         
-        data = {}
+        inData = {}
         try: 
-            data = {
+            inData = {
                 "university" : request.GET['uni'],
+                "outstate"   : request.GET['outstate'],
                 "department" : request.GET['dept'],
                 "major"      : request.GET['major'],
             }
@@ -348,10 +349,44 @@ class CalcView(View):
         #
         # ...they will just get the json data directly.
 
-        return JsonResponse({
-            "Key" : "Hello World!",
-            "Foo" : "Bar"
-        })
+
+        # Prepare the output JSON
+        outData = {
+            "minTuition" : None,
+            "maxTuition" : None,
+            # Any extra data can either go here or in Alerts.
+            "Alerts"     : {},    # Kept for aspirational purposes
+        }
+
+
+
+        # Get the university.
+        # For now we'll have to rely on the user inputting the name of the university exactly.
+        university = None
+        try:
+            university = University.objects.get(name=inData["university"])
+        except University.DoesNotExist as error:
+            raise
+
+        # Get whether the student is instate or out of state
+        
+        outstate = inData["outstate"] == "true"
+
+        # Get the Major
+        major = None
+        try:
+            major = Major.objects.get(major_name=inData["major"])
+        except Major.DoesNotExist as error:
+            raise
+        
+
+
+
+        # populate the output JSON
+        outData["minTuition"] = major.out_of_state_min_tuition if outstate else major.in_state_min_tuition
+        outData["maxTuition"] = major.out_of_state_max_tuition if outstate else major.in_state_max_tuition
+
+        return JsonResponse(outData)
 
 
 # LeaveMajorReview View - Exclusive for leaving reviews for a major at a specific school

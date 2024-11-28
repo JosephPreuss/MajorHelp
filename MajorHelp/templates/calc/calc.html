@@ -9,7 +9,7 @@
 
 {% block script %}
 <script>
-    var inputData = {
+    const inputData = {
         uni      : null,
         outstate : false,
         dept     : null,
@@ -23,7 +23,7 @@
         // None of the data values are null, the request is ready.
 
         // Prepare the GET request string for the url
-        var getStr = "?";
+        let getStr = "?";
 
         for (const [key, value] of Object.entries(inputData)) {
             getStr = getStr.concat(key.toString() + "=" + value.toString() + "&");
@@ -43,17 +43,36 @@
 
         const data = await response.json();
         
-        console.log(data.Key);
+        console.log(data);
     }
 
     function Input(entry) {
 
-        // check if the entered data isn't just whitespace via trim and length
-        data = document.getElementById(entry).value.trim();
-        if (data.length == 0) return;
+        let element, data;
 
+
+        if (entry === undefined) return false;
+
+        // check if the entered data isn't just whitespace via trim and length
+        element = document.getElementById(entry);
+        
+        if (!element) return false;
+
+
+        if (element.tagName.toLowerCase() === 'input' && element.type === "checkbox") {
+            // Checkbox input
+
+            data = element.checked;
+        } else {
+            // Default
+
+            data = document.getElementById(entry).value.trim();
+            if (data.length == 0) return;
+
+        }
         inputData[entry] = data;
         validateInputData();
+
     }
 
 </script>
@@ -78,7 +97,7 @@
                     value="">
             </form>
             <br>
-            <input type="checkbox" name="outstate" id="outstate" onclick="Input('outstate');">
+            <input type="checkbox" name="outstate" id="outstate" value="true" onclick="Input('outstate');">
             <label>Are you attending this university from out of state?</label>
         </div>
         
