@@ -23,6 +23,33 @@ class University(models.Model):
     TotalGradStudents = models.IntegerField()
     GraduationRate = models.DecimalField(max_digits=4, decimal_places=1)
 
+    # Added for tuition calc
+    in_state_base_min_tuition = models.IntegerField(
+        validators=[MinValueValidator(0)],
+        default=0,
+    )
+
+    in_state_base_max_tuition = models.IntegerField(
+        validators=[MinValueValidator(0)],
+        default=0,
+    )
+
+    out_of_state_base_min_tuition = models.IntegerField(
+        validators=[MinValueValidator(0)],
+        default=0,
+    )
+
+    
+    out_of_state_base_max_tuition = models.IntegerField(
+        validators=[MinValueValidator(0)],
+        default=0,
+    )
+
+    fees = models.IntegerField(
+        validators=[MinValueValidator(0)],
+        default=0,
+    )
+
     # Automatically populated slug
     slug = models.SlugField(default="", editable=False, null=False, unique=True)
 
@@ -140,6 +167,11 @@ class Major(models.Model):
         default=0,
     )
     out_of_state_max_tuition = models.IntegerField(
+        validators=[MinValueValidator(0)],
+        default=0,
+    )
+
+    fees = models.IntegerField(
         validators=[MinValueValidator(0)],
         default=0,
     )

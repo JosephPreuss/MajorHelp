@@ -351,40 +351,84 @@ class CalcView(View):
 
 
         # Prepare the output JSON
+
+        # Get whether the student is instate or out of state     
+        outstate = inData["outstate"] == "true"
+
+        # Get the university.
+        university = {
+            "name"          : None,
+            "baseMinTui"    : 0,
+            "baseMaxTui"    : 0,
+            "fees"          : 0,
+        }
+
+
+        # For now we'll have to rely on the user inputting the name of the university exactly.
+        uniObj = None
+        try:
+            uniObj = University.objects.get(name=inData["university"])
+        except uniObj.DoesNotExist as error:
+            raise
+
+        # get the data for the university
+        university["name"]  = uniObj.name
+
+        university["baseMinTui"] = uniObj.out_of_state_base_min_tuition if outstate else uniObj.in_state_base_min_tuition
+        university["baseMaxTui"] = uniObj.out_of_state_base_max_tuition if outstate else uniObj.in_state_base_max_tuition
+
+        university["fees"] = uniObj.fees
+
+
+        # Get the Major
+
+        major = {
+            "name"          : None,
+            "uni"           : None,
+            "baseMinTui"    : 0,
+            "baseMaxTui"    : 0,
+            "fees"          : 0,
+        }
+
+
+        majorObj = None
+        try:
+            majorObj = Major.objects.get(major_name=inData["major"])
+        except MajorObj.DoesNotExist as error:
+            raise
+
+        # get the data for the major
+        major["name"] = majorObj.major_name
+
+        major["uni"] = majorObj.university.name
+
+        major["baseMinTui"] = majorObj.out_of_state_min_tuition if outstate else majorObj.in_state_min_tuition
+        major["baseMaxTui"] = majorObj.out_of_state_max_tuition if outstate else majorObj.in_state_max_tuition
+
+        major["fees"] = majorObj.fees
+
+
         outData = {
-            "minTuition" : None,
-            "maxTuition" : None,
+            "minTui" : 0,
+            "maxTui" : 0,
+            "outstate" : False,
+            "uni" : university,
+            "major"      : major,
             # Any extra data can either go here or in Alerts.
             "Alerts"     : {},    # Kept for aspirational purposes
         }
 
 
+        outData['outstate'] = outstate
 
-        # Get the university.
-        # For now we'll have to rely on the user inputting the name of the university exactly.
-        university = None
-        try:
-            university = University.objects.get(name=inData["university"])
-        except University.DoesNotExist as error:
-            raise
+        # calculate the final tuition range
 
-        # Get whether the student is instate or out of state
+        outData["minTui"] = university["baseMinTui"] + university["fees"] + \
+                                major["baseMinTui"] + major["fees"]
         
-        outstate = inData["outstate"] == "true"
-
-        # Get the Major
-        major = None
-        try:
-            major = Major.objects.get(major_name=inData["major"])
-        except Major.DoesNotExist as error:
-            raise
+        outData["maxTui"] = university["baseMaxTui"] + university["fees"] + \
+                                major["baseMaxTui"] + major["fees"]
         
-
-
-
-        # populate the output JSON
-        outData["minTuition"] = major.out_of_state_min_tuition if outstate else major.in_state_min_tuition
-        outData["maxTuition"] = major.out_of_state_max_tuition if outstate else major.in_state_max_tuition
 
         return JsonResponse(outData)
 
