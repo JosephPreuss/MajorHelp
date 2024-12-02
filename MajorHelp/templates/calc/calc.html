@@ -60,7 +60,6 @@
 
         if (entry === undefined) return false;
 
-        // check if the entered data isn't just whitespace via trim and length
         element = document.getElementById(entry);
         
         if (!element) return false;
@@ -73,6 +72,7 @@
         } else {
             // Default
 
+            // check if the entered data isn't just whitespace via trim and length
             data = document.getElementById(entry).value.trim();
             if (data.length == 0) return;
 
