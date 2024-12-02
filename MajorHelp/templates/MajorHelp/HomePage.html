@@ -6,9 +6,30 @@
 {% block content %}
 <div class="home-page-container">
     <div class="text-section">
-        <h1>Welcome to MajorHelp</h1>
-        <p>Your journey to finding the right university starts here.</p>
+        {% if user.is_authenticated %}
+            <h1 style="font-size: 2.5rem; margin-bottom: 20px;">Welcome back, {{ user.username }}!</h1>
+        {% else %}
+            <h1 style="font-size: 2.5rem; margin-bottom: 20px;">We're here to help.</h1>
+        {% endif %}
+
+        <p class="info-text">
+            Welcome to MajorHelp – your personalized guide to finding the best colleges that fit your goals and budget. Whether you're exploring campuses, comparing tuition rates, or just getting started on your educational journey, MajorHelp is here to assist you every step of the way. With a user-friendly interface, you can easily browse through tailored options, connect with campuses, and manage your college search in one place.
+        </p>
+
+        {% if user.is_authenticated %}
+            <a href="{% url 'MajorHelp:calc' %}" class="get-started-btn">
+                Get Started
+            </a>
+        {% else %}
+            <a href="{% url 'MajorHelp:login' %}" class="get-started-btn">
+                Log in
+            </a>
+            <p class="signup-link">
+                Don't have an account? <a href="{% url 'MajorHelp:signup' %}">Sign up here</a>
+            </p>
+        {% endif %}
     </div>
+
     <div class="image-section">
         <img src="{% static 'images/home2.png' %}" alt="Testing Image" style="width:100%;">
         <div class="overlay"></div>

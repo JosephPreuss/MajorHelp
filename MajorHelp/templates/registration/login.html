@@ -4,14 +4,19 @@
 {% block title %}Login{% endblock %}
 
 {% block content %}
-<div class="login-container">
-    <h2>Login</h2>
-    <form method="post" class="login-form">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Login</button>
-    </form>
+<div class="login-container" style="background-image: url('{% static 'images/login.png' %}');">
+    <div class="login-form-wrapper">
+        <h2>Login</h2>
+        <form method="post" class="login-form">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="btn">Login</button>
+        </form>
 
-    <p>Don't have an account? <a href="{% url 'MajorHelp:signup' %}">Sign up</a></p>
+        <div class="login-links">
+            <p>Don't have an account? <a href="{% url 'MajorHelp:signup' %}">Sign up here</a></p>
+            <p><a href="{% url 'password_reset' %}">Forgot password?</a></p>
+        </div>
+    </div>
 </div>
 {% endblock %}
