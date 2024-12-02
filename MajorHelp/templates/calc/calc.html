@@ -16,6 +16,13 @@
         major    : null,
     }
 
+    const inputIds = [
+        "uni",
+        "outstate",
+        "dept",
+        "major",
+    ]
+
     async function validateInputData() {
         for (const [ignored, value] of Object.entries(inputData)) {
             if (value == null) return;
@@ -43,7 +50,7 @@
 
         const data = await response.json();
         
-        console.log(data);
+        updateData(data);
     }
 
     function Input(entry) {
@@ -75,13 +82,42 @@
 
     }
 
+    function updateData(data) {
+        const total = "$" + data['minTui'] + ' - $' + data['maxTui'];
+
+        document.getElementById("total1").textContent=total;
+        document.getElementById("total2").textContent=total;
+
+
+        document.getElementById("output").style.display = 'block';
+
+
+        uni = data["uni"];
+        document.getElementById("uniName").textContent = uni['name'];
+        document.getElementById("uniTui").textContent = "$" + uni['baseMinTui'] + ' - $' + uni['baseMaxTui'];
+        document.getElementById("uniFees").textContent = "$" + uni['fees'];
+
+
+        major = data["major"];
+        document.getElementById("majorName").textContent = data['major']['name'];
+        document.getElementById("majorTui").textContent = "$" + major['baseMinTui'] + ' - $' + major['baseMaxTui'];
+        document.getElementById("majorFees").textContent = "$" + major['fees'];
+
+    }
+
+    function getValues() {
+        for (let i = 0; i < inputIds.length; i++){
+            Input(inputIds[i]);
+        }
+
+    }
+
 </script>
 {% endblock script %}
 
 
 {% block content %}
 <!-- get the original content from the home page-->
-{{ block.super }} 
 <div>
     <h1>Tuition Calculator</h1>
 </div>
@@ -141,12 +177,16 @@
             (placeholder text)
         </div>
         -->
+        <br>
+        <input type="button" value="submit" onclick="getValues();">
     </div>
 
-    <div id="output">
+    <div id="output" style="display: none;">
         <h2>Estimated Total</h2>
-        <h1>{{ total | default:"$XX,XXX - $XXX,XXX"}}</h1>
+        <h1 id="total1">{{ total | default:"$XX,XXX - $XXX,XXX"}}</h1>
         
+
+
         <h2>Details:</h2>
 
         <!--
@@ -156,7 +196,7 @@
 
         <h3>University Related Costs</h3>
         <!--The name of the University/Major/Scholarship can go here-->
-        University of South Carolina 
+        <b><span id="uniName">XXXXXXXXX</span></b>
         <ul class="outputList">
             <!--
                 For future reference, this can probably be replaced with a for loop containing all applicable
@@ -164,70 +204,60 @@
                 would be something like variableName.amount)
             -->
             <li>
-                Base Tuition <span>{{ baseTuition | default:"$X,XXX" }}</span>
+                Base Tuition <span id="uniTui">{{ baseTuition | default:"$X,XXX" }}</span>
             </li>
             <li>
-                Fees <span>{{ baseTuition | default:"$X,XXX" }}</span>
+                Fees <span id="uniFees">{{ baseTuition | default:"$X,XXX" }}</span>
             </li>
-            <li>
-                Housing <span>{{ baseTuition | default:"$X,XXX" }}</span>
-            </li>
-            
+
             <br>
 
             <!--
                 Notes section
                 Can be surrounded by a for to include any notes
             -->
+            <!--
             <small>
-                <li class="outputNote">
-                    Alumni have reported that this university requires students to live on campus housing for freshman year.
-                </li>
+                <li class="outputNote"> </li>  
             </small>
-
-            
-        </ul>
- 
-        <h4>Subtotal</h4>
-        <h4 style="margin-left:2.5em">$X,XXX - $XX,XXX</h4>
-
-
+            -->
 
 
 
         <h3>Major Related Costs</h3>
-        Computer Science
+        <b><span id="majorName">XXXXXXXXXXXX</span></b>
         <ul class="outputList">
             <li>
-                Base Tuition <span>{{ baseTuition | default:"$X,XXX" }}</span>
+                Base Tuition <span id="majorTui">{{ baseTuition | default:"$X,XXX" }}</span>
             </li>
             <li>
-                Fees <span>{{ baseTuition | default:"$X,XXX" }}</span>
+                Fees <span id="majorFees">{{ baseTuition | default:"$X,XXX" }}</span>
             </li>
 
             <!--
                 Notes section
                 Can be surrounded by a for to include any notes
             -->
+            <!--
             <small>
                 <li class="outputNote">
                     Alumini have reported that this university has a hidden lab fee specific to this Major.
                 </li>
             </small>
-            
+            -->
 
 
         </ul>
 
 
-        
+        <!--
         <h4>Subtotal</h4>
         <h4 style="margin-left:2.5em">$X,XXX - $XX,XXX
-
+        -->
 
         <!-- Just repeat the estimated total again for readability-->
         <h2>Estimated Total</h2>
-        <h1>{{ total | default:"$XX,XXX - $XXX,XXX"}}</h1>
+        <h1 id="total2">{{ total | default:"$XX,XXX - $XXX,XXX"}}</h1>
     </div>
 </div>
 {% endblock content %}
