@@ -50,14 +50,15 @@
             setActiveFilter(filter);
         };
 
-        // This function will handle the form submission for the filters without page reload
         function applyFilters() {
             const schoolType = document.getElementById("school-type").value;
             const searchQuery = document.getElementById("search-query").value;
+            const sortOrder = document.getElementById("sort-order").value;
 
             // Update the filter values dynamically in the form
             document.getElementById("school-type-hidden").value = schoolType;
             document.getElementById("search-query-hidden").value = searchQuery;
+            document.getElementById("sort-order-hidden").value = sortOrder;
 
             // Submit the form to filter the results
             document.getElementById("filter-form").submit();
@@ -71,7 +72,6 @@
     <h1 style="display: inline;">Search Again</h1>
     <form action="{% url 'MajorHelp:search' %}" method="get" style="display: inline;">
         <div id="search-field-container" style="display: inline;">
-            <!-- Default input for Major search -->
             <input type="text" id="search-query" name="query" placeholder="Enter Major name..." value="{{ query }}">
         </div>
         <input type="hidden" id="filter" name="filter" value="major">
@@ -98,11 +98,26 @@
     </select>
 </div>
 
+<!-- Filter for Sorting -->
+<div style="margin-top: 20px;">
+    <label for="sort-order">Sort By:</label>
+    <select id="sort-order" onchange="applyFilters()">
+        <option value="none" {% if request.GET.sort_order == 'none' %}selected{% endif %}>None</option>
+        <option value="low_to_high" {% if request.GET.sort_order == 'low_to_high' %}selected{% endif %}>
+            Tuition (Low to High)
+        </option>
+        <option value="high_to_low" {% if request.GET.sort_order == 'high_to_low' %}selected{% endif %}>
+            Tuition (High to Low)
+        </option>
+    </select>
+</div>
+
 <!-- Filter Form (hidden, submits without redirecting) -->
 <form id="filter-form" method="get" action="{% url 'MajorHelp:major_results' query=query %}" style="display: none;">
     <input type="hidden" id="filter-hidden" name="filter" value="{{ filter_type }}">
     <input type="hidden" id="school-type-hidden" name="school_type" value="{{ school_type }}">
     <input type="hidden" id="search-query-hidden" name="query" value="{{ query }}">
+    <input type="hidden" id="sort-order-hidden" name="sort_order" value="{{ request.GET.sort_order|default:'none' }}">
 </form>
 
 <!-- Search Results -->
@@ -121,7 +136,7 @@
                     <li>
                         <a href="{% url 'MajorHelp:major-detail' slug=major.slug %}">{{ major.major_name }}</a>
                         (In-State: ${{ major.in_state_min_tuition }} - ${{ major.in_state_max_tuition }},
-                        Out-of-State: ${{ major.out_of_state_min_tuition }} - ${{ major.out_of_state_max_tuition }} )
+                        Out-of-State: ${{ major.out_of_state_min_tuition }} - ${{ major.out_of_state_max_tuition }})
                     </li>
                 {% endfor %}
             </ul>

@@ -188,8 +188,9 @@ class SearchView(View):
 
 class SchoolResultsView(View):
     def get(self, request, query):
-        # Get the filter values from the request (default to 'both' for school_type)
-        school_type = request.GET.get('school_type', 'both')
+        # Get the filter values from the request
+        school_type = request.GET.get('school_type', 'both')  # Default to 'both'
+        sort_order = request.GET.get('sort_order', 'none')  # Default to 'none'
 
         # Fetch universities matching the query (case-insensitive, partial matches)
         universities = University.objects.filter(name__icontains=query)
@@ -198,6 +199,11 @@ class SchoolResultsView(View):
         if school_type != 'both':
             universities = universities.filter(is_public=(school_type == 'public'))
 
+        # Apply sorting based on sort_order
+        if sort_order == 'low_to_high':
+            universities = universities.order_by('in_state_base_min_tuition')
+        elif sort_order == 'high_to_low':
+            universities = universities.order_by('-in_state_base_min_tuition')
 
         # Group universities by department and create the results dictionary
         results = {}
@@ -216,24 +222,32 @@ class SchoolResultsView(View):
                 'departments': departments
             }
 
-        # Render the results page and pass the school_type to preserve the filter state
+        # Render the results page and pass the school_type and sort_order to preserve the filter state
         return render(request, 'search/school_results.html', {
-            'query': query, 
-            'results': results, 
+            'query': query,
+            'results': results,
             'school_type': school_type,  # Pass school_type to the template
+            'sort_order': sort_order,  # Pass sort_order to the template
         })
 class DepartmentResultsView(View):
     def get(self, request, query):
-        # Get the filter values from the request (default to 'both' for school_type)
+        # Get the filter values from the request
         school_type = request.GET.get('school_type', 'both')  # Default to 'both'
+        sort_order = request.GET.get('sort_order', 'none')  # Default to 'none'
 
-        # Fetch majors matching the query (case-insensitive, partial matches)
+        # Fetch majors matching the query
         majors = Major.objects.filter(department__icontains=query)
 
         # Apply filtering by school type if applicable
         if school_type != 'both':
             majors = majors.filter(university__is_public=(school_type == 'public'))
 
+        # Apply sorting based on sort_order
+        if sort_order == 'low_to_high':
+            majors = majors.order_by('in_state_min_tuition')
+        elif sort_order == 'high_to_low':
+            majors = majors.order_by('-in_state_min_tuition')
+
         # Group majors by university and department
         results = {}
         for major in majors:
@@ -250,26 +264,35 @@ class DepartmentResultsView(View):
 
             results[university]['departments'][major.department].append(major)
 
-        # Render the results page and pass the school_type to preserve the filter state
+        # Render the results page with the filtered and sorted data
         return render(request, 'search/department_results.html', {
             'query': query, 
             'results': results, 
-            'school_type': school_type,  # Pass school_type to the template
+            'school_type': school_type, 
+            'sort_order': sort_order  # Pass the sort_order to the template
         })
+
 class MajorResultsView(View):
     def get(self, request, query):
-        # Get filters from the request (default to 'both' for school_type)
-        school_type = request.GET.get('school_type', 'both')  # Default is 'both'
+        # Get filter values
+        school_type = request.GET.get('school_type', 'both')  # Default to 'both'
+        sort_order = request.GET.get('sort_order', 'none')  # Default to 'none'
 
-        # Fetch majors that match the query (case-insensitive and partial matches)
+        # Fetch majors matching the query
         majors = Major.objects.filter(major_name__icontains=query)
 
-        # Filter by school type (public/private)
+        # Filter by school type
         if school_type == 'public':
             majors = majors.filter(university__is_public=True)
         elif school_type == 'private':
             majors = majors.filter(university__is_public=False)
 
+        # Apply sorting
+        if sort_order == 'low_to_high':
+            majors = majors.order_by('in_state_min_tuition')
+        elif sort_order == 'high_to_low':
+            majors = majors.order_by('-in_state_min_tuition')
+
         # Group majors by university and department
         results = {}
         for major in majors:
@@ -280,19 +303,18 @@ class MajorResultsView(View):
                     'type': 'Public' if university.is_public else 'Private',
                     'departments': {}
                 }
-
             if major.department not in results[university]['departments']:
                 results[university]['departments'][major.department] = []
-
             results[university]['departments'][major.department].append(major)
 
-        # Render the template with grouped data and filters
+        # Render the results
         return render(request, 'search/major_results.html', {
             'query': query,
             'results': results,
-            'school_type': school_type  # Pass the school_type to the template
+            'school_type': school_type,
+            'sort_order': sort_order,
         })
-
+    
 class MajorOverviewView(DetailView):
     model = Major
     template_name = "major/MajorOverviewPage.html"
@@ -300,19 +322,25 @@ class MajorOverviewView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        
-        # Fetch all reviews related to the major
-        context['reviews'] = self.object.major_reviews.all()
+        major = self.object
 
-        # Loop through reviews to prepare the filled and empty stars
-        for review in context['reviews']:
-            # Calculate filled and empty stars based on the rating
-            review.filled_stars = list(range(int(review.rating)))  # List of filled stars (rating number)
-            review.empty_stars = list(range(5 - int(review.rating)))  # List of empty stars
+        # Calculate the average rating for all reviews for this major
+        reviews = major.major_reviews.all()
+        if reviews.exists():
+            average_rating = reviews.aggregate(Avg('rating'))['rating__avg']
+            context['average_rating'] = round(average_rating, 1)  # Round to 1 decimal place
+        else:
+            context['average_rating'] = 0  # Default to 0 if no reviews exist
+
+        context['reviews'] = reviews
+        context['star_range'] = [1, 2, 3, 4, 5]
+
+        # Check if the user has already left a review for this major
+        if self.request.user.is_authenticated:
+            user_review = MajorReview.objects.filter(user=self.request.user, major=major).first()
+            context['user_review'] = user_review  # If review exists, pass it to the template
 
         return context
-
-
 
 
 class CalcView(View):
@@ -464,14 +492,17 @@ class CalcView(View):
 
 @login_required
 def LeaveMajorReview(request, slug):
-    # Fetch the major based on the slug
-    major = Major.objects.get(slug=slug)
+    major = get_object_or_404(Major, slug=slug)
 
     # Check if the form is submitted via POST
     if request.method == 'POST':
         # Get the review text and rating from the form
         review_text = request.POST.get('review_text')
         rating = request.POST.get('rating')  # Get the selected rating (1-5)
+
+        if not (1 <= int(rating) <= 5):
+            messages.error(request, 'Please provide a valid rating between 1 and 5.')
+            return redirect('MajorHelp:major-detail', slug=slug)
 
         # Create and save the review using the MajorReview model
         MajorReview.objects.create(
@@ -482,7 +513,9 @@ def LeaveMajorReview(request, slug):
             rating=rating  # Save the rating
         )
 
-        # Redirect to the same major overview page after the review is saved
+        messages.success(request, 'Your review has been successfully submitted!')
         return redirect('MajorHelp:major-detail', slug=slug)
 
     return render(request, 'leave_review.html', {'major': major})
+
+# Render review stars in Major Overview

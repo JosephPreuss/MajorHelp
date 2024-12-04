@@ -21,7 +21,11 @@
         }
 
         .star-rating .filled {
-            color: #ffbc00;
+            color: #ffbc00; /* Yellow color for filled stars */
+        }
+
+        .star-rating span {
+            color: #ddd; /* Gray for empty stars */
         }
 
         /* Ensuring the stars and text appear on the same line */
@@ -35,8 +39,36 @@
             margin-right: 15px; /* Adds space between text and stars */
         }
 
-        .review-stars {
-            display: inline-block;
+        /* Review Section Stars */
+        .review-stars .filled {
+            color: #ffbc00; /* Yellow color for filled stars */
+        }
+
+        .review-stars span {
+            color: #ddd; /* Gray for empty stars */
+        }
+
+        /* Review Form Textarea */
+        textarea {
+            width: 100%;
+            height: 100px;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        /* Button Style */
+        button {
+            padding: 10px 15px;
+            border: none;
+            background-color: #4CAF50;
+            color: white;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background-color: #45a049;
         }
     </style>
 </head>
@@ -75,7 +107,24 @@
             <li>Total Undergrad Students: {{ major.university.TotalUndergradStudents }}</li>
             <li>Total Grad Students: {{ major.university.TotalGradStudents }}</li>
         </ul>
-
+        <h3>Average Rating</h3>
+        <div class="average-rating">
+            {% if average_rating %}
+                <!-- Loop to display the average stars -->
+                <div class="review-stars">
+                    {% for i in star_range %}
+                        {% if i <= average_rating %}
+                            <span class="filled">★</span>  <!-- Filled star (yellow) -->
+                        {% else %}
+                            <span>★</span>  <!-- Empty star (gray) -->
+                        {% endif %}
+                    {% endfor %}
+                </div>
+                <p>Average Rating: {{ average_rating }} / 5</p>
+            {% else %}
+                <p>No reviews yet.</p>
+            {% endif %}
+        </div>
         <!-- Display Reviews -->
         <h3>Reviews</h3>
         <ul>
@@ -86,12 +135,10 @@
                         <em>{{ review.pub_date|date:"F j, Y, g:i a" }}</em> <br>
                     </div>
                     <div class="review-stars">
-                        <!-- Loop to display stars based on review.rating (filled or empty) -->
-                        {% for i in 1..5 %}
+                        <!-- Show only filled stars based on rating -->
+                        {% for i in star_range %}
                             {% if i <= review.rating %}
-                                <span class="filled">★</span>  <!-- Filled star -->
-                            {% else %}
-                                <span>★</span>  <!-- Empty star -->
+                                <span class="filled">★</span>  <!-- Filled star (yellow) -->
                             {% endif %}
                         {% endfor %}
                     </div>
@@ -100,9 +147,9 @@
                 <li>No reviews yet. Be the first to leave a review!</li>
             {% endfor %}
         </ul>
-
         <!-- Form for Leaving a Review -->
-        {% if user.is_authenticated %}
+        <!-- Review Submission Form -->
+        {% if user.is_authenticated and not user_review %}
             <h3>Leave a Review</h3>
             <form method="POST" action="{% url 'MajorHelp:leave-major-review' slug=major.slug %}">
                 {% csrf_token %}
@@ -121,6 +168,8 @@
 
                 <button type="submit">Submit Review</button>
             </form>
+        {% elif user.is_authenticated %}
+            <p>You have already submitted a review for this major!</p>
         {% else %}
             <p>You must be logged in to leave a review. <a href="{% url 'MajorHelp:login' %}">Log in</a> or <a href="{% url 'MajorHelp:signup' %}">Sign up</a>.</p>
         {% endif %}

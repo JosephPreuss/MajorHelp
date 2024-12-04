@@ -55,10 +55,12 @@
         function applyFilters() {
             const schoolType = document.getElementById("school-type").value;
             const searchQuery = document.getElementById("search-query").value;
+            const sortOrder = document.getElementById("sort-order").value;
 
             // Update the filter values dynamically in the form
             document.getElementById("school-type-hidden").value = schoolType;
             document.getElementById("search-query-hidden").value = searchQuery;
+            document.getElementById("sort-order-hidden").value = sortOrder;
 
             // Submit the form to filter the results
             document.getElementById("filter-form").submit();
@@ -99,11 +101,26 @@
     </select>
 </div>
 
+<!-- Filter Dropdown for Sorting -->
+<div style="margin-top: 20px;">
+    <label for="sort-order">Sort By:</label>
+    <select id="sort-order" name="sort_order" onchange="applyFilters()">
+        <option value="none" {% if request.GET.sort_order == 'none' %}selected{% endif %}>None</option>
+        <option value="low_to_high" {% if request.GET.sort_order == 'low_to_high' %}selected{% endif %}>
+            Tuition (Low to High)
+        </option>
+        <option value="high_to_low" {% if request.GET.sort_order == 'high_to_low' %}selected{% endif %}>
+            Tuition (High to Low)
+        </option>
+    </select>
+</div>
+
 <!-- Filter Form (hidden, submits without redirecting) -->
 <form id="filter-form" method="get" action="{% url 'MajorHelp:school_results' query=query %}" style="display: none;">
     <input type="hidden" id="filter-hidden" name="filter" value="{{ filter_type }}">
     <input type="hidden" id="school-type-hidden" name="school_type" value="{{ school_type }}">
     <input type="hidden" id="search-query-hidden" name="query" value="{{ query }}">
+    <input type="hidden" id="sort-order-hidden" name="sort_order" value="{{ request.GET.sort_order|default:'none' }}">
 </form>
 
 <!-- Search Results -->

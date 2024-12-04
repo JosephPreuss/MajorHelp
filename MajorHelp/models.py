@@ -11,8 +11,6 @@ from django.contrib.auth.models import User
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from pestopanini import settings
 
-# Create your models here.
-
 # Model for university
 class University(models.Model):
     name = models.TextField()
@@ -39,7 +37,6 @@ class University(models.Model):
         default=0,
     )
 
-    
     out_of_state_base_max_tuition = models.IntegerField(
         validators=[MinValueValidator(0)],
         default=0,
@@ -88,8 +85,9 @@ class University(models.Model):
 
     def __str__(self):
         return self.name
-    
-# instance of a rating for a university, uses foreign key to refrence that university    
+
+
+# instance of a rating for a university, uses foreign key to reference that university    
 class UniversityRating(models.Model):
     CATEGORY_CHOICES = [
         ('campus', 'Campus'),
@@ -110,7 +108,6 @@ class UniversityRating(models.Model):
     class Meta:
         unique_together = ('university', 'category', 'user')
 
-    # Ensure the rating is within the 1-5 range
     def save(self, *args, **kwargs):
         if self.rating < 1:
             self.rating = 1
@@ -121,7 +118,8 @@ class UniversityRating(models.Model):
     def __str__(self):
         return f"{self.university.name} - {self.category}: {self.rating}"
 
-# Model for a uni review
+
+# Model for a university review
 class UniversityReview(models.Model):
     username = models.CharField(max_length=50)
     review_text = models.CharField(max_length=500)
@@ -131,6 +129,8 @@ class UniversityReview(models.Model):
     def __str__(self):
         return f"{self.username}: {self.review_text}"
     
+
+# Model for the Major
 class Major(models.Model):
     DEPARTMENT_CHOICES = [
         ('Humanities and Social Sciences', 'Humanities and Social Sciences'),
@@ -151,7 +151,7 @@ class Major(models.Model):
         related_name="majors"
     )
     major_name = models.CharField(max_length=255)
-    major_description = models.TextField(blank=True)  # Add this line
+    major_description = models.TextField(blank=True)
     slug = models.SlugField(default="", editable=False, null=False, unique=True)
     department = models.CharField(max_length=50, choices=DEPARTMENT_CHOICES)
     in_state_min_tuition = models.IntegerField(
@@ -195,8 +195,12 @@ class Major(models.Model):
             f"(In-state: ${self.in_state_min_tuition} - ${self.in_state_max_tuition}, "
             f"Out-of-state: ${self.out_of_state_min_tuition} - ${self.out_of_state_max_tuition})"
         )
+
+
+# Default user getter for MajorReview model
 def get_default_user():
     return User.objects.first().id
+
 
 class MajorReview(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, default=get_default_user)
@@ -204,10 +208,11 @@ class MajorReview(models.Model):
     pub_date = models.DateTimeField(auto_now_add=True)
     major = models.ForeignKey('Major', on_delete=models.CASCADE, related_name='major_reviews')
     university = models.ForeignKey('University', on_delete=models.CASCADE, default=1)  # Assuming 1 is a valid University ID
-    rating = models.DecimalField(max_digits=2, decimal_places=1, validators=[MinValueValidator(1), MaxValueValidator(5)],default=0)
+    rating = models.DecimalField(max_digits=2, decimal_places=1, validators=[MinValueValidator(1), MaxValueValidator(5)], default=0)
 
     def __str__(self):
         return f"{self.user.username}: {self.review_text}"
+
 
 class FinancialAid(models.Model):
     name = models.CharField(max_length=256)
@@ -217,6 +222,8 @@ class FinancialAid(models.Model):
     def __str__(self):
         return self.name
 
+
+# Custom User Manager
 class CustomUserManager(BaseUserManager):
     def create_user(self, username, password=None, **extra_fields):
         if not username:
@@ -237,6 +244,8 @@ class CustomUserManager(BaseUserManager):
 
         return self.create_user(username, password, **extra_fields)
 
+
+# Custom User model
 class CustomUser(AbstractUser):
     ROLE_CHOICES = [
         ('prospective_student', 'Prospective Student'),
