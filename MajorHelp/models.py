@@ -209,6 +209,14 @@ class MajorReview(models.Model):
     def __str__(self):
         return f"{self.user.username}: {self.review_text}"
 
+class FinancialAid(models.Model):
+    name = models.CharField(max_length=256)
+    location = models.CharField(max_length=256)
+    amount = models.IntegerField(default=0)
+    
+    def __str__(self):
+        return self.name
+
 class CustomUserManager(BaseUserManager):
     def create_user(self, username, password=None, **extra_fields):
         if not username:

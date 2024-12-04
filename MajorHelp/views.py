@@ -325,6 +325,7 @@ class CalcView(View):
                 "outstate"   : request.GET['outstate'],
                 "department" : request.GET['dept'],
                 "major"      : request.GET['major'],
+                "aid"        : request.GET['aid'],
             }
         
         # This exception is raised if one of the values (uni, dept, etc) is not defined.
@@ -408,12 +409,36 @@ class CalcView(View):
         major["fees"] = majorObj.fees
 
 
+        # setup financial aid
+
+        aid = {
+            "name"          : "",
+            "amount"        : 0,
+        }
+
+
+        if (inData["aid"] != ""):
+            aidObj = None
+            try:
+                aidObj = FinancialAid.objects.get(name=inData["aid"])
+            except FinancialAid.DoesNotExist as error:
+                raise
+
+            # get the data for Financial aid
+            aid["name"] = aidObj.name
+
+            aid["amount"] = aidObj.amount
+
+
+
+
         outData = {
-            "minTui" : 0,
-            "maxTui" : 0,
-            "outstate" : False,
-            "uni" : university,
-            "major"      : major,
+            "minTui"        : 0,
+            "maxTui"        : 0,
+            "outstate"      : False,
+            "uni"           : university,
+            "major"         : major,
+            "aid"           : aid,
             # Any extra data can either go here or in Alerts.
             "Alerts"     : {},    # Kept for aspirational purposes
         }
@@ -423,11 +448,13 @@ class CalcView(View):
 
         # calculate the final tuition range
 
-        outData["minTui"] = university["baseMinTui"] + university["fees"] + \
-                                major["baseMinTui"] + major["fees"]
-        
-        outData["maxTui"] = university["baseMaxTui"] + university["fees"] + \
-                                major["baseMaxTui"] + major["fees"]
+        outData["minTui"] = university["baseMinTui"] + university["fees"]   + \
+                            major["baseMinTui"] + major["fees"]               \
+                            - aid["amount"]
+
+        outData["maxTui"] = university["baseMaxTui"] + university["fees"]   + \
+                            major["baseMaxTui"] + major["fees"]               \
+                            - aid["amount"]
         
 
         return JsonResponse(outData)

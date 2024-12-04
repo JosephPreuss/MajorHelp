@@ -14,6 +14,7 @@
         outstate : false,
         dept     : null,
         major    : null,
+        aid      : "",   // empty string represents no aid
     }
 
     const inputIds = [
@@ -21,7 +22,53 @@
         "outstate",
         "dept",
         "major",
+        "aid",
     ]
+
+
+    function getValues() {
+
+        for (let i = 0; i < inputIds.length; i++){
+            Input(inputIds[i], false, false);
+        }
+
+
+        validateInputData();
+    }
+
+
+    function Input(entry, required = false, validate=true) {
+
+        let element, data;
+
+
+        if (entry === undefined) return false;
+
+        element = document.getElementById(entry);
+
+        if (!element) return false;
+
+
+
+        if (element.tagName.toLowerCase() === 'input' && element.type === "checkbox") {
+            // Checkbox input
+
+            data = element.checked;
+        } else {
+            // Default
+
+            // check if the entered data isn't just whitespace via trim and length
+            data = document.getElementById(entry).value.trim();
+            if (data.length == 0 && required) return;
+        }
+        inputData[entry] = data;
+
+        if (validate) {
+            validateInputData();
+        }
+
+    }
+    
 
     async function validateInputData() {
         for (const [ignored, value] of Object.entries(inputData)) {
@@ -53,35 +100,6 @@
         updateData(data);
     }
 
-    function Input(entry) {
-
-        let element, data;
-
-
-        if (entry === undefined) return false;
-
-        element = document.getElementById(entry);
-        
-        if (!element) return false;
-
-
-        if (element.tagName.toLowerCase() === 'input' && element.type === "checkbox") {
-            // Checkbox input
-
-            data = element.checked;
-        } else {
-            // Default
-
-            // check if the entered data isn't just whitespace via trim and length
-            data = document.getElementById(entry).value.trim();
-            if (data.length == 0) return;
-
-        }
-        inputData[entry] = data;
-        validateInputData();
-
-    }
-
     function updateData(data) {
         const total = "$" + data['minTui'] + ' - $' + data['maxTui'];
 
@@ -99,19 +117,22 @@
 
 
         major = data["major"];
-        document.getElementById("majorName").textContent = data['major']['name'];
+        document.getElementById("majorName").textContent = major['name'];
         document.getElementById("majorTui").textContent = "$" + major['baseMinTui'] + ' - $' + major['baseMaxTui'];
         document.getElementById("majorFees").textContent = "$" + major['fees'];
 
-    }
 
-    function getValues() {
-        for (let i = 0; i < inputIds.length; i++){
-            Input(inputIds[i]);
+        aid = data["aid"];
+        
+        if (aid["name"] !== "") {
+            document.getElementById("financialAidOutput").style.display = 'inline';
+            document.getElementById("aidName").textContent = aid['name'];
+            document.getElementById("aidTui").textContent = "-$" + aid['amount'];
+        } else {
+            document.getElementById("financialAidOutput").style.display = 'none';
         }
 
     }
-
 </script>
 {% endblock script %}
 
@@ -128,7 +149,7 @@
             <h2>Let's start by choosing your school.</h2>
             <!--The "; return false" prevents the form from actually submitting via post or get
                 thus refreshing the page... which clears the form.-->
-            <form onsubmit="Input('uni'); return false">
+            <form onsubmit="Input('uni', true); return false">
                 <input type="text" id="uni" name="university" placeholder="Enter your university."
                     value="">
             </form>
@@ -156,9 +177,16 @@
 
         <div>
             <h2>Great, now lets talk majors.</h2>
-            <form onsubmit="Input('major'); return false">
+            <form onsubmit="Input('major', true); return false">
                 <input type="text" name="major" id="major" placeholder="" value="">
             </form> 
+        </div>
+
+        <div id="financialAidInput">
+            <h2>Do you have any scholarships or Financial aid?</h2>
+            <form onsubmit="Input('aid'); return false">
+                <input type="text" name="aid" id="aid" placeholder="" value="">
+            </form>
         </div>
 
         <!--
@@ -167,10 +195,7 @@
             (placeholder text)
         </div>
 
-        <div id="scholarships">
-            <h2>Do you have any scholarships?</h2>
-            (placeholder text)
-        </div>
+        
 
         <div id="extraAid">
             <h2>Enter any other estimated external aids</h2>
@@ -178,7 +203,7 @@
         </div>
         -->
         <br>
-        <input type="button" value="submit" onclick="getValues();">
+        <input id="submitButton" type="button" value="submit" onclick="getValues();">
     </div>
 
     <div id="output" style="display: none;">
@@ -248,6 +273,16 @@
 
 
         </ul>
+        
+        <div id="financialAidOutput" style="display : none;">
+            <h3>Financial Aid</h3>
+            <b><span id="aidName">XXXXXXXXXXXX</span></b>
+            <ul class="outputList">
+                <li>
+                    Price reducted <span id="aidTui"></span>
+                </li>
+            </ul>
+        </div>
 
 
         <!--
