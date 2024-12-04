@@ -1,0 +1,228 @@
+/* UniOverview.css */
+
+/* General Styles */
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #4ec7cf;
+}
+
+h1 {
+    text-align: center;
+    font-size: 3.5rem;
+    color: #004080; /* Navy blue */
+    margin-top: 25px;
+    margin-bottom: 5px;
+}
+
+h2 {
+    text-align: center;
+    font-size: 2rem;
+    color: #666;
+    margin-top: 0;
+    margin-bottom: 10px;
+}
+
+.about-container {
+    max-width: 1500px; 
+    background-color: #fff; /* White background for the content box */
+    padding: 20px; /* Adds padding inside the box */
+    margin: 0 auto; /* Centers the box */
+    margin-top: 20px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1); /* External shadow for depth */
+    border-radius: 10px; /* Rounded corners */
+}
+
+.about-container h10 {
+    text-align: left;
+    font-size: 2.5rem;
+    color: #666;
+    margin-top: 0;
+    margin-bottom: 10px;
+    margin-left: 25px;
+    font-style: italic;
+    font-weight: 550;
+}
+
+.about-container p1 {
+    display: block;
+    max-width: 1430px;
+    margin-left: 35px;
+    margin-right: 35px;
+    margin-top: 10px;
+    line-height: 1.5;
+    font-size: 1.25rem;
+}
+
+
+/* Ratings Section */
+.ratings-section {
+    max-width: 725px; 
+    background-color: #fff; /* White background for the content box */
+    padding: 20px; /* Adds padding inside the box */
+    margin-left: 425px; /* Centers the box */
+    margin-top: 20px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1); /* External shadow for depth */
+    border-radius: 10px; /* Rounded corners */
+}
+
+.ratings-section h3 {
+    text-align: left;
+    font-size: 2.5rem;
+    color: #666;
+    margin-top: 0;
+    margin-bottom: 10px;
+    margin-left: 25px;
+    font-style: italic;
+    font-weight: 550;
+}
+
+.ratings-section h4 {
+    text-align: left;
+    font-size: 1.4rem;
+    color: #666;
+    margin-top: 0;
+    margin-bottom: 10px;
+    margin-left: 25px;
+    text-decoration: underline;
+    font-weight: 550;
+}
+
+.ratings-section ul {
+    list-style: none;
+    margin: 30px;
+}
+
+.ratings-section ul li {
+    background: #b3d7e6;
+    border: 4px solid #00a0e6;
+    border-radius: 20px;
+    margin: 10px;
+    padding: 10px;
+    font-size: 1.5rem;
+    text-align: center;
+    font-weight: 700;
+    color: #666;
+}
+
+.ratings-section form {
+    margin: 10px 0;
+}
+
+.ratings-section button {
+    margin: 5px;
+    padding: 5px 10px;
+    background-color: #0073e6;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.ratings-section button:hover {
+    background-color: #005bb5;
+}
+
+/* New Review Form */
+.new-post-form {
+    background-color: #f9f9f9;
+    padding: 20px;
+    margin: 20px auto;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    max-width: 800px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.new-post-form h6 {
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+}
+
+.new-post-form .review-input {
+    width: 100%;
+    height: 100px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    resize: none;
+}
+
+.new-post-form .submit-review {
+    padding: 10px 20px;
+    background-color: #28a745; /* Green */
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.new-post-form .submit-review:hover {
+    background-color: #218838;
+}
+
+/* Review List */
+.review-list {
+    background-color: #fff;
+    padding: 20px;
+    margin: 20px auto;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    max-width: 800px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.review-list h9 {
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+    color: #333;
+}
+
+.review-list ul {
+    list-style: none;
+    padding: 0;
+}
+
+.review-list li {
+    margin-bottom: 10px;
+    padding: 10px;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+.review-list p5 {
+    margin: 0;
+    font-size: 1rem;
+}
+
+.review-list p6 {
+    text-align: center;
+    color: #888;
+}
+
+/* Statistics */
+h5, p2, p3, p4 {
+    text-align: center;
+    margin: 10px 0;
+}
+
+h5 {
+    font-size: 1.2rem;
+    color: #444;
+}
+
+p2, p3, p4 {
+    font-size: 1rem;
+}
+
+/* Links */
+a {
+    color: #0073e6;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}

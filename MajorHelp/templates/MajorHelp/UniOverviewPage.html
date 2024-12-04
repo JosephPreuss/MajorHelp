@@ -1,152 +1,172 @@
 <!DOCTYPE html>
 {% include "navbar.html" %}
 <html lang="en">
+
 <head>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/UniOverview.css' %}">
     <meta charset="UTF-8">
     <title>{{ university.name }}</title>
 </head>
+
 <body>
     <h1>{{ university.name }}</h1>
     <h2> {{ university.location }}</h2>
     
-    <p>{{ university.aboutText }}</p>
+    <div class="about-container">
+        <h10> About: </h10> 
+        <p1>{{ university.aboutText }}</p1>
+    </div>
 
-    <h3>Average Ratings</h3>
+    <div class="ratings-section">
+        <h3>Average Ratings:</h3>
+        {% if not user.is_authenticated and user.role != 'alumni' or user.role != 'current_student' %}
+        <h4> Please log-in as a Current student or Alumni to leave a rating! </h4>
+        {% endif %}
+        <ul>
+            <!-- List of the ratings catagories for the university and buttons for each -->
+            <li>Campus: {{ university.campus_rating }}
+                {% if user.is_authenticated and user.role == 'alumni' or user.role == 'current_student' %}
+                <form action="{% url 'MajorHelp:submit-rating' university.id %}" method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="category" value="campus">
+                    <button type="submit" name="rating" value="1">1</button>
+                    <button type="submit" name="rating" value="2">2</button>
+                    <button type="submit" name="rating" value="3">3</button>
+                    <button type="submit" name="rating" value="4">4</button>
+                    <button type="submit" name="rating" value="5">5</button>
+                </form>
+                {% endif %}
+            </li>
 
-    {% if not user.is_authenticated and user.role != 'alumni' or user.role != 'current_student' %}
-    <h4> Please log-in as a Current student or Alumni to leave a rating! </h4>
-    {% endif %}
+            <li>Athletics: {{ university.athletics_rating }}
+                {% if user.is_authenticated and user.role == 'alumni' or user.role == 'current_student' %}  
+                <form action="{% url 'MajorHelp:submit-rating' university.id %}" method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="category" value="athletics">
+                    <button type="submit" name="rating" value="1">1</button>
+                    <button type="submit" name="rating" value="2">2</button>
+                    <button type="submit" name="rating" value="3">3</button>
+                    <button type="submit" name="rating" value="4">4</button>
+                    <button type="submit" name="rating" value="5">5</button>
+                </form>
+                {% endif %}
+            </li>
 
-    <ul>
-        <!-- List of the ratings catagories for the university and buttons for each -->
-        <li>Campus: {{ university.campus_rating }}</li>
-            {% if user.is_authenticated and user.role == 'alumni' or user.role == 'current_student' %}
-            <form action="{% url 'MajorHelp:submit-rating' university.id %}" method="post">
-                {% csrf_token %}
-                <input type="hidden" name="category" value="campus">
-                <button type="submit" name="rating" value="1">1</button>
-                <button type="submit" name="rating" value="2">2</button>
-                <button type="submit" name="rating" value="3">3</button>
-                <button type="submit" name="rating" value="4">4</button>
-                <button type="submit" name="rating" value="5">5</button>
-            </form>
-            {% endif %}
+            <li>Safety: {{ university.safety_rating }}
+                {% if user.is_authenticated and user.role == 'alumni' or user.role == 'current_student' %}
+                <form action="{% url 'MajorHelp:submit-rating' university.id %}" method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="category" value="safety">
+                    <button type="submit" name="rating" value="1">1</button>
+                    <button type="submit" name="rating" value="2">2</button>
+                    <button type="submit" name="rating" value="3">3</button>
+                    <button type="submit" name="rating" value="4">4</button>
+                    <button type="submit" name="rating" value="5">5</button>
+                </form>
+                {% endif %}
+            </li>
 
-        <li>Athletics: {{ university.athletics_rating }}</li>
-            {% if user.is_authenticated and user.role == 'alumni' or user.role == 'current_student' %}  
-            <form action="{% url 'MajorHelp:submit-rating' university.id %}" method="post">
-                {% csrf_token %}
-                <input type="hidden" name="category" value="athletics">
-                <button type="submit" name="rating" value="1">1</button>
-                <button type="submit" name="rating" value="2">2</button>
-                <button type="submit" name="rating" value="3">3</button>
-                <button type="submit" name="rating" value="4">4</button>
-                <button type="submit" name="rating" value="5">5</button>
-            </form>
-            {% endif %}
+            <li>Social Life: {{ university.social_rating }}
+                {% if user.is_authenticated and user.role == 'alumni' or user.role == 'current_student' %}
+                <form action="{% url 'MajorHelp:submit-rating' university.id %}" method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="category" value="social">
+                    <button type="submit" name="rating" value="1">1</button>
+                    <button type="submit" name="rating" value="2">2</button>
+                    <button type="submit" name="rating" value="3">3</button>
+                    <button type="submit" name="rating" value="4">4</button>
+                    <button type="submit" name="rating" value="5">5</button>
+                </form>
+                {% endif %}
+            </li>
 
-        <li>Safety: {{ university.safety_rating }}</li>
-            {% if user.is_authenticated and user.role == 'alumni' or user.role == 'current_student' %}
-            <form action="{% url 'MajorHelp:submit-rating' university.id %}" method="post">
-                {% csrf_token %}
-                <input type="hidden" name="category" value="safety">
-                <button type="submit" name="rating" value="1">1</button>
-                <button type="submit" name="rating" value="2">2</button>
-                <button type="submit" name="rating" value="3">3</button>
-                <button type="submit" name="rating" value="4">4</button>
-                <button type="submit" name="rating" value="5">5</button>
-            </form>
-            {% endif %}
+            <li>Professors: {{ university.professor_rating }}
+                {% if user.is_authenticated and user.role == 'alumni' or user.role == 'current_student' %}
+                <form action="{% url 'MajorHelp:submit-rating' university.id %}" method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="category" value="professor">
+                    <button type="submit" name="rating" value="1">1</button>
+                    <button type="submit" name="rating" value="2">2</button>
+                    <button type="submit" name="rating" value="3">3</button>
+                    <button type="submit" name="rating" value="4">4</button>
+                    <button type="submit" name="rating" value="5">5</button>
+                </form>
+                {% endif %}
+            </li>
 
-        <li>Social Life: {{ university.social_rating }}</li>
-            {% if user.is_authenticated and user.role == 'alumni' or user.role == 'current_student' %}
-            <form action="{% url 'MajorHelp:submit-rating' university.id %}" method="post">
-                {% csrf_token %}
-                <input type="hidden" name="category" value="social">
-                <button type="submit" name="rating" value="1">1</button>
-                <button type="submit" name="rating" value="2">2</button>
-                <button type="submit" name="rating" value="3">3</button>
-                <button type="submit" name="rating" value="4">4</button>
-                <button type="submit" name="rating" value="5">5</button>
-            </form>
-            {% endif %}
+            <li>Dorms: {{ university.dorm_rating }}
+                {% if user.is_authenticated and user.role == 'alumni' or user.role == 'current_student' %}
+                <form action="{% url 'MajorHelp:submit-rating' university.id %}" method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="category" value="dorm">
+                    <button type="submit" name="rating" value="1">1</button>
+                    <button type="submit" name="rating" value="2">2</button>
+                    <button type="submit" name="rating" value="3">3</button>
+                    <button type="submit" name="rating" value="4">4</button>
+                    <button type="submit" name="rating" value="5">5</button>
+                </form>
+                {% endif %}
+            </li>
 
-        <li>Professors: {{ university.professor_rating }}</li>
-            {% if user.is_authenticated and user.role == 'alumni' or user.role == 'current_student' %}
-            <form action="{% url 'MajorHelp:submit-rating' university.id %}" method="post">
-                {% csrf_token %}
-                <input type="hidden" name="category" value="professor">
-                <button type="submit" name="rating" value="1">1</button>
-                <button type="submit" name="rating" value="2">2</button>
-                <button type="submit" name="rating" value="3">3</button>
-                <button type="submit" name="rating" value="4">4</button>
-                <button type="submit" name="rating" value="5">5</button>
-            </form>
-            {% endif %}
+            <li>Dining: {{ university.dining_rating }}
+                {% if user.is_authenticated and user.role == 'alumni' or user.role == 'current_student' %}
+                <form action="{% url 'MajorHelp:submit-rating' university.id %}" method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="category" value="dining">
+                    <button type="submit" name="rating" value="1">1</button>
+                    <button type="submit" name="rating" value="2">2</button>
+                    <button type="submit" name="rating" value="3">3</button>
+                    <button type="submit" name="rating" value="4">4</button>
+                    <button type="submit" name="rating" value="5">5</button>
+                </form>
+                {% endif %}
+            </li>
 
-        <li>Dorms: {{ university.dorm_rating }}</li>
-            {% if user.is_authenticated and user.role == 'alumni' or user.role == 'current_student' %}
-            <form action="{% url 'MajorHelp:submit-rating' university.id %}" method="post">
-                {% csrf_token %}
-                <input type="hidden" name="category" value="dorm">
-                <button type="submit" name="rating" value="1">1</button>
-                <button type="submit" name="rating" value="2">2</button>
-                <button type="submit" name="rating" value="3">3</button>
-                <button type="submit" name="rating" value="4">4</button>
-                <button type="submit" name="rating" value="5">5</button>
-            </form>
-            {% endif %}
+        </ul>
+    </div>
 
-        <li>Dining: {{ university.dining_rating }}</li>
-            {% if user.is_authenticated and user.role == 'alumni' or user.role == 'current_student' %}
-            <form action="{% url 'MajorHelp:submit-rating' university.id %}" method="post">
-                {% csrf_token %}
-                <input type="hidden" name="category" value="dining">
-                <button type="submit" name="rating" value="1">1</button>
-                <button type="submit" name="rating" value="2">2</button>
-                <button type="submit" name="rating" value="3">3</button>
-                <button type="submit" name="rating" value="4">4</button>
-                <button type="submit" name="rating" value="5">5</button>
-            </form>
-            {% endif %}
-
-    </ul>
-
-    <h3>Statistics</h3>
-    <p>Graduation Rate: {{ university.GraduationRate }}%</p>
-    <p>Total Undergrad Students: {{ university.TotalUndergradStudents }}</p>
-    <p>Total Grad Students: {{ university.TotalGradStudents }}</p>
+    <h5>Statistics</h5>
+    <p2>Graduation Rate: {{ university.GraduationRate }}%</p2>
+    <p3>Total Undergrad Students: {{ university.TotalUndergradStudents }}</p3>
+    <p4>Total Grad Students: {{ university.TotalGradStudents }}</p4>
     
     <!-- Form for leaving a review, visible only to logged-in users -->
     {% if user.is_authenticated and user.role == 'alumni' or user.role == 'current_student' %}
     <div class="new-post-form">
-        <h2>Leave a Review</h2>
+        <h6>Leave a Review</h6>
         <form action="{% url 'MajorHelp:create_review' user.username %}" method="post">
             {% csrf_token %}
             <input type="hidden" name="university_id" value="{{ university.id }}">
-            <textarea name="review_text" placeholder="Leave your review..." required></textarea>
+            <textarea class="review-input" name="review_text" placeholder="Leave your review..." required></textarea>
             <p></p>
-            <button type="submit">Submit Review</button>
+            <button class="submit-review" type="submit">Submit Review</button>
         </form>
     </div>
+
     {% elif user.is_authenticated %}
-    <h4>You must be an Alumni or a Current Student to leave a review.</h4>
+    <h7>You must be an Alumni or a Current Student to leave a review.</h7>
+
     {% else %}
-    <h4>Please <a href="{% url 'MajorHelp:login' %}">log in</a> to leave a review.</h4>
+    <h8>Please <a href="{% url 'MajorHelp:login' %}">log in</a> to leave a review.</h8>
+
     {% endif %}
 
     <!-- Display all reviews (visible to all users) -->
-    <h3>Reviews</h3>
-    {% if latest_post_list %}
-        <ul>
-            {% for post in latest_post_list %}
-                <li>
-                    <p>"{{ post.review_text }}" <strong>By:</strong> {{ post.username }} on {{ post.pub_date }}</p>
-                </li>
-            {% endfor %}
-        </ul>
-    {% else %}
-        <p>No reviews yet. Add your own if your a Student or Alumni!</p>
-    {% endif %}
+    <div class="review-list">
+        <h9>Reviews</h9>
+        {% if latest_post_list %}
+            <ul>
+                {% for post in latest_post_list %}
+                    <li>
+                        <p5>"{{ post.review_text }}" <strong>By:</strong> {{ post.username }} on {{ post.pub_date }}</p5>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p6>No reviews yet. Add your own if your a Student or Alumni!</p6>
+        {% endif %}
+    </div>
+
 </body>
 </html>
