@@ -54,13 +54,18 @@ h2 {
     font-size: 1.25rem;
 }
 
+.body-section{
+    display: flex; /* Use flexbox for horizontal alignment */
+    gap: 20px; /* Optional: adds space between the divs */
+    margin: 0 auto; /* Center the container */
+    max-width: 1530px; /* Ensure it doesn't stretch too much */
+}
 
 /* Ratings Section */
 .ratings-section {
-    max-width: 725px; 
+    min-width: 48%; 
     background-color: #fff; /* White background for the content box */
     padding: 20px; /* Adds padding inside the box */
-    margin-left: 425px; /* Centers the box */
     margin-top: 20px;
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1); /* External shadow for depth */
     border-radius: 10px; /* Rounded corners */
@@ -75,6 +80,16 @@ h2 {
     margin-left: 25px;
     font-style: italic;
     font-weight: 550;
+}
+
+.ratings-section p12 {
+    margin-left: 25px;
+    font-size: 1.1rem;
+    color: #666;
+    margin-top: 10px;
+    margin-bottom: 20px;
+    font-weight: 550;
+    text-decoration: underline;
 }
 
 .ratings-section h4 {
@@ -105,47 +120,148 @@ h2 {
     color: #666;
 }
 
-.ratings-section form {
-    margin: 10px 0;
+.ratings-section form { 
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: center; /* Align buttons back toward the center */
+    gap: 10px; /* Add spacing between buttons */
 }
 
 .ratings-section button {
     margin: 5px;
-    padding: 5px 10px;
-    background-color: #0073e6;
-    color: #fff;
+    padding: 10px;
+    background-color: #ffdd009d;
+    color: none;
     border: none;
-    border-radius: 5px;
     cursor: pointer;
+    clip-path: polygon(
+        50% 0%, 
+        61% 35%, 
+        98% 35%, 
+        68% 57%, 
+        79% 91%, 
+        50% 70%, 
+        21% 91%, 
+        32% 57%, 
+        2% 35%, 
+        39% 35%
+    ); /* Creates a star shape */
+    width: 50px;
+    height: 50px;
+    display: inline-block;
+    text-align: center;
+    font-size: 14px;
+    font-weight: bold;
+    line-height: 75px; /* Centers the text vertically */
+    transition: transform 0.3s ease, background-color 0.3s ease;
 }
 
+/* Highlight buttons on hover */
 .ratings-section button:hover {
-    background-color: #005bb5;
+    background-color: #ffdd009d;
+    transform: scale(1.1);
 }
+
+.ratings-section button:hover ~ button {
+    background-color: #ffdd009d; /* Reset background of buttons after hover */
+}
+
+/* Highlight preceding buttons */
+.ratings-section button:hover,
+.ratings-section button:hover ~ button {
+    background-color: #CFB53B; /* Highlight color */
+    transform: scale(1.1);
+}
+
+.ratings-section button.rating-button:hover ~ button.rating-button{
+    background-color: #ffdd009d; /* Reset non-highlighted buttons */
+}
+
+.stats-section{
+    min-width: 46%;
+    max-height: fit-content; 
+    background-color: #fff; /* White background for the content box */
+    padding: 20px; /* Adds padding inside the box */
+    margin-top: 20px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1); /* External shadow for depth */
+    border-radius: 10px; /* Rounded corners */
+}
+
+/* Statistics */
+.stats-section h5 {
+    text-align: left;
+    font-size: 2.5rem;
+    color: #666;
+    margin-top: 0;
+    margin-bottom: 10px;
+    margin-left: 25px;
+    font-style: italic;
+    font-weight: 550;
+}
+
+.stats-section p2 {
+    display: block;
+    max-width: 1430px;
+    margin-left: 35px;
+    margin-right: 35px;
+    margin-top: 10px;
+    line-height: 1.5;
+    font-size: 1.25rem;
+}
+
+.stats-section p3 {
+    display: block;
+    max-width: 1430px;
+    margin-left: 35px;
+    margin-right: 35px;
+    margin-top: 10px;
+    line-height: 1.5;
+    font-size: 1.25rem;
+}
+
+.stats-section p4{
+    display: block;
+    max-width: 1430px;
+    margin-left: 35px;
+    margin-right: 35px;
+    margin-top: 10px;
+    line-height: 1.5;
+    font-size: 1.25rem;
+}
+
 
 /* New Review Form */
 .new-post-form {
-    background-color: #f9f9f9;
-    padding: 20px;
-    margin: 20px auto;
-    border: 1px solid #ddd;
-    border-radius: 10px;
-    max-width: 800px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    max-width: 1500px; 
+    background-color: #fff; /* White background for the content box */
+    padding: 20px; /* Adds padding inside the box */
+    margin: 0 auto; /* Centers the box */
+    margin-top: 20px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1); /* External shadow for depth */
+    border-radius: 10px; /* Rounded corners */
 }
 
 .new-post-form h6 {
-    font-size: 1.2rem;
+    text-align: left;
+    font-size: 2.5rem;
+    color: #666;
+    margin-top: 0;
     margin-bottom: 10px;
+    margin-left: 25px;
+    font-style: italic;
+    font-weight: 550;
 }
 
 .new-post-form .review-input {
-    width: 100%;
+    width: 98%;
+    margin: 0 auto;
     height: 100px;
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 5px;
     resize: none;
+    font-size: 1.25rem;
+    
 }
 
 .new-post-form .submit-review {
@@ -156,6 +272,7 @@ h2 {
     border-radius: 5px;
     cursor: pointer;
     margin-top: 10px;
+    font-size: 1.25rem;
 }
 
 .new-post-form .submit-review:hover {
@@ -164,24 +281,50 @@ h2 {
 
 /* Review List */
 .review-list {
-    background-color: #fff;
-    padding: 20px;
-    margin: 20px auto;
-    border: 1px solid #ddd;
-    border-radius: 10px;
-    max-width: 800px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    max-width: 1500px; 
+    background-color: #fff; /* White background for the content box */
+    padding: 20px; /* Adds padding inside the box */
+    margin: 0 auto; /* Centers the box */
+    margin-top: 20px;
+    margin-bottom: 100px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1); /* External shadow for depth */
+    border-radius: 10px; /* Rounded corners */
+}
+
+.review-list p10 {
+    margin-left: 560px ;
+    font-size: 1.5rem;
+    color: #666;
+    margin-top: 10px;
+    margin-bottom: 20px;
+    font-weight: 550;
+    text-decoration: underline;
+}
+
+.review-list p11 {
+    margin-left: 415px ;
+    font-size: 1.5rem;
+    color: #666;
+    margin-top: 10px;
+    margin-bottom: 20px;
+    font-weight: 550;
+    text-decoration: underline;
 }
 
 .review-list h9 {
-    font-size: 1.5rem;
-    margin-bottom: 15px;
-    color: #333;
+    text-align: left;
+    font-size: 2.5rem;
+    color: #666;
+    margin-top: 0;
+    margin-bottom: 20px;
+    margin-left: 25px;
+    font-style: italic;
+    font-weight: 550;
 }
 
 .review-list ul {
     list-style: none;
-    padding: 0;
+    padding: 10px;
 }
 
 .review-list li {
@@ -193,28 +336,14 @@ h2 {
 }
 
 .review-list p5 {
-    margin: 0;
-    font-size: 1rem;
+    margin-left: 10px;
+    font-size: 1.25rem;
+    padding: 5px;
 }
 
 .review-list p6 {
     text-align: center;
     color: #888;
-}
-
-/* Statistics */
-h5, p2, p3, p4 {
-    text-align: center;
-    margin: 10px 0;
-}
-
-h5 {
-    font-size: 1.2rem;
-    color: #444;
-}
-
-p2, p3, p4 {
-    font-size: 1rem;
 }
 
 /* Links */
