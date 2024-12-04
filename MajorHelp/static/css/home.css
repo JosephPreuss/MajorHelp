@@ -6,7 +6,7 @@
 
 .text-section {
     flex: 1; /* Takes up 50% of the width, matching the image section */
-    background-color: #4cc8e0; /* Blue color on the left */
+    background-color: #4FC7CF; /* Blue color on the left */
     display: flex;
     flex-direction: column;
     justify-content: flex-start; /* Aligns content to the top */

@@ -21,16 +21,16 @@
 }
 
 .signup-header h1 {
-    text-align: left;          /* Aligns the text to the left */
+    text-align: left;          
     font-size: 70px;
-    margin-bottom: 20px;       /* Optional: Adds space below the header */
-    font-weight: bold;         /* Makes the text bold */
-    color: #000;               /* Adjusts the color if needed */
-    padding-left: 20px;        /* Adds a little space on the left for better alignment */
+    margin-bottom: 20px;       
+    font-weight: bold;        
+    color: #000;              
+    padding-left: 20px;       
 }
 
 .signup-header .highlight {
-    color: #4cc8e0;
+    color: #4FC7CF;
 }
 
 /* Form Group Styling */
@@ -81,7 +81,7 @@
 .confirm-button {
     margin-top: 20px;
     padding: 20px 70px;
-    background-color: #4cc8e0;
+    background-color: #4FC7CF;
     color: #fff;
     border: none;
     border-radius: 25px;

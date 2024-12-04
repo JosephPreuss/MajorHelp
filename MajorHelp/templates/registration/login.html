@@ -9,7 +9,16 @@
         <h2>Login</h2>
         <form method="post" class="login-form">
             {% csrf_token %}
-            {{ form.as_p }}
+            <div class="input-group">
+                {{ form.username.label_tag }}
+                {{ form.username }}
+                {{ form.username.errors }}
+            </div>
+            <div class="input-group">
+                {{ form.password.label_tag }}
+                {{ form.password }}
+                {{ form.password.errors }}
+            </div>
             <button type="submit" class="btn">Login</button>
         </form>
 
@@ -20,4 +29,3 @@
     </div>
 </div>
 {% endblock %}
-g

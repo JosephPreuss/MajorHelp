@@ -1,6 +1,25 @@
-<!-- settings.html -->
-{% extends "base.html" %}
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}User Settings{% endblock %}
+
 {% block content %}
-<h1>User Settings</h1>
-<p>This is a placeholder for the user settings page.</p>
+<div class="settings-container">
+    <div class="settings-header">
+        <h1>User <span class="highlight">Settings</span></h1>
+    </div>
+    
+    <div class="user-info">
+        <p><strong>Email:</strong> {{ user.email }}</p>
+        <p><strong>Username:</strong> {{ user.username }}</p>
+        <p><strong>Role:</strong> {{ user.role }}</p>
+    </div>
+    
+    <div class="settings-actions">
+        <a href="{% url 'password_change' %}">
+            <button class="change-password-button">Change Password</button>
+        </a>
+        <button class="delete-account-button">Delete Account</button>
+    </div>
+</div>
 {% endblock %}

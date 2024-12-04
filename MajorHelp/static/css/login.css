@@ -1,6 +1,23 @@
 body {
-    background-color: #4FC7CF;
+    height: 100vh; 
+    background: linear-gradient(45deg, #4FC7CF, #15787f);
+    background-size: 300% 300%;
+    animation: gradientAnimation 6s ease infinite; 
 }
+
+/* Keyframes for the gradient animation */
+@keyframes gradientAnimation {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
 
 /* Styles for the login container */
 .login-container {
@@ -36,20 +53,33 @@ body {
     flex-direction: column;
 }
 
+/* Input Fields for Login Form */
+.login-form input {
+    width: 70%; /* Full-width inputs */
+    padding: 10px; /* Padding for comfortable input space */
+    border: 1px solid #ccc; /* Light gray border */
+    border-radius: 5px; /* Rounded corners */
+    font-size: 1rem; /* Standard font size */
+    margin-bottom: 15px; /* Space below each input field for better separation */
+}
+
+/* Button Styling */
 .login-form button {
-    margin-top: 20px;
     padding: 10px;
-    background-color: #4cc8e0; /* Button background color */
+    width: 100%; /* Full-width button */
+    background-color: #4FC7CF; /* Button background color */
     color: white;
     border: none;
-    border-radius: 4px;
+    border-radius: 5px; /* Match the border-radius of inputs */
+    font-size: 1rem; /* Match the font size */
     cursor: pointer;
     transition: background-color 0.3s ease;
 }
 
 .login-form button:hover {
-    background-color: #45a5c9;
+    background-color: #45a5c9; /* Slightly darker color on hover */
 }
+
 
 .login-links {
     margin-top: 15px;

@@ -1,0 +1,82 @@
+/* Settings container styles */
+.settings-container {
+    display: flex;
+    flex-direction: column;
+    align-items: left;
+    padding: 30px;  /* Reduce padding to make it more compact vertically */
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    max-width: 1200px;
+    margin: 60px auto;  /* Reduce margin to make the container take up less vertical space */
+    background-color: rgb(255, 255, 255);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Header styling */
+.settings-header {
+    margin-bottom: 20px;
+}
+
+/* Styles for the settings header */
+.settings-header h1 {
+    font-size: 5rem; 
+    font-weight: bold; 
+    margin-bottom: 20px; 
+}
+.highlight {
+    color: #4FC7CF; /* Light blue color */
+}
+
+/* User info styling */
+.user-info p {
+    font-size: 1.2rem;
+    margin: 10px 0;
+    margin-bottom: 30px;
+}
+
+.settings-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 20px;
+    position: relative;
+    top: -155px;
+    left: -125px;
+}
+
+/* Change password button */
+.change-password-button {
+    padding: 20px 40px; 
+    width: 200px; 
+    background-color: #4FC7CF;
+    color: #ffffff;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    font-weight: bold;
+    text-align: center; /* Center the text within the button */
+    transition: background-color 0.3s ease;
+}
+
+.change-password-button:hover {
+    background-color: #3aa6b8;
+}
+
+/* Delete account button */
+.delete-account-button {
+    padding: 20px 40px; /* Increase padding to make buttons appear larger */
+    width: 200px; /* Set a fixed width for uniform button size */
+    background-color: #d45252;
+    color: #ffffff;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    font-weight: bold;
+    text-align: center; /* Center the text within the button */
+    transition: background-color 0.3s ease;
+}
+
+.delete-account-button:hover {
+    background-color: #e63939;
+}
+
