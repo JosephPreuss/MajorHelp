@@ -4,12 +4,57 @@
 {% block title %}Sign Up{% endblock %}
 
 {% block content %}
-    <h2>Sign Up</h2>
-    <form method="post">
+<div class="signup-container">
+    <div class="signup-header">
+        <h1>Sign <span class="highlight">Up</span></h1>
+    </div>
+    <form method="post" class="signup-form">
         {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Sign Up</button>
-    </form>
+        <div class="form-group">
+            <!-- Left Section for Email and Username -->
+            <div class="form-section">
+                <h2>Email</h2>
+                <div class="input-group">
+                    {{ form.email.label_tag }}
+                    {{ form.email }}
+                    {{ form.email.errors }}
+                </div>
+                <div class="input-group">
+                    {{ form.username.label_tag }}
+                    {{ form.username }}
+                    {{ form.username.errors }}
+                </div>
+            </div>
 
-    <p>Already have an account? <a href="{% url 'MajorHelp:login' %}">Login here</a></p>
+            <!-- Middle Section for Passwords -->
+            <div class="form-section password-section">
+                <h2>Password</h2>
+                <p>Enter and confirm your password.</p>
+                <div class="input-group">
+                    {{ form.password.label_tag }}
+                    {{ form.password }}
+                    {{ form.password.errors }}
+                </div>
+                <div class="input-group">
+                    {{ form.confirm_password.label_tag }}
+                    {{ form.confirm_password }}
+                    {{ form.confirm_password.errors }}
+                </div>
+            </div>
+
+            <!-- Right Section for Role -->
+            <div class="form-section role-section">
+                <h2>Role</h2>
+                <p>Select your academic status: Are you a prospective student, current student, alumni, or staff?</p>
+                <div class="input-group">
+                    {{ form.role.label_tag }}
+                    {{ form.role }}
+                    {{ form.role.errors }}
+                </div>
+                <button type="submit" class="confirm-button">Confirm</button>
+            </div>
+        </div>
+    </form>
+    <p class="signup-footer">Already have an account? <a href="{% url 'MajorHelp:login' %}">Login here</a></p>
+</div>
 {% endblock %}
