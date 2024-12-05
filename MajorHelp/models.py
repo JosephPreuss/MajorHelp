@@ -130,7 +130,19 @@ class UniversityReview(models.Model):
         return f"{self.username}: {self.review_text}"
     
 
-# Model for the Major
+class Course(models.Model):
+    major = models.ForeignKey(
+        'Major',
+        on_delete=models.CASCADE,
+        related_name='major_courses'  # Unique related_name
+    )
+    course_name = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.course_name
+
+
+# Update the Major model
 class Major(models.Model):
     DEPARTMENT_CHOICES = [
         ('Humanities and Social Sciences', 'Humanities and Social Sciences'),
@@ -170,11 +182,13 @@ class Major(models.Model):
         validators=[MinValueValidator(0)],
         default=0,
     )
-
     fees = models.IntegerField(
         validators=[MinValueValidator(0)],
         default=0,
     )
+
+    # New field: Courses
+    courses = models.ManyToManyField(Course, related_name="majors", blank=True)
 
     def clean(self):
         if self.in_state_max_tuition < self.in_state_min_tuition:
@@ -195,7 +209,6 @@ class Major(models.Model):
             f"(In-state: ${self.in_state_min_tuition} - ${self.in_state_max_tuition}, "
             f"Out-of-state: ${self.out_of_state_min_tuition} - ${self.out_of_state_max_tuition})"
         )
-
 
 # Default user getter for MajorReview model
 def get_default_user():
