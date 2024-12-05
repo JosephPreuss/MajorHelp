@@ -18,7 +18,6 @@
             'Law and Criminal Justice'
         ];
 
-        // Function to handle filter changes (department, major, etc.)
         function setActiveFilter(filter) {
             document.getElementById("filter").value = filter;
 
@@ -29,7 +28,6 @@
                 select.name = "query";
                 select.id = "search-query";
 
-                // Add "Select a Department" as the default option
                 select.innerHTML = `<option value="" disabled selected>Select a Department</option>` +
                     departmentOptions.map(option => `<option value="${option}">${option}</option>`).join('');
 
@@ -46,52 +44,47 @@
             }
         }
 
-        window.onload = function () {
-            const filter = "{{ filter_type }}" || "department"; // Default filter is department
-            setActiveFilter(filter);
-        };
-
-        // This function will handle the form submission for the filters without page reload
         function applyFilters() {
             const schoolType = document.getElementById("school-type").value;
             const searchQuery = document.getElementById("search-query").value;
             const sortOrder = document.getElementById("sort-order").value;
+            const minTuition = document.getElementById("min-tuition").value;
+            const maxTuition = document.getElementById("max-tuition").value;
+            const isOutState = document.getElementById("is-out-state").checked;
 
-            // Update the filter values dynamically in the form
             document.getElementById("school-type-hidden").value = schoolType;
             document.getElementById("search-query-hidden").value = searchQuery;
             document.getElementById("sort-order-hidden").value = sortOrder;
+            document.getElementById("min-tuition-hidden").value = minTuition;
+            document.getElementById("max-tuition-hidden").value = maxTuition;
+            document.getElementById("is-out-state-hidden").value = isOutState;
 
-            // Submit the form to filter the results
             document.getElementById("filter-form").submit();
         }
     </script>
 </head>
 <body>
 
-<!-- Search Again Section (this redirects to the search page) -->
+<!-- Search Again Section -->
 <div>
     <h1 style="display: inline;">Search Again</h1>
     <form action="{% url 'MajorHelp:search' %}" method="get" style="display: inline;">
         <div id="search-field-container" style="display: inline;">
-            <!-- Default input for Major search -->
-            <input type="text" id="search-query" name="query" placeholder="Enter your search term..." value="{{ query }}">
+            <input type="text" id="search-query" name="query" placeholder="Enter Major name..." value="{{ query }}">
         </div>
-        <input type="hidden" id="filter" name="filter" value="{{ filter_type }}">
+        <input type="hidden" id="filter" name="filter" value="major">
         <button type="submit">Search</button>
     </form>
 </div>
 
-<!-- Filter Buttons for Department, School, and Major -->
+<!-- Filter Buttons -->
 <div>
-    <div>
-        <button type="button" id="department-button" onclick="setActiveFilter('department')">Department</button>
-        <button type="button" id="school-button" onclick="setActiveFilter('school')">School</button>
-        <button type="button" id="major-button" onclick="setActiveFilter('major')">Major</button>
-    </div>
+    <button type="button" id="department-button" onclick="setActiveFilter('department')">Department</button>
+    <button type="button" id="school-button" onclick="setActiveFilter('school')">School</button>
+    <button type="button" id="major-button" class="active" onclick="setActiveFilter('major')">Major</button>
 </div>
 
-<!-- Filter Dropdown for School Type -->
+<!-- Filter for School Type -->
 <div style="margin-top: 20px;">
     <label for="school-type">School Type:</label>
     <select id="school-type" onchange="applyFilters()">
@@ -101,10 +94,10 @@
     </select>
 </div>
 
-<!-- Filter Dropdown for Sorting -->
+<!-- Filter for Sorting -->
 <div style="margin-top: 20px;">
     <label for="sort-order">Sort By:</label>
-    <select id="sort-order" name="sort_order" onchange="applyFilters()">
+    <select id="sort-order" onchange="applyFilters()">
         <option value="none" {% if request.GET.sort_order == 'none' %}selected{% endif %}>None</option>
         <option value="low_to_high" {% if request.GET.sort_order == 'low_to_high' %}selected{% endif %}>
             Tuition (Low to High)
@@ -115,17 +108,30 @@
     </select>
 </div>
 
+<!-- Filter for Tuition Range -->
+<div style="margin-top: 20px;">
+    <label for="min-tuition">Min Tuition:</label>
+    <input type="number" id="min-tuition" name="min_tuition" placeholder="Min Tuition" value="{{ request.GET.min_tuition }}">
+
+    <label for="max-tuition">Max Tuition:</label>
+    <input type="number" id="max-tuition" name="max_tuition" placeholder="Max Tuition" value="{{ request.GET.max_tuition }}">
+
+    <button type="button" onclick="applyFilters()">Apply</button>
+</div>
+
 <!-- Filter Form (hidden, submits without redirecting) -->
-<form id="filter-form" method="get" action="{% url 'MajorHelp:department_results' query=query %}" style="display: none;">
+<form id="filter-form" method="get" action="{% url 'MajorHelp:major_results' query=query %}" style="display: none;">
     <input type="hidden" id="filter-hidden" name="filter" value="{{ filter_type }}">
     <input type="hidden" id="school-type-hidden" name="school_type" value="{{ school_type }}">
     <input type="hidden" id="search-query-hidden" name="query" value="{{ query }}">
     <input type="hidden" id="sort-order-hidden" name="sort_order" value="{{ request.GET.sort_order|default:'none' }}">
+    <input type="hidden" id="min-tuition-hidden" name="min_tuition" value="{{ request.GET.min_tuition }}">
+    <input type="hidden" id="max-tuition-hidden" name="max_tuition" value="{{ request.GET.max_tuition }}">
 </form>
+
 
 <!-- Search Results -->
 <h2>Search Results for "{{ query }}"</h2>
-
 {% if results %}
     {% for university, details in results.items %}
         <h3>
@@ -147,7 +153,7 @@
         {% endfor %}
     {% endfor %}
 {% else %}
-    <p>No results found for your search.</p>
+    <p>No departments found matching your request.</p>
 {% endif %}
 
 </body>
