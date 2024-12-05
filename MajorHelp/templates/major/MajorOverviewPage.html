@@ -91,6 +91,15 @@
             <li>Out-of-State Tuition: ${{ major.out_of_state_min_tuition }} - ${{ major.out_of_state_max_tuition }}</li>
         </ul>
 
+        <h3>Courses</h3>
+        <ul>
+            {% for course in major.major_courses.all %}
+                <li>{{ course.course_name }}</li>
+            {% empty %}
+                <li>No courses are currently available for this major.</li>
+            {% endfor %}
+        </ul>
+
         <h3>University Information</h3>
         <p>Location: {{ major.university.location }}</p>
         <p>Type: 
@@ -174,6 +183,8 @@
             <p>You must be logged in to leave a review. <a href="{% url 'MajorHelp:login' %}">Log in</a> or <a href="{% url 'MajorHelp:signup' %}">Sign up</a>.</p>
         {% endif %}
     </div>
+</body>
+</html>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {

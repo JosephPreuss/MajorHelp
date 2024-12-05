@@ -36,7 +36,16 @@ class MajorReviewAdmin(admin.ModelAdmin):
     )
 
     readonly_fields = ('pub_date',)
-    
+
+# Inline for managing Courses in Major admin
+class CourseInline(admin.TabularInline):
+    model = Course  # Use the Course model
+    extra = 1  # Display one blank row for adding new courses
+
+    # Ensure the inline references the ManyToMany relationship correctly
+    fk_name = 'major'
+
+# Admin configuration for Major
 class MajorAdmin(admin.ModelAdmin):
     list_display = (
         'major_name',
@@ -48,7 +57,8 @@ class MajorAdmin(admin.ModelAdmin):
         'out_of_state_max_tuition',
     )
     list_filter = ('university', 'department')
-    search_fields = ('major_name', 'major_description')  
+    search_fields = ('major_name', 'major_description')
+    inlines = [CourseInline]  # Include CourseInline in MajorAdmin
 
 class UserAdmin(admin.ModelAdmin):
     list_display = ('username', 'email', 'role')
