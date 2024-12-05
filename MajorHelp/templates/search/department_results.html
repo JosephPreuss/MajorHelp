@@ -4,6 +4,118 @@
 <head>
     <meta charset="UTF-8">
     <title>Department Search Results</title>
+
+    <style>
+
+        .filter-label {
+            color: white;
+            margin-right: 10px;
+        }
+        /* Container to center everything */
+        .search-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            margin: 20px;
+        }
+
+        /* Search field container */
+        #search-field-container {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            width: 100%;
+            justify-content: center;
+        }
+
+        #search-query {
+            padding: 10px;
+            font-size: 16px;
+            width: 300px;
+            margin-right: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+        }
+
+        /* Dropdown for search type */
+        #filter-dropdown-container {
+            display: flex;
+            align-items: center;
+            margin-left: 10px;
+}
+
+        .filter-dropdown select {
+            padding: 10px;
+            font-size: 16px;
+            width: 300px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+        }
+
+        /* Search button styling */
+        button[type="submit"] {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 10px;
+            border-radius: 5px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            box-sizing: border-box;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #45a049;
+        }
+
+        /* Filter section container (adjusted for centering) */
+        #filters-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-top: 20px;
+            gap: 20px; /* Adds space between filter elements */
+        }
+
+        .filter-dropdown {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            width: 250px;
+        }
+
+        .filter-dropdown select {
+            padding: 10px;
+            font-size: 16px;
+            width: 100%; /* Ensure select box takes full container width */
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+            height: 40px;
+        }
+
+        /* Adjusting button appearance */
+        .filter-button {
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            background-color: #4CAF50;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .filter-button:hover {
+            background-color: #45a049;
+        }
+    </style>
+
+    <!-- Scripts -->
     <script>
         const departmentOptions = [
             'Humanities and Social Sciences',
@@ -66,53 +178,57 @@
             document.getElementById("filter-form").submit();
         }
     </script>
+
 </head>
 <body>
 
-<!-- Search Again Section (this redirects to the search page) -->
-<div>
-    <h1 style="display: inline;">Search Again</h1>
-    <form action="{% url 'MajorHelp:search' %}" method="get" style="display: inline;">
-        <div id="search-field-container" style="display: inline;">
+<!-- Search Again Section -->
+<div class="search-container">
+    <h2 class="filter-label">Search Again</h2>
+    <form action="{% url 'MajorHelp:search' %}" method="get">
+        <div id="search-field-container">
             <!-- Default input for Major search -->
             <input type="text" id="search-query" name="query" placeholder="Enter your search term..." value="{{ query }}">
+
+            <!-- Search by dropdown -->
+            <div id="filter-dropdown-container">
+                <label for="filter-dropdown" class="filter-label">Search by:</label>
+                <select id="filter-dropdown" name="filter-dropdown" onchange="setActiveFilter(this.value)">
+                    <option value="department" {% if filter_type == 'department' %}selected{% endif %}>Department</option>
+                    <option value="school" {% if filter_type == 'school' %}selected{% endif %}>School</option>
+                    <option value="major" {% if filter_type == 'major' %}selected{% endif %}>Major</option>
+                </select>
+            </div>
         </div>
-        <input type="hidden" id="filter" name="filter" value="{{ filter_type }}">
         <button type="submit">Search</button>
     </form>
 </div>
 
-<!-- Filter Buttons for Department, School, and Major -->
-<div>
-    <div>
-        <button type="button" id="department-button" onclick="setActiveFilter('department')">Department</button>
-        <button type="button" id="school-button" onclick="setActiveFilter('school')">School</button>
-        <button type="button" id="major-button" onclick="setActiveFilter('major')">Major</button>
+<!-- Filter Section (Horizontal Layout) -->
+<div id="filters-container">
+    <!-- Filter Dropdown for School Type -->
+    <div class="filter-dropdown">
+        <label for="school-type" class="filter-label">School Type:</label>
+        <select id="school-type" onchange="applyFilters()">
+            <option value="both" {% if school_type == 'both' %}selected{% endif %}>Both</option>
+            <option value="public" {% if school_type == 'public' %}selected{% endif %}>Public</option>
+            <option value="private" {% if school_type == 'private' %}selected{% endif %}>Private</option>
+        </select>
     </div>
-</div>
 
-<!-- Filter Dropdown for School Type -->
-<div style="margin-top: 20px;">
-    <label for="school-type">School Type:</label>
-    <select id="school-type" onchange="applyFilters()">
-        <option value="both" {% if school_type == 'both' %}selected{% endif %}>Both</option>
-        <option value="public" {% if school_type == 'public' %}selected{% endif %}>Public</option>
-        <option value="private" {% if school_type == 'private' %}selected{% endif %}>Private</option>
-    </select>
-</div>
-
-<!-- Filter Dropdown for Sorting -->
-<div style="margin-top: 20px;">
-    <label for="sort-order">Sort By:</label>
-    <select id="sort-order" name="sort_order" onchange="applyFilters()">
-        <option value="none" {% if request.GET.sort_order == 'none' %}selected{% endif %}>None</option>
-        <option value="low_to_high" {% if request.GET.sort_order == 'low_to_high' %}selected{% endif %}>
-            Tuition (Low to High)
-        </option>
-        <option value="high_to_low" {% if request.GET.sort_order == 'high_to_low' %}selected{% endif %}>
-            Tuition (High to Low)
-        </option>
-    </select>
+    <!-- Filter Dropdown for Sorting -->
+    <div class="filter-dropdown">
+        <label for="sort-order" class="filter-label">Sort By:</label>
+        <select id="sort-order" name="sort_order" onchange="applyFilters()">
+            <option value="none" {% if request.GET.sort_order == 'none' %}selected{% endif %}>None</option>
+            <option value="low_to_high" {% if request.GET.sort_order == 'low_to_high' %}selected{% endif %}>
+                Tuition (Low to High)
+            </option>
+            <option value="high_to_low" {% if request.GET.sort_order == 'high_to_low' %}selected{% endif %}>
+                Tuition (High to Low)
+            </option>
+        </select>
+    </div>
 </div>
 
 <!-- Filter Form (hidden, submits without redirecting) -->
@@ -147,7 +263,7 @@
         {% endfor %}
     {% endfor %}
 {% else %}
-    <p>No results found for your search.</p>
+    <p>No results found for "{{ query }}"</p>
 {% endif %}
 
 </body>
