@@ -53,8 +53,15 @@ class UniversityOverviewView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['latest_post_list'] = UniversityReview.objects.filter(university=self.object)
+        university = self.object
+        
+        #JUMP
+        if self.request.user.is_authenticated:
+            user_review = UniversityReview.objects.filter(username=self.request.user.username, university=university).first()
+            context['user_review'] = user_review  # If review exists, pass it to the template
+        
         return context
-    
+        
 # View for submitting a rating to a specific catagory of a cartain university    
 class SubmitRatingView(View):
     def post(self, request, pk):
@@ -374,6 +381,7 @@ class MajorOverviewView(DetailView):
         context['reviews'] = reviews
         context['star_range'] = [1, 2, 3, 4, 5]
 
+        #JUMP
         # Check if the user has already left a review for this major
         if self.request.user.is_authenticated:
             user_review = MajorReview.objects.filter(user=self.request.user, major=major).first()

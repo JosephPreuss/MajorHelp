@@ -139,7 +139,7 @@
     </div>
 
     <!-- Form for leaving a review, visible only to logged-in users -->
-    {% if user.is_authenticated and user.role == 'alumni' or user.role == 'current_student' %}
+    {% if user.is_authenticated and user.role == 'alumni' or user.role == 'current_student' and not user_review%}
         <div class="new-post-form">
             <h6>Leave a Review:</h6>
             <form action="{% url 'MajorHelp:create_review' user.username %}" method="post">
@@ -150,8 +150,6 @@
                 <button class="submit-review" type="submit">Submit Review</button>
             </form>
         </div>
-
-
     {% endif %}
 
     <!-- Display all reviews (visible to all users) -->
