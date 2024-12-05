@@ -1,8 +1,27 @@
 /* Extend css changes from the main stylesheet */
 @import url("styles.css");
 
+#title {
+	margin-left: 5vh;
+	color: white;
+}
+
 #inputOutput {
     display:    flex;
+}
+
+.content-box {
+    max-width: 900px; 
+    background-color: #fff; /* White background for the content box */
+    padding: 20px; 
+    margin: 0 auto; 
+    margin-top: 20px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1); 
+    border-radius: 10px; 
+}
+
+.color-text {
+    color : #4fc7cf;
 }
 
 /* Only affects inputOutput's immediate children. */
@@ -20,6 +39,7 @@
 
 #output {
     max-width: 25%;
+    padding: 0px 50px 0px 50px
 }
 
 /*  Will likely be used later

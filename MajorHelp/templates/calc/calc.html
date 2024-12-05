@@ -140,13 +140,13 @@
 {% block content %}
 <!-- get the original content from the home page-->
 <div>
-    <h1>Tuition Calculator</h1>
+    <h1 id="title">Tuition Calculator</h1>
 </div>
 
 <div id="inputOutput">
-    <div id="input">
+    <div id="input" class="content-box">
         <div>
-            <h2>Let's start by choosing your school.</h2>
+            <h2>Let's start by choosing your <span class="color-text">school</span>.</h2>
             <!--The "; return false" prevents the form from actually submitting via post or get
                 thus refreshing the page... which clears the form.-->
             <form onsubmit="Input('uni', true); return false">
@@ -159,7 +159,7 @@
         </div>
         
         <div>
-            <h2>Now select the department</h2>
+            <h2>Now select the <span class="color-text">department</span>.</h2>
                 <select id="dept" name="department" onchange="Input('dept')">
                     <option value="" disabled="" selected="">Pick a Department</option>
                     <option value="Humanities and Social Sciences">Humanities and Social Sciences</option>
@@ -176,14 +176,14 @@
         </div>
 
         <div>
-            <h2>Great, now lets talk majors.</h2>
+            <h2>Great, now lets talk <span class="color-text">majors</span>.</h2>
             <form onsubmit="Input('major', true); return false">
                 <input type="text" name="major" id="major" placeholder="" value="">
             </form> 
         </div>
 
         <div id="financialAidInput">
-            <h2>Do you have any scholarships or Financial aid?</h2>
+            <h2>Do you have any <span class="color-text">scholarships</span> or <span class="color-text">financial aid</span>?</h2>
             <form onsubmit="Input('aid'); return false">
                 <input type="text" name="aid" id="aid" placeholder="" value="">
             </form>
@@ -206,8 +206,8 @@
         <input id="submitButton" type="button" value="submit" onclick="getValues();">
     </div>
 
-    <div id="output" style="display: none;">
-        <h2>Estimated Total</h2>
+    <div id="output" class="content-box" style="display: none;">
+        <h2>Estimated <span class="color-text">Total</span></h2>
         <h1 id="total1">{{ total | default:"$XX,XXX - $XXX,XXX"}}</h1>
         
 
@@ -221,7 +221,7 @@
 
         <h3>University Related Costs</h3>
         <!--The name of the University/Major/Scholarship can go here-->
-        <b><span id="uniName">XXXXXXXXX</span></b>
+        <b><span id="uniName" class="color-text">XXXXXXXXX</span></b>
         <ul class="outputList">
             <!--
                 For future reference, this can probably be replaced with a for loop containing all applicable
@@ -250,7 +250,7 @@
 
 
         <h3>Major Related Costs</h3>
-        <b><span id="majorName">XXXXXXXXXXXX</span></b>
+        <b><span id="majorName" class="color-text">XXXXXXXXXXXX</span></b>
         <ul class="outputList">
             <li>
                 Base Tuition <span id="majorTui">{{ baseTuition | default:"$X,XXX" }}</span>
@@ -276,7 +276,7 @@
         
         <div id="financialAidOutput" style="display : none;">
             <h3>Financial Aid</h3>
-            <b><span id="aidName">XXXXXXXXXXXX</span></b>
+            <b><span id="aidName" class="color-text">XXXXXXXXXXXX</span></b>
             <ul class="outputList">
                 <li>
                     Price reducted <span id="aidTui"></span>
@@ -291,7 +291,7 @@
         -->
 
         <!-- Just repeat the estimated total again for readability-->
-        <h2>Estimated Total</h2>
+        <h2>Estimated <span class="color-text">Total</span></h2>
         <h1 id="total2">{{ total | default:"$XX,XXX - $XXX,XXX"}}</h1>
     </div>
 </div>
