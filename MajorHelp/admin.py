@@ -55,6 +55,10 @@ class MajorAdmin(admin.ModelAdmin):
         'in_state_max_tuition',
         'out_of_state_min_tuition',
         'out_of_state_max_tuition',
+        'grad_in_state_min_tuition',
+        'grad_in_state_max_tuition',
+        'grad_out_of_state_min_tuition',
+        'grad_out_of_state_max_tuition',
     )
     list_filter = ('university', 'department')
     search_fields = ('major_name', 'major_description')

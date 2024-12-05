@@ -6,12 +6,11 @@
     <title>Department Search Results</title>
 
     <style>
-
         .filter-label {
             color: white;
             margin-right: 10px;
         }
-        /* Container to center everything */
+
         .search-container {
             display: flex;
             justify-content: center;
@@ -20,7 +19,6 @@
             margin: 20px;
         }
 
-        /* Search field container */
         #search-field-container {
             display: flex;
             align-items: center;
@@ -39,12 +37,11 @@
             box-sizing: border-box;
         }
 
-        /* Dropdown for search type */
         #filter-dropdown-container {
             display: flex;
             align-items: center;
             margin-left: 10px;
-}
+        }
 
         .filter-dropdown select {
             padding: 10px;
@@ -55,7 +52,6 @@
             box-sizing: border-box;
         }
 
-        /* Search button styling */
         button[type="submit"] {
             padding: 10px 20px;
             font-size: 16px;
@@ -72,14 +68,13 @@
             background-color: #45a049;
         }
 
-        /* Filter section container (adjusted for centering) */
         #filters-container {
             display: flex;
             justify-content: center;
             align-items: center;
             flex-wrap: wrap;
             margin-top: 20px;
-            gap: 20px; /* Adds space between filter elements */
+            gap: 20px;
         }
 
         .filter-dropdown {
@@ -92,14 +87,13 @@
         .filter-dropdown select {
             padding: 10px;
             font-size: 16px;
-            width: 100%; /* Ensure select box takes full container width */
+            width: 100%;
             border-radius: 5px;
             border: 1px solid #ccc;
             box-sizing: border-box;
             height: 40px;
         }
 
-        /* Adjusting button appearance */
         .filter-button {
             padding: 10px 20px;
             font-size: 16px;
@@ -115,7 +109,6 @@
         }
     </style>
 
-    <!-- Scripts -->
     <script>
         const departmentOptions = [
             'Humanities and Social Sciences',
@@ -156,48 +149,20 @@
             }
         }
 
-        function applyFilters() {
-            const schoolType = document.getElementById("school-type").value;
-            const searchQuery = document.getElementById("search-query").value;
-            const sortOrder = document.getElementById("sort-order").value;
-            const minTuition = document.getElementById("min-tuition").value;
-            const maxTuition = document.getElementById("max-tuition").value;
-            const isOutState = document.getElementById("is-out-state").checked;
-
-            document.getElementById("school-type-hidden").value = schoolType;
-            document.getElementById("search-query-hidden").value = searchQuery;
-            document.getElementById("sort-order-hidden").value = sortOrder;
-            document.getElementById("min-tuition-hidden").value = minTuition;
-            document.getElementById("max-tuition-hidden").value = maxTuition;
-            document.getElementById("is-out-state-hidden").value = isOutState;
+        function reloadPage() {
+            document.getElementById("school-type-hidden").value = document.getElementById("school-type").value;
+            document.getElementById("sort-order-hidden").value = document.getElementById("sort-order").value;
+            document.getElementById("min-tuition-hidden").value = document.getElementById("min-tuition").value;
+            document.getElementById("max-tuition-hidden").value = document.getElementById("max-tuition").value;
+            document.getElementById("is-out-state-hidden").value = document.getElementById("is-out-state").checked ? "true" : "false";
 
             document.getElementById("filter-form").submit();
         }
     </script>
-
 </head>
 <body>
 
 <!-- Search Again Section -->
-<<<<<<< HEAD
-<div class="search-container">
-    <h2 class="filter-label">Search Again</h2>
-    <form action="{% url 'MajorHelp:search' %}" method="get">
-        <div id="search-field-container">
-            <!-- Default input for Major search -->
-            <input type="text" id="search-query" name="query" placeholder="Enter your search term..." value="{{ query }}">
-
-            <!-- Search by dropdown -->
-            <div id="filter-dropdown-container">
-                <label for="filter-dropdown" class="filter-label">Search by:</label>
-                <select id="filter-dropdown" name="filter-dropdown" onchange="setActiveFilter(this.value)">
-                    <option value="department" {% if filter_type == 'department' %}selected{% endif %}>Department</option>
-                    <option value="school" {% if filter_type == 'school' %}selected{% endif %}>School</option>
-                    <option value="major" {% if filter_type == 'major' %}selected{% endif %}>Major</option>
-                </select>
-            </div>
-        </div>
-=======
 <div>
     <h1 style="display: inline;">Search Again</h1>
     <form action="{% url 'MajorHelp:search' %}" method="get" style="display: inline;">
@@ -205,38 +170,10 @@
             <input type="text" id="search-query" name="query" placeholder="Enter Major name..." value="{{ query }}">
         </div>
         <input type="hidden" id="filter" name="filter" value="major">
->>>>>>> 51034a8887681c86eaca3e14c28d3c17e90ad699
         <button type="submit">Search</button>
     </form>
 </div>
 
-<<<<<<< HEAD
-<!-- Filter Section (Horizontal Layout) -->
-<div id="filters-container">
-    <!-- Filter Dropdown for School Type -->
-    <div class="filter-dropdown">
-        <label for="school-type" class="filter-label">School Type:</label>
-        <select id="school-type" onchange="applyFilters()">
-            <option value="both" {% if school_type == 'both' %}selected{% endif %}>Both</option>
-            <option value="public" {% if school_type == 'public' %}selected{% endif %}>Public</option>
-            <option value="private" {% if school_type == 'private' %}selected{% endif %}>Private</option>
-        </select>
-    </div>
-
-    <!-- Filter Dropdown for Sorting -->
-    <div class="filter-dropdown">
-        <label for="sort-order" class="filter-label">Sort By:</label>
-        <select id="sort-order" name="sort_order" onchange="applyFilters()">
-            <option value="none" {% if request.GET.sort_order == 'none' %}selected{% endif %}>None</option>
-            <option value="low_to_high" {% if request.GET.sort_order == 'low_to_high' %}selected{% endif %}>
-                Tuition (Low to High)
-            </option>
-            <option value="high_to_low" {% if request.GET.sort_order == 'high_to_low' %}selected{% endif %}>
-                Tuition (High to Low)
-            </option>
-        </select>
-    </div>
-=======
 <!-- Filter Buttons -->
 <div>
     <button type="button" id="department-button" onclick="setActiveFilter('department')">Department</button>
@@ -247,7 +184,7 @@
 <!-- Filter for School Type -->
 <div style="margin-top: 20px;">
     <label for="school-type">School Type:</label>
-    <select id="school-type" onchange="applyFilters()">
+    <select id="school-type" onchange="reloadPage()">
         <option value="both" {% if school_type == 'both' %}selected{% endif %}>Both</option>
         <option value="public" {% if school_type == 'public' %}selected{% endif %}>Public</option>
         <option value="private" {% if school_type == 'private' %}selected{% endif %}>Private</option>
@@ -257,7 +194,7 @@
 <!-- Filter for Sorting -->
 <div style="margin-top: 20px;">
     <label for="sort-order">Sort By:</label>
-    <select id="sort-order" onchange="applyFilters()">
+    <select id="sort-order" onchange="reloadPage()">
         <option value="none" {% if request.GET.sort_order == 'none' %}selected{% endif %}>None</option>
         <option value="low_to_high" {% if request.GET.sort_order == 'low_to_high' %}selected{% endif %}>
             Tuition (Low to High)
@@ -266,7 +203,6 @@
             Tuition (High to Low)
         </option>
     </select>
->>>>>>> 51034a8887681c86eaca3e14c28d3c17e90ad699
 </div>
 
 <!-- Filter for Tuition Range -->
@@ -277,19 +213,24 @@
     <label for="max-tuition">Max Tuition:</label>
     <input type="number" id="max-tuition" name="max_tuition" placeholder="Max Tuition" value="{{ request.GET.max_tuition }}">
 
-    <button type="button" onclick="applyFilters()">Apply</button>
+    <label for="is-out-state">
+        <input type="checkbox" id="is-out-state" name="is_out_state" {% if request.GET.is_out_state == 'true' %}checked{% endif %}>
+        Out of State
+    </label>
+
+    <button type="button" onclick="reloadPage()">Apply</button>
 </div>
 
-<!-- Filter Form (hidden, submits without redirecting) -->
-<form id="filter-form" method="get" action="{% url 'MajorHelp:major_results' query=query %}" style="display: none;">
+<!-- Filter Form -->
+<form id="filter-form" method="get" action="{% url 'MajorHelp:department_results' query=query %}" style="display: none;">
     <input type="hidden" id="filter-hidden" name="filter" value="{{ filter_type }}">
     <input type="hidden" id="school-type-hidden" name="school_type" value="{{ school_type }}">
     <input type="hidden" id="search-query-hidden" name="query" value="{{ query }}">
     <input type="hidden" id="sort-order-hidden" name="sort_order" value="{{ request.GET.sort_order|default:'none' }}">
     <input type="hidden" id="min-tuition-hidden" name="min_tuition" value="{{ request.GET.min_tuition }}">
     <input type="hidden" id="max-tuition-hidden" name="max_tuition" value="{{ request.GET.max_tuition }}">
+    <input type="hidden" id="is-out-state-hidden" name="is_out_state" value="{% if request.GET.is_out_state == 'true' %}true{% else %}false{% endif %}">
 </form>
-
 
 <!-- Search Results -->
 <h2>Search Results for "{{ query }}"</h2>
@@ -299,7 +240,6 @@
             <a href="{% url 'MajorHelp:university-detail' slug=university.slug %}">{{ university.name }}</a>
             | {{ details.location }} | {{ details.type }}
         </h3>
-
         {% for department, majors in details.departments.items %}
             <h4>{{ department }}</h4>
             <ul>
@@ -314,11 +254,7 @@
         {% endfor %}
     {% endfor %}
 {% else %}
-<<<<<<< HEAD
-    <p>No results found for "{{ query }}"</p>
-=======
     <p>No departments found matching your request.</p>
->>>>>>> 51034a8887681c86eaca3e14c28d3c17e90ad699
 {% endif %}
 
 </body>

@@ -187,6 +187,28 @@ class Major(models.Model):
         default=0,
     )
 
+    # Graduate tuition
+    grad_in_state_min_tuition = models.IntegerField(
+        validators=[MinValueValidator(0)],
+        default=0,
+        help_text="Minimum in-state tuition for graduate students."
+    )
+    grad_in_state_max_tuition = models.IntegerField(
+        validators=[MinValueValidator(0)],
+        default=0,
+        help_text="Maximum in-state tuition for graduate students."
+    )
+    grad_out_of_state_min_tuition = models.IntegerField(
+        validators=[MinValueValidator(0)],
+        default=0,
+        help_text="Minimum out-of-state tuition for graduate students."
+    )
+    grad_out_of_state_max_tuition = models.IntegerField(
+        validators=[MinValueValidator(0)],
+        default=0,
+        help_text="Maximum out-of-state tuition for graduate students."
+    )
+
     # New field: Courses
     courses = models.ManyToManyField(Course, related_name="majors", blank=True)
 
@@ -208,6 +230,8 @@ class Major(models.Model):
             f"{self.major_name} at {self.university.name} "
             f"(In-state: ${self.in_state_min_tuition} - ${self.in_state_max_tuition}, "
             f"Out-of-state: ${self.out_of_state_min_tuition} - ${self.out_of_state_max_tuition})"
+            f"Grad In-state: ${self.grad_in_state_min_tuition} - ${self.grad_in_state_max_tuition}, "
+            f"Grad Out-of-state: ${self.grad_out_of_state_min_tuition} - ${self.grad_out_of_state_max_tuition})"
         )
 
 # Default user getter for MajorReview model

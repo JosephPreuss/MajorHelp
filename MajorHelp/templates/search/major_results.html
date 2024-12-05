@@ -28,7 +28,6 @@
                 select.name = "query";
                 select.id = "search-query";
 
-                // Add default "Select a Department" option
                 select.innerHTML = `<option value="" disabled selected>Select a Department</option>` +
                     departmentOptions.map(option => `<option value="${option}">${option}</option>`).join('');
 
@@ -45,21 +44,15 @@
             }
         }
 
-        function applyFilters() {
-            const schoolType = document.getElementById("school-type").value;
-            const searchQuery = document.getElementById("search-query").value;
-            const sortOrder = document.getElementById("sort-order").value;
-            const minTuition = document.getElementById("min-tuition").value;
-            const maxTuition = document.getElementById("max-tuition").value;
+        function reloadPage() {
+            // Update hidden inputs with current filter values
+            document.getElementById("school-type-hidden").value = document.getElementById("school-type").value;
+            document.getElementById("sort-order-hidden").value = document.getElementById("sort-order").value;
+            document.getElementById("min-tuition-hidden").value = document.getElementById("min-tuition").value;
+            document.getElementById("max-tuition-hidden").value = document.getElementById("max-tuition").value;
+            document.getElementById("is-out-state-hidden").value = document.getElementById("is-out-state").checked ? "true" : "false";
 
-            // Update the filter values dynamically in the form
-            document.getElementById("school-type-hidden").value = schoolType;
-            document.getElementById("search-query-hidden").value = searchQuery;
-            document.getElementById("sort-order-hidden").value = sortOrder;
-            document.getElementById("min-tuition-hidden").value = minTuition;
-            document.getElementById("max-tuition-hidden").value = maxTuition;
-
-            // Submit the form to filter the results
+            // Submit the form to reload the page with updated filters
             document.getElementById("filter-form").submit();
         }
     </script>
@@ -88,7 +81,7 @@
 <!-- Filter for School Type -->
 <div style="margin-top: 20px;">
     <label for="school-type">School Type:</label>
-    <select id="school-type" onchange="applyFilters()">
+    <select id="school-type" name="school_type" onchange="reloadPage()">
         <option value="both" {% if school_type == 'both' %}selected{% endif %}>Both</option>
         <option value="public" {% if school_type == 'public' %}selected{% endif %}>Public</option>
         <option value="private" {% if school_type == 'private' %}selected{% endif %}>Private</option>
@@ -98,7 +91,7 @@
 <!-- Filter for Sorting -->
 <div style="margin-top: 20px;">
     <label for="sort-order">Sort By:</label>
-    <select id="sort-order" onchange="applyFilters()">
+    <select id="sort-order" name="sort_order" onchange="reloadPage()">
         <option value="none" {% if request.GET.sort_order == 'none' %}selected{% endif %}>None</option>
         <option value="low_to_high" {% if request.GET.sort_order == 'low_to_high' %}selected{% endif %}>
             Tuition (Low to High)
@@ -117,17 +110,23 @@
     <label for="max-tuition">Max Tuition:</label>
     <input type="number" id="max-tuition" name="max_tuition" placeholder="Max Tuition" value="{{ request.GET.max_tuition }}">
 
-    <button type="button" onclick="applyFilters()">Apply</button>
+    <label for="is-out-state">
+        <input type="checkbox" id="is-out-state" name="is_out_state" {% if request.GET.is_out_state == 'true' %}checked{% endif %}>
+        Out of State
+    </label>
+
+    <button type="button" onclick="reloadPage()">Apply</button>
 </div>
 
-<!-- Filter Form (hidden, submits without redirecting) -->
-<form id="filter-form" method="get" action="{% url 'MajorHelp:major_results' query=query %}" style="display: none;">
+<!-- Hidden Form for Submitting -->
+<form id="filter-form" method="get" action="{% url 'MajorHelp:major_results' query=query %}">
     <input type="hidden" id="filter-hidden" name="filter" value="{{ filter_type }}">
     <input type="hidden" id="school-type-hidden" name="school_type" value="{{ school_type }}">
     <input type="hidden" id="search-query-hidden" name="query" value="{{ query }}">
     <input type="hidden" id="sort-order-hidden" name="sort_order" value="{{ request.GET.sort_order|default:'none' }}">
     <input type="hidden" id="min-tuition-hidden" name="min_tuition" value="{{ request.GET.min_tuition }}">
     <input type="hidden" id="max-tuition-hidden" name="max_tuition" value="{{ request.GET.max_tuition }}">
+    <input type="hidden" id="is-out-state-hidden" name="is_out_state" value="{% if request.GET.is_out_state == 'true' %}true{% else %}false{% endif %}">
 </form>
 
 <!-- Search Results -->
@@ -146,7 +145,9 @@
                     <li>
                         <a href="{% url 'MajorHelp:major-detail' slug=major.slug %}">{{ major.major_name }}</a>
                         (In-State: ${{ major.in_state_min_tuition }} - ${{ major.in_state_max_tuition }},
-                        Out-of-State: ${{ major.out_of_state_min_tuition }} - ${{ major.out_of_state_max_tuition }})
+                        Out-of-State: ${{ major.out_of_state_min_tuition }} - ${{ major.out_of_state_max_tuition }},
+                        Graduate In-State: ${{ major.grad_in_state_min_tuition }} - ${{ major.grad_in_state_max_tuition }},
+                        Graduate Out-of-State: ${{ major.grad_out_of_state_min_tuition }} - ${{ major.grad_out_of_state_max_tuition }})
                     </li>
                 {% endfor %}
             </ul>

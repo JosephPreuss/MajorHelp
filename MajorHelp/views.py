@@ -25,6 +25,7 @@ from django.contrib.auth import get_user_model
 import re
 from django.db.models import F, Value
 from django.db.models.functions import Cast
+from django.db.models import Min
 
 # Used to catch an exception if GET tries to get a value that isn't defined.
 from django.utils.datastructures import MultiValueDictKeyError
@@ -195,57 +196,94 @@ class SearchView(View):
 
 class SchoolResultsView(View):
     def get(self, request, query):
-        # Get the filter values from the request
+        # Get filters from the request
         school_type = request.GET.get('school_type', 'both')  # Default to 'both'
         sort_order = request.GET.get('sort_order', 'none')  # Default to 'none'
-        min_tuition = request.GET.get('min_tuition', None)  # Minimum tuition filter
-        max_tuition = request.GET.get('max_tuition', None)  # Maximum tuition filter
+        min_tuition = request.GET.get('min_tuition', None)
+        max_tuition = request.GET.get('max_tuition', None)
+        is_out_state = request.GET.get('is_out_state', 'false') == 'true'
 
-        # Fetch universities matching the query (case-insensitive, partial matches)
+        # Convert min_tuition and max_tuition to integers, if provided
+        try:
+            min_tuition = int(min_tuition) if min_tuition else None
+            max_tuition = int(max_tuition) if max_tuition else None
+        except ValueError:
+            min_tuition = None
+            max_tuition = None
+
+        # Fetch universities matching the query
         universities = University.objects.filter(name__icontains=query)
 
-        # Apply filtering by school type if applicable
-        if school_type != 'both':
-            universities = universities.filter(is_public=(school_type == 'public'))
+        # Filter by school type
+        if school_type == 'public':
+            universities = universities.filter(is_public=True)
+        elif school_type == 'private':
+            universities = universities.filter(is_public=False)
 
-        # Apply tuition range filtering
-        if min_tuition:
-            universities = universities.filter(in_state_base_min_tuition__gte=min_tuition)
-        if max_tuition:
-            universities = universities.filter(in_state_base_max_tuition__lte=max_tuition)
-
-        # Apply sorting based on sort_order
-        if sort_order == 'low_to_high':
-            universities = universities.order_by('in_state_base_min_tuition')
-        elif sort_order == 'high_to_low':
-            universities = universities.order_by('-in_state_base_min_tuition')
-
-        # Group universities by department and create the results dictionary
+        # Initialize results dictionary
         results = {}
+
         for university in universities:
+            # Fetch associated majors
+            majors = university.majors.all()
+
+            # Determine the tuition field based on out-of-state filter
+            min_tuition_field = 'out_of_state_min_tuition' if is_out_state else 'in_state_min_tuition'
+            max_tuition_field = 'out_of_state_max_tuition' if is_out_state else 'in_state_max_tuition'
+
+            # Filter majors by tuition range
+            if min_tuition is not None:
+                majors = majors.filter(**{f"{min_tuition_field}__gte": min_tuition})
+            if max_tuition is not None:
+                majors = majors.filter(**{f"{max_tuition_field}__lte": max_tuition})
+
+            # If no majors remain after filtering, exclude the university
+            if not majors.exists():
+                continue
+
+            # Collect department data
             departments = {}
-            # Group majors by department
-            for major in university.majors.all():
+            for major in majors:
                 if major.department not in departments:
                     departments[major.department] = []
                 departments[major.department].append(major)
 
-            # Add university details and grouped departments to results
+            # Calculate minimum tuition for sorting
+            aggregated_min_tuition = majors.aggregate(
+                min_tuition=Min(min_tuition_field)
+            )['min_tuition']
+
+            # Add university details and aggregated department data to results
             results[university] = {
                 'location': university.location,
                 'type': 'Public' if university.is_public else 'Private',
-                'departments': departments
+                'departments': departments,
+                'min_tuition': aggregated_min_tuition,
             }
 
-        # Render the results page and pass the filters to preserve the filter state
+        # Sort results by tuition if requested
+        if sort_order in ['low_to_high', 'high_to_low']:
+            sorted_universities = sorted(
+                results.keys(),
+                key=lambda uni: results[uni]['min_tuition'],
+                reverse=(sort_order == 'high_to_low')
+            )
+            sorted_results = {uni: results[uni] for uni in sorted_universities}
+        else:
+            sorted_results = results
+
+        # Render the template
         return render(request, 'search/school_results.html', {
             'query': query,
-            'results': results,
+            'results': sorted_results,
             'school_type': school_type,
             'sort_order': sort_order,
             'min_tuition': min_tuition,
             'max_tuition': max_tuition,
+            'is_out_state': is_out_state,
         })
+
+
 
 class DepartmentResultsView(View):
     def get(self, request, query):

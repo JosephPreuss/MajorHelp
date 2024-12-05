@@ -85,10 +85,16 @@
         <h3>Department</h3>
         <p>{{ major.department }}</p>
 
-        <h3>Tuition</h3>
+        <h3>Undergrad Tuition</h3>
         <ul>
             <li>In-State Tuition: ${{ major.in_state_min_tuition }} - ${{ major.in_state_max_tuition }}</li>
             <li>Out-of-State Tuition: ${{ major.out_of_state_min_tuition }} - ${{ major.out_of_state_max_tuition }}</li>
+        </ul>
+
+        <h3>Graduate Tuition</h3>
+        <ul>
+            <li>In-State Tuition: ${{ major.grad_in_state_min_tuition }} - ${{ major.grad_in_state_max_tuition }}</li>
+            <li>Out-of-State Tuition: ${{ major.grad_out_of_state_min_tuition }} - ${{ major.grad_out_of_state_max_tuition }}</li>
         </ul>
 
         <h3>Courses</h3>
@@ -185,6 +191,7 @@
     </div>
 </body>
 </html>
+
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
