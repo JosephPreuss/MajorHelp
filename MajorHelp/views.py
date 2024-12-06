@@ -459,7 +459,7 @@ class CalcView(View):
         #
         # If for some reason the user fills out a get request manually via the url link,
         #
-        #   (ie http://localhost:8000/calc/?uni=University+Of+South+Carolina&outstate=true&dept=Education&major=CIS)
+        #   (ie http://localhost:8000/calc/?uni=University+Of+South+Carolina&outstate=true&dept=Education&major=CIS&aid=Palmetto+Fellows)
         #
         # ...they will just get the json data directly.
 
