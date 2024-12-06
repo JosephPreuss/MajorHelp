@@ -1,0 +1,62 @@
+/* Navbar styling */
+nav {
+    background-color: #ffffff;
+    padding: 10px;
+    text-align: right;
+}
+
+nav a, .logout-link {
+    text-decoration: none;
+    color: #333;
+    padding: 10px;
+    margin: 0 10px;
+    cursor: pointer;
+    background: none;
+    border: none;
+    font: inherit;
+}
+
+nav a:hover, .logout-link:hover {
+    color: #417bb9;
+}
+
+/* Align navbar items */
+.navbar a, .logout-link {
+    margin-right: 15px;
+}
+
+/* Custom scrollbar styling for Chrome, Edge, and Safari */
+::-webkit-scrollbar {
+    width: 8px;  /* Width of the scrollbar */
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;  /* Background color of the scrollbar track */
+}
+
+::-webkit-scrollbar-thumb {
+    background: #888;  /* Scrollbar thumb color */
+    border-radius: 4px;  /* Rounded corners for the scrollbar thumb */
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #555;  /* Darker color when hovering over the scrollbar */
+}
+
+/* Scrollbar styling for Firefox */
+html {
+    scrollbar-width: thin;  /* Makes scrollbar thin */
+    scrollbar-color: #888 #f1f1f1;  /* Thumb color followed by track color */
+}
+
+/* For mobile responsiveness */
+@media screen and (max-width: 768px) {
+    nav {
+        flex-direction: column;
+        text-align: left;
+    }
+
+    .navbar a, .logout-link {
+        margin: 5px 0;
+    }
+}

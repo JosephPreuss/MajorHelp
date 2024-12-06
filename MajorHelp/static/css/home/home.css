@@ -1,0 +1,74 @@
+.home-page-container {
+    display: flex;
+    height: 100vh; /* Full viewport height, ensures both sections are the same height */
+    overflow: hidden; /* Prevents any overflow issues if the content is too large */
+}
+
+.text-section {
+    flex: 1; /* Takes up 50% of the width, matching the image section */
+    background-color: #4FC7CF; /* Blue color on the left */
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start; /* Aligns content to the top */
+    align-items: center; /* Center text both horizontally and vertically */
+    color: white;
+    text-align: center;
+    z-index: 1;
+    height: 100%; /* Ensures it matches the container's height */
+}
+
+.info-text {
+    width: 90%;        /* Adjust the width to make it narrower */
+    margin: 0 auto;    /* Center the paragraph in its container */
+    font-size: 18px;
+    text-align: left;
+}
+
+.text-section h1 {
+    margin-top: 70px; /* Adjust as needed for spacing */
+}
+
+.image-section {
+    flex: 2; /* Takes up the other half, or 2/3 of the width */
+    background-size: cover; /* Ensures the image fills the container */
+    background-position: center; /* Centers the image */
+    position: relative;
+    height: 100%; /* Ensures it matches the container's height */
+}
+
+/* Style for the 'Get Started' button */
+.get-started-btn {
+    margin-top: 30px;
+    margin-right: 390px;
+    padding: 15px 30px;
+    background-color: #ffffff;
+    color: #4cc8e0;
+    border: none;
+    text-decoration: none;
+    font-weight: bold;
+    border-radius: 50px;
+    cursor: pointer;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.get-started-btn:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.2);
+}
+
+.signup-link {
+    margin-top: 20px;
+    margin-right: 250px;
+    font-size: 0.9rem;
+    color: #ffffff;  /* This makes the link blue, similar to standard hyperlink colors */
+}
+
+.signup-link a {
+    color: #ffffff;
+    text-decoration: underline;  /* Underline for typical link style */
+}
+
+.signup-link a:hover {
+    color: #0077b3;  /* Darker shade on hover for emphasis */
+}
