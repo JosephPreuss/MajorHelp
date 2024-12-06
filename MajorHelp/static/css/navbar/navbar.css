@@ -1,0 +1,125 @@
+/* Reset styling */
+body, ul, li, a, form, button {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    text-decoration: none;
+    list-style: none;
+}
+
+body {
+    font-family: Arial, sans-serif;
+}
+
+/* Navbar container */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: #fff;
+    border-bottom: 1px solid #ddd;
+}
+
+/* Logo section */
+.logo {
+    display: flex;
+    align-items: center;
+}
+
+.logo-image {
+    width: 40px;
+    height: 40px;
+    margin-right: 10px;
+}
+
+.brand {
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+}
+
+.highlight {
+    color: #40c4c6; /* Highlight color */
+}
+
+/* Navigation links */
+.nav-links {
+    display: flex; /* Aligns the items in a row */
+    gap: 15px; /* Spacing between each list item */
+    list-style: none; /* Removes default bullet points */
+    margin: 0; /* Removes default margin */
+    padding: 0; /* Removes default padding */
+    margin-left: auto; /* Pushes the links to the right */
+
+}
+
+.nav-links li a {
+    font-size: 16px;
+    color: #40c4c6;
+    transition: color 0.3s;
+}
+
+.nav-links li a:hover {
+    color: #246d6e;
+}
+
+/* Auth buttons */
+.auth-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.sign-in, .register, .logout-button, .settings-button {
+    padding: 8px 15px;
+    font-size: 14px;
+    border-radius: 20px;
+    border: 2px solid #40c4c6;
+    transition: all 0.3s;
+}
+
+.sign-in {
+    background-color: #fff;
+    color: #40c4c6;
+}
+
+.sign-in:hover {
+    background-color: #e8f8f8;
+}
+
+.register {
+    background-color: #40c4c6;
+    color: #fff;
+}
+
+.register:hover {
+    background-color: #2da2a3;
+}
+
+.logout-button {
+    background-color: #fff;
+    color: #40c4c6;
+    border: 2px solid #40c4c6;
+    cursor: pointer;
+}
+
+.logout-button:hover {
+    background-color: #e8f8f8;
+}
+
+.settings-button {    color: #40c4c6;
+
+    background-color: #fff;
+    color: #40c4c6;
+    border: 2px solid #40c4c6;
+    cursor: pointer;
+}
+
+.settings-button:hover {
+    background-color: #e8f8f8;
+}
+
+.logo-image {
+    width: 150px; /* Adjust size as needed */
+    height: auto; /* Keeps the aspect ratio */
+}

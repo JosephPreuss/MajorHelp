@@ -107,70 +107,6 @@
         .filter-button:hover {
             background-color: #45a049;
         }
-
-        #filters-section {
-            margin-top: 20px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 20px;
-        }
-
-        .filter-section {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-            width: 250px;
-        }
-
-        .filter-section select,
-        .filter-section input {
-            padding: 10px;
-            font-size: 16px;
-            width: 100%;
-            border-radius: 5px;
-            border: 1px solid #ccc;
-            box-sizing: border-box;
-            height: 40px;
-        }
-
-        button[type="button"] {
-            padding: 10px 20px;
-            font-size: 16px;
-            cursor: pointer;
-            margin-top: 10px;
-            border-radius: 5px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            box-sizing: border-box;
-        }
-
-        button[type="button"]:hover {
-            background-color: #45a049;
-        }
-
-        .filter-buttons {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-
-        .filter-buttons button {
-            padding: 10px 20px;
-            font-size: 16px;
-            cursor: pointer;
-            background-color: #4CAF50;
-            color: white;
-            border-radius: 5px;
-            border: none;
-        }
-
-        .filter-buttons button:hover {
-            background-color: #45a049;
-        }
     </style>
 
     <script>
@@ -188,49 +124,30 @@
         ];
 
         function setActiveFilter(filter) {
-    document.getElementById("filter").value = filter;
+            document.getElementById("filter").value = filter;
 
-    const searchFieldContainer = document.getElementById("search-field-container");
-    
-    // Clear the container before adding new elements
-    searchFieldContainer.innerHTML = '';
+            const searchFieldContainer = document.getElementById("search-field-container");
 
-    if (filter === 'department') {
-        const select = document.createElement("select");
-        select.name = "query";
-        select.id = "search-query";
+            if (filter === 'department') {
+                const select = document.createElement("select");
+                select.name = "query";
+                select.id = "search-query";
 
-        select.innerHTML = `<option value="" disabled selected>Select a Department</option>` +
-            departmentOptions.map(option => `<option value="${option}">${option}</option>`).join('');
+                select.innerHTML = `<option value="" disabled selected>Select a Department</option>` +
+                    departmentOptions.map(option => `<option value="${option}">${option}</option>`).join('');
 
-        searchFieldContainer.appendChild(select);
-    } else {
-        const input = document.createElement("input");
-        input.type = "text";
-        input.id = "search-query";
-        input.name = "query";
-        input.placeholder = `Enter ${filter} name...`;
-        searchFieldContainer.appendChild(input);
-    }
-
-    // Hide the "Major", "Department", and "School" fields when they are not selected
-    const majorFilterSection = document.getElementById("major-filter");
-    const departmentFilterSection = document.getElementById("department-filter");
-    const schoolFilterSection = document.getElementById("school-filter");
-
-    majorFilterSection.style.display = "none";
-    departmentFilterSection.style.display = "none";
-    schoolFilterSection.style.display = "none";
-
-    if (filter === "major") {
-        majorFilterSection.style.display = "flex";
-    } else if (filter === "department") {
-        departmentFilterSection.style.display = "flex";
-    } else if (filter === "school") {
-        schoolFilterSection.style.display = "flex";
-    }
-}
-
+                searchFieldContainer.innerHTML = ''; 
+                searchFieldContainer.appendChild(select);
+            } else {
+                const input = document.createElement("input");
+                input.type = "text";
+                input.id = "search-query";
+                input.name = "query";
+                input.placeholder = `Enter ${filter} name...`;
+                searchFieldContainer.innerHTML = ''; 
+                searchFieldContainer.appendChild(input);
+            }
+        }
 
         function reloadPage() {
             document.getElementById("school-type-hidden").value = document.getElementById("school-type").value;
@@ -247,7 +164,7 @@
 
 <!-- Search Again Section -->
 <div>
-    <h1 style="display: inline-block; text-align: center; width: 100%; color: white">Search Again</h1>
+    <h1 style="display: inline;">Search Again</h1>
     <form action="{% url 'MajorHelp:search' %}" method="get" style="display: inline;">
         <div id="search-field-container" style="display: inline;">
             <input type="text" id="search-query" name="query" placeholder="Enter Major name..." value="{{ query }}">
@@ -256,75 +173,52 @@
         <button type="submit">Search</button>
     </form>
 </div>
-<!-- Filter Buttons (Updated with Dropdown) -->
-<div class="filter-buttons">
-    <div class="filter-dropdown">
-        <select id="filter-select" onchange="setActiveFilter(this.value)">
-            <option value="major" selected>Major</option>
-            <option value="department">Department</option>
-            <option value="school">School</option>
-        </select>
-    </div>
+
+<!-- Filter Buttons -->
+<div>
+    <button type="button" id="department-button" onclick="setActiveFilter('department')">Department</button>
+    <button type="button" id="school-button" onclick="setActiveFilter('school')">School</button>
+    <button type="button" id="major-button" class="active" onclick="setActiveFilter('major')">Major</button>
 </div>
 
-<!-- Filter Section (Adjusted for dropdown implementation) -->
-<div id="filters-section">
-    <div class="filter-section" id="department-filter" style="display: none;">
-        <label for="department">Department:</label>
-        <select id="department-dropdown" name="department" onchange="reloadPage()">
-            <option value="" disabled selected>Select Department</option>
-            {% for department in departmentOptions %}
-                <option value="{{ department }}" {% if department == request.GET.department %}selected{% endif %}>{{ department }}</option>
-            {% endfor %}
-        </select>
-    </div>
+<!-- Filter for School Type -->
+<div style="margin-top: 20px;">
+    <label for="school-type">School Type:</label>
+    <select id="school-type" onchange="reloadPage()">
+        <option value="both" {% if school_type == 'both' %}selected{% endif %}>Both</option>
+        <option value="public" {% if school_type == 'public' %}selected{% endif %}>Public</option>
+        <option value="private" {% if school_type == 'private' %}selected{% endif %}>Private</option>
+    </select>
+</div>
 
-    <div class="filter-section" id="school-filter" style="display: none;">
-        <label for="school">School:</label>
-        <select id="school-dropdown" name="school" onchange="reloadPage()">
-            <option value="" disabled selected>Select School</option>
-            <!-- Replace with dynamic school options -->
-            {% for school in schools %}
-                <option value="{{ school }}" {% if school == request.GET.school %}selected{% endif %}>{{ school }}</option>
-            {% endfor %}
-        </select>
-    </div>
+<!-- Filter for Sorting -->
+<div style="margin-top: 20px;">
+    <label for="sort-order">Sort By:</label>
+    <select id="sort-order" onchange="reloadPage()">
+        <option value="none" {% if request.GET.sort_order == 'none' %}selected{% endif %}>None</option>
+        <option value="low_to_high" {% if request.GET.sort_order == 'low_to_high' %}selected{% endif %}>
+            Tuition (Low to High)
+        </option>
+        <option value="high_to_low" {% if request.GET.sort_order == 'high_to_low' %}selected{% endif %}>
+            Tuition (High to Low)
+        </option>
+    </select>
+</div>
 
-    <!-- School Type Filter -->
-    <div class="filter-section">
-        <label for="school-type">School Type:</label>
-        <select id="school-type" onchange="reloadPage()">
-            <option value="both" {% if school_type == 'both' %}selected{% endif %}>Both</option>
-            <option value="public" {% if school_type == 'public' %}selected{% endif %}>Public</option>
-            <option value="private" {% if school_type == 'private' %}selected{% endif %}>Private</option>
-        </select>
-    </div>
+<!-- Filter for Tuition Range -->
+<div style="margin-top: 20px;">
+    <label for="min-tuition">Min Tuition:</label>
+    <input type="number" id="min-tuition" name="min_tuition" placeholder="Min Tuition" value="{{ request.GET.min_tuition }}">
 
-    <!-- Sort Order Filter -->
-    <div class="filter-section">
-        <label for="sort-order">Sort By:</label>
-        <select id="sort-order" onchange="reloadPage()">
-            <option value="none" {% if request.GET.sort_order == 'none' %}selected{% endif %}>None</option>
-            <option value="low_to_high" {% if request.GET.sort_order == 'low_to_high' %}selected{% endif %}>Tuition (Low to High)</option>
-            <option value="high_to_low" {% if request.GET.sort_order == 'high_to_low' %}selected{% endif %}>Tuition (High to Low)</option>
-        </select>
-    </div>
+    <label for="max-tuition">Max Tuition:</label>
+    <input type="number" id="max-tuition" name="max_tuition" placeholder="Max Tuition" value="{{ request.GET.max_tuition }}">
 
-    <!-- Filter for Tuition Range -->
-    <div style="margin-top: 20px;">
-        <label for="min-tuition" class="filter-label">Min Tuition:</label>
-        <input type="number" id="min-tuition" name="min_tuition" placeholder="Min Tuition" value="{{ request.GET.min_tuition }}" class="filter-input">
+    <label for="is-out-state">
+        <input type="checkbox" id="is-out-state" name="is_out_state" {% if request.GET.is_out_state == 'true' %}checked{% endif %}>
+        Out of State
+    </label>
 
-        <label for="max-tuition" class="filter-label">Max Tuition:</label>
-        <input type="number" id="max-tuition" name="max_tuition" placeholder="Max Tuition" value="{{ request.GET.max_tuition }}" class="filter-input">
-
-        <label for="is-out-state" class="filter-label">
-            <input type="checkbox" id="is-out-state" name="is_out_state" {% if request.GET.is_out_state == 'true' %}checked{% endif %} class="filter-checkbox">
-            Out of State
-        </label>
-
-        <button type="button" onclick="reloadPage()" class="filter-button">Apply</button>
-    </div>
+    <button type="button" onclick="reloadPage()">Apply</button>
 </div>
 
 <!-- Filter Form -->
@@ -339,34 +233,29 @@
 </form>
 
 <!-- Search Results -->
-<h2 style="font-size: 28px; color: white;">Search Results for "{{ query }}"</h2>
+<h2>Search Results for "{{ query }}"</h2>
 {% if results %}
     {% for university, details in results.items %}
-        <div class="result-item">
-            <h3 class="result-header">
-                <a href="{% url 'MajorHelp:university-detail' slug=university.slug %}" class="result-link">{{ university.name }}</a>
-                <span class="result-location">{{ details.location }}</span> | 
-                <span class="result-type">{{ details.type }}</span>
-            </h3>
-            {% for department, majors in details.departments.items %}
-                <h4 class="department-header">{{ department }}</h4>
-                <ul class="major-list">
-                    {% for major in majors %}
-                        <li class="major-item">
-                            <a href="{% url 'MajorHelp:major-detail' slug=major.slug %}" class="major-link">{{ major.major_name }}</a>
-                            <span class="major-tuition">
-                                (In-State: ${{ major.in_state_min_tuition }} - ${{ major.in_state_max_tuition }},
-                                Out-of-State: ${{ major.out_of_state_min_tuition }} - ${{ major.out_of_state_max_tuition }})
-
-                            </span>
-                        </li>
-                    {% endfor %}
-                </ul>
-            {% endfor %}
-        </div>
+        <h3>
+            <a href="{% url 'MajorHelp:university-detail' slug=university.slug %}">{{ university.name }}</a>
+            | {{ details.location }} | {{ details.type }}
+        </h3>
+        {% for department, majors in details.departments.items %}
+            <h4>{{ department }}</h4>
+            <ul>
+                {% for major in majors %}
+                    <li>
+                        <a href="{% url 'MajorHelp:major-detail' slug=major.slug %}">{{ major.major_name }}</a>
+                        (In-State: ${{ major.in_state_min_tuition }} - ${{ major.in_state_max_tuition }},
+                        Out-of-State: ${{ major.out_of_state_min_tuition }} - ${{ major.out_of_state_max_tuition }})
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endfor %}
     {% endfor %}
 {% else %}
-    <p style="color: white;">No departments found matching your request.</p>
+    <p>No departments found matching your request.</p>
 {% endif %}
+
 </body>
 </html>
