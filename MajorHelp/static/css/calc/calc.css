@@ -1,0 +1,80 @@
+/* Extend css changes from the main stylesheet */
+@import url("styles.css");
+
+#title {
+	margin-left: 5vh;
+	color: white;
+}
+
+#inputOutput {
+    display:    flex;
+}
+
+.content-box {
+    max-width: 900px; 
+    background-color: #fff; /* White background for the content box */
+    padding: 20px; 
+    margin: 0 auto; 
+    margin-top: 20px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1); 
+    border-radius: 10px; 
+}
+
+.color-text {
+    color : #4fc7cf;
+}
+
+/* Only affects inputOutput's immediate children. */
+#inputOutput > div {
+    margin-left:1vw;
+    margin-right:1vw;
+    margin-top:0.5vh;
+    margin-bottom:0.5vh;
+
+}
+
+#input {
+    max-width: 60%;
+}
+
+#output {
+    max-width: 25%;
+    padding: 0px 50px 0px 50px
+}
+
+/*  Will likely be used later
+.outputList {
+
+}
+*/
+
+/* commented out but kept in case we want to css the text to the left
+.itemizedResults {
+    
+}
+*/
+
+/* 
+    This targets the spans contained in the list elements of every
+    unordered list of the class outputList. A bit of a mouthful but
+    this prevents each li/span from needing to be assigned a class.
+
+    This won't be as an issue if the li's are made via a template for
+    loop.
+
+    If need be, if you need to change this to be a class, I suggest the
+    name "itemizedNumber" and apply it to the span, as it controls the 
+    "$X,XXX" and places it to the right.
+*/
+.outputList > li span {
+    float:right;
+    text-align: right;
+}
+
+.outputNote {
+    list-style: none;
+}
+
+.outputNote:before {
+    content: "(!)"
+}

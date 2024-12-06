@@ -1,0 +1,24 @@
+/* Footer Styling */
+.footer {
+    position: fixed; 
+    bottom: 0; 
+    width: 100%;  
+    height: 50px;  
+    background-color: white; 
+    text-align: center; 
+    padding: 10px 0;  /* Adds some space inside the footer */
+    border-top: 1px solid #e6e6e6;  /* Optional: Subtle border for separation */
+    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);  /* Optional: Adds a clean shadow */
+    z-index: 1000;  /* Ensures it stays above other content */
+    
+    /* Flexbox to center text vertically and horizontally */
+    display: flex;  
+    justify-content: center;  /* Horizontally centers the content */
+    align-items: center;  /* Vertically centers the content */
+}
+
+.footer p {
+    margin: 0;  /* Removes default margin around the paragraph */
+    color: #4FC7CF;
+    font-size: 0.9rem;  
+}
