@@ -14,12 +14,12 @@ from pestopanini import settings
 # Model for university
 class University(models.Model):
     name = models.TextField()
-    location = models.CharField(max_length=255)  # City and State
+    location = models.CharField(default="", max_length=255)  # City and State
     is_public = models.BooleanField(default=True, help_text="Check if the university is public; leave unchecked for private")
-    aboutText = models.TextField()
-    TotalUndergradStudents = models.IntegerField()
-    TotalGradStudents = models.IntegerField()
-    GraduationRate = models.DecimalField(max_digits=4, decimal_places=1)
+    aboutText = models.TextField(default= "")
+    TotalUndergradStudents = models.IntegerField(default = 0)
+    TotalGradStudents = models.IntegerField(default = 0)
+    GraduationRate = models.DecimalField(default=0.0, max_digits=4, decimal_places=1)
 
     # Added for tuition calc
     in_state_base_min_tuition = models.IntegerField(
