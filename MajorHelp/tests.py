@@ -4,11 +4,11 @@ from django.test import Client
 
 from django.urls import reverse
 
+from .models import University, Major
 
 
 # Create your tests here.
 
-from .models import University, Major
 class CalcTests(TestCase):
     @classmethod
     def setUpTestData(cls):
