@@ -459,7 +459,7 @@ class CalcView(View):
         #
         # If for some reason the user fills out a get request manually via the url link,
         #
-        #   (ie http://localhost:8000/calc/?uni=University+Of+South+Carolina&outstate=true&dept=Education&major=CIS)
+        #   (ie http://localhost:8000/calc/?uni=University+Of+South+Carolina&outstate=true&dept=Education&major=CIS&aid=)
         #
         # ...they will just get the json data directly.
 
@@ -483,6 +483,7 @@ class CalcView(View):
         try:
             uniObj = University.objects.get(name=inData["university"])
         except uniObj.DoesNotExist as error:
+            print("No university of name: \"" + inData["university"] + "\" was found.")
             raise
 
         # get the data for the university
