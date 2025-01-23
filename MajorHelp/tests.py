@@ -4,7 +4,7 @@ from django.test import Client
 
 from django.urls import reverse
 
-from .models import University, Major
+from .models import *
 
 
 # Create your tests here.
@@ -67,4 +67,62 @@ class CalcTests(TestCase):
         self.assertEqual(response.status_code, 200)
 
         self.assertEqual(response['content-type'], 'application/json')
+
+
+#  unit test for University Ratings Model
+class UniRatingsTests(TestCase):
+    def setUp(self):
+    # Create test users
+        self.user = CustomUser.objects.create_user(
+            username="testuser",
+            password="testpassword",
+            email="testuser@example.com",
+        )
+
+        self.user2 = CustomUser.objects.create_user(
+            username="testuser2",
+            password="testpassword",
+            email="testuser2@example.com",
+        )
         
+        self.user3 = CustomUser.objects.create_user(
+            username="testuser3",
+            password="testpassword",
+            email="testuser3@example.com",
+        )
+
+        # Create a test university
+        self.university = University.objects.create(
+            name="Test University",
+            location="Test City, Test State",
+            is_public=True,
+            aboutText="This is a test university.",
+        )
+
+        # Create unique ratings
+        UniversityRating.objects.create(
+            university=self.university,
+            category="campus",
+            rating=4.0,
+            user=self.user,
+        )
+        UniversityRating.objects.create(
+            university=self.university,
+            category="campus",
+            rating=5.0,
+            user=self.user2,  # Different user
+        )
+        UniversityRating.objects.create(
+            university=self.university,
+            category="safety",
+            rating=3.0,
+            user=self.user,  # Different category
+    )
+
+    def test_get_average_rating(self):
+        # Test the average rating for "campus"
+        campus_avg = self.university.get_average_rating("campus")
+        self.assertEqual(campus_avg, 4.5)  # Average of 4.0, 5.0, and 3.0
+        
+        saftey_avg = self.university.get_average_rating("safety")
+        self.assertEqual(saftey_avg, 3.0)
