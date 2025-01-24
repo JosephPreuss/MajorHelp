@@ -126,3 +126,35 @@ class UniRatingsTests(TestCase):
         
         saftey_avg = self.university.get_average_rating("safety")
         self.assertEqual(saftey_avg, 3.0)
+
+     
+#  unit test for user role assignment
+    class UserRoleAssignmentTest(TestCase):
+        def setUp(self):
+            # creating two users with different roles 
+            self.alumni_user = CustomUser.objects.create_user (
+                username='alumni_user',
+                password='alumnipassword123',
+                role='alumni',
+                email='alumni@example.com'
+            )
+            self.current_student_user = CustomUser.objects.create_user(
+            username='current_student_user',
+            password='current_studentpassword123',
+            role='current_student',
+            email='currentstudent@example.com'
+        )
+            
+        def test_user_roles(self):
+            # Fetch users from the database
+            alumni_user = CustomUser.objects.get(username='alumni_user')
+            current_student_user = CustomUser.objects.get(username='current_student_user')
+
+            # Checks if roles are assigned correctly
+            self.assertEqual(alumni_user.role, 'alumni')
+            self.assertEqual(current_student_user.role, 'current_student')
+
+            # Ensures the user data is consistent 
+            self.assertTrue(alumni_user.check_password('alumnipassword123'))
+            self.assertTrue(current_student_user.check_password('current_studentpassword123'))
+        
