@@ -158,3 +158,52 @@ class UniRatingsTests(TestCase):
             self.assertTrue(alumni_user.check_password('alumnipassword123'))
             self.assertTrue(current_student_user.check_password('current_studentpassword123'))
         
+class MajorModelTest(TestCase):
+    def setUp(self):
+        # Create a University object
+        university = University.objects.create(
+            name="Test University",
+            location="Test City, TC",
+            is_public=True,
+            aboutText="A test university for testing purposes.",
+            TotalUndergradStudents=10000,
+            TotalGradStudents=2000,
+            GraduationRate=85.5,
+        )
+        
+        # Create a Major object
+        self.major = Major.objects.create(
+            university=university,
+            major_name="Computer Science",
+            major_description="A major focused on computer science concepts.",
+            department="Engineering and Technology",
+            in_state_min_tuition=5000,
+            in_state_max_tuition=15000,
+            out_of_state_min_tuition=20000,
+            out_of_state_max_tuition=30000,
+            fees=1500,
+            grad_in_state_min_tuition=10000,
+            grad_in_state_max_tuition=20000,
+            grad_out_of_state_min_tuition=25000,
+            grad_out_of_state_max_tuition=35000,
+        )
+        
+        # Create Course objects linked to the Major
+        self.course1 = Course.objects.create(
+            major=self.major,
+            course_name="Introduction to Programming"
+        )
+
+        self.course2 = Course.objects.create(
+            major=self.major,
+            course_name="Data Structures"
+        )
+
+        # Explicitly add the courses to the Major's courses relationship
+        self.major.courses.add(self.course1, self.course2)
+
+    def test_major_has_courses(self):
+        # Ensure that the courses are correctly associated with the Major
+        self.assertEqual(self.major.courses.count(), 2)
+        self.assertIn(self.course1, self.major.courses.all())
+        self.assertIn(self.course2, self.major.courses.all())
