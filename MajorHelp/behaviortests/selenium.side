@@ -1,0 +1,165 @@
+{
+  "id": "7fca27b4-79e7-4d79-9a63-80da169edff6",
+  "version": "2.0",
+  "name": "selenium",
+  "url": "http://127.0.0.1:8000",
+  "tests": [{
+    "id": "1dd52661-41d6-4dd3-8240-ac374f012f92",
+    "name": "calc-minimum",
+    "commands": [{
+      "id": "0944bfab-deb1-4284-81ae-873d0902e2d2",
+      "comment": "",
+      "command": "open",
+      "target": "/",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "b5eb3111-0ab1-4a55-9938-c33f87392c99",
+      "comment": "",
+      "command": "setWindowSize",
+      "target": "1908x2036",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "be1afda2-aaaa-4db2-bd5a-64aa6e524c32",
+      "comment": "",
+      "command": "click",
+      "target": "linkText=Tuition Calculator",
+      "targets": [
+        ["linkText=Tuition Calculator", "linkText"],
+        ["css=li:nth-child(4) > a", "css:finder"],
+        ["xpath=//a[contains(text(),'Tuition Calculator')]", "xpath:link"],
+        ["xpath=//a[contains(@href, '/calc/')]", "xpath:href"],
+        ["xpath=//li[4]/a", "xpath:position"],
+        ["xpath=//a[contains(.,'Tuition Calculator')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "501d978a-4d0e-4daa-aee7-c354b9ff940a",
+      "comment": "",
+      "command": "click",
+      "target": "id=uni",
+      "targets": [
+        ["id=uni", "id"],
+        ["name=university", "name"],
+        ["css=#uni", "css:finder"],
+        ["xpath=//input[@id='uni']", "xpath:attributes"],
+        ["xpath=//div[@id='input']/div/form/input", "xpath:idRelative"],
+        ["xpath=//input", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "12802dc5-b792-4570-810e-702096e1b993",
+      "comment": "",
+      "command": "type",
+      "target": "id=uni",
+      "targets": [
+        ["id=uni", "id"],
+        ["name=university", "name"],
+        ["css=#uni", "css:finder"],
+        ["xpath=//input[@id='uni']", "xpath:attributes"],
+        ["xpath=//div[@id='input']/div/form/input", "xpath:idRelative"],
+        ["xpath=//input", "xpath:position"]
+      ],
+      "value": "University Of South Carolina"
+    }, {
+      "id": "9df86f93-9e41-493a-9775-dca937c00e45",
+      "comment": "",
+      "command": "click",
+      "target": "id=dept",
+      "targets": [
+        ["id=dept", "id"],
+        ["name=department", "name"],
+        ["css=#dept", "css:finder"],
+        ["xpath=//select[@id='dept']", "xpath:attributes"],
+        ["xpath=//div[@id='input']/div[2]/select", "xpath:idRelative"],
+        ["xpath=//select", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "b4031eb3-2633-4046-8d3d-05c2b83aca28",
+      "comment": "",
+      "command": "select",
+      "target": "id=dept",
+      "targets": [],
+      "value": "label=Engineering and Technology"
+    }, {
+      "id": "2be0606a-990c-48e1-a59c-1576da8c1db6",
+      "comment": "",
+      "command": "click",
+      "target": "css=option:nth-child(6)",
+      "targets": [
+        ["css=option:nth-child(6)", "css:finder"],
+        ["xpath=//option[@value='Engineering and Technology']", "xpath:attributes"],
+        ["xpath=//select[@id='dept']/option[6]", "xpath:idRelative"],
+        ["xpath=//option[6]", "xpath:position"],
+        ["xpath=//option[contains(.,'Engineering and Technology')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "32c7002f-b05f-4ed5-b4fe-610cb4c4896a",
+      "comment": "",
+      "command": "click",
+      "target": "id=major",
+      "targets": [
+        ["id=major", "id"],
+        ["name=major", "name"],
+        ["css=#major", "css:finder"],
+        ["xpath=//input[@id='major']", "xpath:attributes"],
+        ["xpath=//div[@id='input']/div[3]/form/input", "xpath:idRelative"],
+        ["xpath=//div[3]/form/input", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "32752cac-da7e-4659-8144-aea41c053f55",
+      "comment": "",
+      "command": "type",
+      "target": "id=major",
+      "targets": [
+        ["id=major", "id"],
+        ["name=major", "name"],
+        ["css=#major", "css:finder"],
+        ["xpath=//input[@id='major']", "xpath:attributes"],
+        ["xpath=//div[@id='input']/div[3]/form/input", "xpath:idRelative"],
+        ["xpath=//div[3]/form/input", "xpath:position"]
+      ],
+      "value": "Comp Sci"
+    }, {
+      "id": "fd07ee8c-f1dc-4268-9f3e-16e4d90bcb25",
+      "comment": "",
+      "command": "click",
+      "target": "id=submitButton",
+      "targets": [
+        ["id=submitButton", "id"],
+        ["css=#submitButton", "css:finder"],
+        ["xpath=//input[@id='submitButton']", "xpath:attributes"],
+        ["xpath=//div[@id='input']/input", "xpath:idRelative"],
+        ["xpath=//div[2]/div/input", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "5be84692-0d8d-4de6-83f2-beba51195b7e",
+      "comment": "",
+      "command": "assertElementPresent",
+      "target": "id=output",
+      "targets": [
+        ["id=output", "id"],
+        ["css=#output", "css:finder"],
+        ["xpath=//div[@id='output']", "xpath:attributes"],
+        ["xpath=//div[@id='inputOutput']/div[2]", "xpath:idRelative"],
+        ["xpath=//div[2]/div[2]", "xpath:position"]
+      ],
+      "value": ""
+    }]
+  }],
+  "suites": [{
+    "id": "57100e8b-40be-4e85-a66f-7a189c165fb2",
+    "name": "Default Suite",
+    "persistSession": false,
+    "parallel": false,
+    "timeout": 300,
+    "tests": []
+  }],
+  "urls": ["http://127.0.0.1:8000/"],
+  "plugins": []
+}
