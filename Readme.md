@@ -9,6 +9,8 @@ Testing for the application is done using Django’s built-in testing framework.
 
 Testing for the application is done using Django’s built-in testing framework. To run all the automated tests, use the command `python manage.py test`. This will execute the unit and integration tests within the application.
 
+To execute the behavior tests one must have selenium installed and pytest installed on their computer. Also the test opens a screen through firefox so if you do not have firefox installed it may also cause issues. Currently you must navigate under our repo to MajorHelp/behaviortests and then run pytest test_searchwithnothing.py to run the script. This may very as more tests are added
+
 # Authors
 - Alex Phakdy - aphakdy@email.sc.edu 
 - Brandon - boriley@email.sc.edu
