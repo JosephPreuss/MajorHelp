@@ -20,7 +20,7 @@ class TestClickLogIn():
   
   def test_clickLogIn(self):
     self.driver.get("https://majorhelp.onrender.com/")
-    self.driver.set_window_size(1034, 1109)
+    self.driver.set_window_size(1033, 1104)
     self.driver.find_element(By.LINK_TEXT, "Search").click()
     self.driver.find_element(By.ID, "search-query").click()
     dropdown = self.driver.find_element(By.ID, "search-query")
@@ -29,6 +29,6 @@ class TestClickLogIn():
     self.driver.find_element(By.CSS_SELECTOR, "button").click()
     self.driver.find_element(By.LINK_TEXT, "University Of South Carolina").click()
     self.driver.find_element(By.LINK_TEXT, "log in").click()
-    elements = self.driver.find_elements(By.CSS_SELECTOR, ".login-form-wrapper")
+    elements = self.driver.find_elements(By.CSS_SELECTOR, ".login-container")
     assert len(elements) > 0
   
