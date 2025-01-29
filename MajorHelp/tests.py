@@ -4,6 +4,8 @@ from django.test import Client
 
 from django.urls import reverse
 
+from django.contrib.auth import get_user_model
+
 from .models import *
 
 
@@ -207,3 +209,81 @@ class MajorModelTest(TestCase):
         self.assertEqual(self.major.courses.count(), 2)
         self.assertIn(self.course1, self.major.courses.all())
         self.assertIn(self.course2, self.major.courses.all())
+
+    
+class SignupTest(TestCase):
+    def setUp(self):
+        self.url = reverse('MajorHelp:signup')  # Replace with the actual name of your signup URL if different
+
+    def test_signup_page_renders(self):
+        """
+        Test that the sign-up page renders successfully.
+        """
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'registration/signup.html')  # Ensure this matches your template
+
+    def test_successful_signup(self):
+        """
+        Test that a new user is created with valid data.
+        """
+        user_data = {
+            'username': 'newuser',
+            'password': 'securepassword123',
+            'confirm_password': 'securepassword123',
+            'email': 'newuser@example.com',
+            'role': 'alumni'
+        }
+        response = self.client.post(self.url, user_data)
+
+        # Check for redirect (successful signup redirects).
+        self.assertEqual(response.status_code, 302)  # Redirect to home or another success URL.
+        
+        # Check if the user exists in the database.
+        self.assertTrue(CustomUser.objects.filter(username='newuser').exists())
+
+
+class LoginTest(TestCase):
+    def setUp(self):
+        # Create a test user with the necessary data
+        self.username = "testuser"
+        self.password = "securepassword123"
+        self.user_data = {
+            'username': self.username,
+            'password': self.password,
+            'confirm_password': self.password,
+            'email': "testuser@example.com",
+            'role': 'alumni' 
+        }
+        
+        # Use CustomUserCreationForm or your own user creation logic here
+        self.user = CustomUser.objects.create_user(
+            username=self.username,
+            password=self.password,
+            email=self.user_data['email'],
+            role=self.user_data['role']
+        )
+
+        self.url = reverse('MajorHelp:login')  
+
+    def test_login_page_renders(self):
+        """
+        Test that the login page renders successfully.
+        """
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'registration/login.html')  # Adjust this if needed
+
+    def test_successful_login(self):
+        """
+        Test that a user can log in with correct credentials.
+        """
+        response = self.client.post(self.url, {
+            'username': self.username,
+            'password': self.password,
+        })
+
+        # After successful login, ensure it redirects (or go to dashboard/home, adjust the URL as needed)
+        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, reverse('MajorHelp:home'))  # Adjust if the redirect target is different
+
