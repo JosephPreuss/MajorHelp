@@ -19,9 +19,15 @@ To execute the behavior tests one must have selenium installed and pytest instal
 - Joseph jpreuss@email.sc.edu
 
 ## Testing
-The test files are located in the base MajorHelp directory, specifically in MajorHelp/tests.py.
 
-Testing for the application is done using Django’s built-in testing framework. To run all the automated tests, use the command:
+To run the behavioral tests, move to that folder location and use the command:
+py -m pytest .\test_clickLogIn.py
+py -m pytest .\test_searchwithnothing.py
+py -m pytest .\test_testcontactandabout.py
+py -m pytest .\test_calcminimum.py
+
+The test files are located in the base MajorHelp directory, specifically in MajorHelp/tests.py.
+To run all the unit tests, use the command:
 
 ```bash
 python manage.py test
