@@ -427,6 +427,8 @@ class MajorOverviewView(DetailView):
 
         return context
 
+# Flag for the backend to tell the front that it doesn't exist.
+DNE = "DOESNOTEXIST"
 
 class CalcView(View):
     def get(self, request):
@@ -482,17 +484,18 @@ class CalcView(View):
         uniObj = None
         try:
             uniObj = University.objects.get(name=inData["university"])
-        except uniObj.DoesNotExist as error:
+        except University.DoesNotExist as error:
             print("No university of name: \"" + inData["university"] + "\" was found.")
-            raise
 
-        # get the data for the university
-        university["name"]  = uniObj.name
+            university["name"] = DNE
+        else:
+            # get the data for the university
+            university["name"]  = uniObj.name
 
-        university["baseMinTui"] = uniObj.out_of_state_base_min_tuition if outstate else uniObj.in_state_base_min_tuition
-        university["baseMaxTui"] = uniObj.out_of_state_base_max_tuition if outstate else uniObj.in_state_base_max_tuition
+            university["baseMinTui"] = uniObj.out_of_state_base_min_tuition if outstate else uniObj.in_state_base_min_tuition
+            university["baseMaxTui"] = uniObj.out_of_state_base_max_tuition if outstate else uniObj.in_state_base_max_tuition
 
-        university["fees"] = uniObj.fees
+            university["fees"] = uniObj.fees
 
 
         # Get the Major
@@ -509,18 +512,20 @@ class CalcView(View):
         majorObj = None
         try:
             majorObj = Major.objects.get(major_name=inData["major"])
-        except MajorObj.DoesNotExist as error:
-            raise
+        except Major.DoesNotExist as error:
+            print("No major of name: \"" + inData["major"] + "\" was found.")
 
-        # get the data for the major
-        major["name"] = majorObj.major_name
+            major["name"] = DNE
+        else: 
+            # get the data for the major
+            major["name"] = majorObj.major_name
 
-        major["uni"] = majorObj.university.name
+            major["uni"] = majorObj.university.name
 
-        major["baseMinTui"] = majorObj.out_of_state_min_tuition if outstate else majorObj.in_state_min_tuition
-        major["baseMaxTui"] = majorObj.out_of_state_max_tuition if outstate else majorObj.in_state_max_tuition
+            major["baseMinTui"] = majorObj.out_of_state_min_tuition if outstate else majorObj.in_state_min_tuition
+            major["baseMaxTui"] = majorObj.out_of_state_max_tuition if outstate else majorObj.in_state_max_tuition
 
-        major["fees"] = majorObj.fees
+            major["fees"] = majorObj.fees
 
 
         # setup financial aid
@@ -536,12 +541,14 @@ class CalcView(View):
             try:
                 aidObj = FinancialAid.objects.get(name=inData["aid"])
             except FinancialAid.DoesNotExist as error:
-                raise
+                print("No financial aid of name: \"" + inData["aid"] + "\" was found.")
 
-            # get the data for Financial aid
-            aid["name"] = aidObj.name
+                aid["name"] = DNE
+            else:
+                # get the data for Financial aid
+                aid["name"] = aidObj.name
 
-            aid["amount"] = aidObj.amount
+                aid["amount"] = aidObj.amount
 
 
 
