@@ -20,8 +20,8 @@
     };
 
     // the value entries in this dictionary represent whether the data is
-    // "required". Required entries are not allowed to be null and the backend
-    // will return a 400 if given a null required entry.
+    // "required". Required entries are not allowed to be empty strings and the
+    // backend will return a 400 if given a null or empty required entry.
     const inputEntries = {
         uni         :       true,
         outstate    :   false,

@@ -1,5 +1,5 @@
 from django.shortcuts import get_object_or_404, render, redirect
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse, HttpResponseBadRequest
 from django.template import loader
 from django.http import Http404
 from django.db.models import F
@@ -8,7 +8,6 @@ from django.views import generic
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import JsonResponse
 from django.views.generic import TemplateView
 from django.contrib.auth.forms import UserCreationForm
 from django.views import View
@@ -427,19 +426,35 @@ class MajorOverviewView(DetailView):
 
         return context
 
-# Flag for the backend to tell the front that it doesn't exist.
-DNE = "DOESNOTEXIST"
 
 class CalcView(View):
     def get(self, request):
+        # TODO(jpreuss) Pass the json back to the frontend to prepopulate
+        #               the already filled data.
+        return render(request, 'calc/calc.html')
+
+# Flag for the backend to tell the front that it doesn't exist.
+DNE = "DOESNOTEXIST"
+
+class CalcInfo(View):
+    def get(self, request):
         
+        # Check to see if there are no entries in the GET request, if so, its
+        # likely because the user is accessing /calc/info on their browser directly.
+        if not request.GET:
+
+        # if so then just redirect to the calculator
+            return HttpResponseRedirect(reverse("MajorHelp:calc"))
+        
+
+
         inData = {}
         try: 
             inData = {
-                "university" : request.GET['uni'],
+                "university" : request.GET['uni'],          # required
                 "outstate"   : request.GET['outstate'],
                 "department" : request.GET['dept'],
-                "major"      : request.GET['major'],
+                "major"      : request.GET['major'],        # required
                 "aid"        : request.GET['aid'],
             }
         
@@ -447,23 +462,14 @@ class CalcView(View):
         # Effectively, this saves me from having to do an if with DeMorgan's law on every
         # single data value.
         #
-        # If there isn't a value defined yet, then that means that the user is accessing
-        # the page as normal and has yet to input anything, so just return calc.html.
-        except MultiValueDictKeyError:
+        # If there isn't a value defined yet, then for some reason the front end did not
+        # validate the get json, return a 400 - Bad Request
+        except MultiValueDictKeyError as e:
             
-            return render(request, 'calc/calc.html')
-
-        
-        # If all of those values are filled out, then that means that the javascript in
-        # calc.html is making another get request to this view with the data supplied.
-        # 
-        # Don't redirect, instead return a JSON with the resulting tuition data.
-        #
-        # If for some reason the user fills out a get request manually via the url link,
-        #
-        #   (ie http://localhost:8000/calc/?uni=University+Of+South+Carolina&outstate=true&dept=Education&major=CIS&aid=)
-        #
-        # ...they will just get the json data directly.
+            # \u0002 (␂) aka start of text will be used in case the front end needs to
+            # skip any header and get to the 'str(e)' that contains the malformated
+            # (likely null) entry.
+            return HttpResponseBadRequest("<h1> 400 Bad Request </h1><br>\u0002" + str(e) + " is not defined.")
 
 
         # Prepare the output JSON
@@ -472,6 +478,12 @@ class CalcView(View):
         outstate = inData["outstate"] == "true"
 
         # Get the university.
+
+        # University is a required entry
+        if inData["university"] == "":
+            return HttpResponseBadRequest("<h1> 400 Bad Request </h1><br>\u0002 'uni' is left blank.")
+
+
         university = {
             "name"          : None,
             "baseMinTui"    : 0,
@@ -484,12 +496,14 @@ class CalcView(View):
         uniObj = None
         try:
             uniObj = University.objects.get(name=inData["university"])
+
         except University.DoesNotExist as error:
             print("No university of name: \"" + inData["university"] + "\" was found.")
 
             university["name"] = DNE
         else:
             # get the data for the university
+
             university["name"]  = uniObj.name
 
             university["baseMinTui"] = uniObj.out_of_state_base_min_tuition if outstate else uniObj.in_state_base_min_tuition
@@ -499,6 +513,11 @@ class CalcView(View):
 
 
         # Get the Major
+
+        # Major is a required entry
+        if inData["major"] == "":
+            return HttpResponseBadRequest("<h1> 400 Bad Request </h1><br>\u0002 'major' is left blank.")
+
 
         major = {
             "name"          : None,
@@ -510,14 +529,16 @@ class CalcView(View):
 
 
         majorObj = None
-        try:
+        try: 
             majorObj = Major.objects.get(major_name=inData["major"])
+
         except Major.DoesNotExist as error:
             print("No major of name: \"" + inData["major"] + "\" was found.")
 
             major["name"] = DNE
         else: 
-            # get the data for the major
+            # get the data for the majo
+
             major["name"] = majorObj.major_name
 
             major["uni"] = majorObj.university.name
