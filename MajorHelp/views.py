@@ -498,7 +498,7 @@ class CalcInfo(View):
             uniObj = University.objects.get(name=inData["university"])
 
         except University.DoesNotExist as error:
-            print("No university of name: \"" + inData["university"] + "\" was found.")
+            # print("No university of name: \"" + inData["university"] + "\" was found.")
 
             university["name"] = DNE
         else:
@@ -533,7 +533,7 @@ class CalcInfo(View):
             majorObj = Major.objects.get(major_name=inData["major"])
 
         except Major.DoesNotExist as error:
-            print("No major of name: \"" + inData["major"] + "\" was found.")
+            # print("No major of name: \"" + inData["major"] + "\" was found.")
 
             major["name"] = DNE
         else: 
@@ -562,7 +562,7 @@ class CalcInfo(View):
             try:
                 aidObj = FinancialAid.objects.get(name=inData["aid"])
             except FinancialAid.DoesNotExist as error:
-                print("No financial aid of name: \"" + inData["aid"] + "\" was found.")
+                # print("No financial aid of name: \"" + inData["aid"] + "\" was found.")
 
                 aid["name"] = DNE
             else:
