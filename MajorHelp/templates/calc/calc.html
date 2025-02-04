@@ -9,28 +9,34 @@
 
 {% block script %}
 <script>
-    const inputData = {
-        uni      : null,
-        outstate : false,
-        dept     : null,
-        major    : null,
-        aid      : "",   // empty string represents no aid
-    }
+    const URL_HEAD = "/calc/info/"
 
-    const inputIds = [
-        "uni",
-        "outstate",
-        "dept",
-        "major",
-        "aid",
-    ]
+    const inputData = {
+        uni      :  null,
+        outstate :  false,
+        dept     :  null,
+        major    :  null,
+        aid      :  null,
+    };
+
+    // the value entries in this dictionary represent whether the data is
+    // "required". Required entries are not allowed to be null and the backend
+    // will return a 400 if given a null required entry.
+    const inputEntries = {
+        uni         :       true,
+        outstate    :   false,
+        dept        :   false,
+        major       :       true,
+        aid         :   false,
+    };
+
+    // TODO(jpreuss) is it better to have one dictonary that returns a tuple?
 
 
     function getValues() {
 
-        for (let i = 0; i < inputIds.length; i++){
-            Input(inputIds[i], false, false);
-        }
+        for (const [entry, required] of Object.entries(inputEntries))
+            Input(entry, required, false)
 
 
         validateInputData();
@@ -59,7 +65,8 @@
 
             // check if the entered data isn't just whitespace via trim and length
             data = document.getElementById(entry).value.trim();
-            if (data.length == 0 && required) return;
+            if (data.length == 0 && required) 
+                data = null;
         }
         inputData[entry] = data;
 
@@ -71,22 +78,24 @@
     
 
     async function validateInputData() {
-        for (const [ignored, value] of Object.entries(inputData)) {
-            if (value == null) return;
+        for (const [entry , required] of Object.entries(inputEntries)) {
+            if (required && inputData[entry] == null) return false
         }
-        // None of the data values are null, the request is ready.
+        // None of the required data values are null, the request is ready.
+
+        // TODO(jpreuss) might also have to check for empty strings for rquired
+        // entries
 
         // Prepare the GET request string for the url
         let getStr = "?";
 
-        for (const [key, value] of Object.entries(inputData)) {
-            getStr = getStr.concat(key.toString() + "=" + value.toString() + "&");
+        for (const [entry, data] of Object.entries(inputData)) {
+            getStr = getStr.concat(entry.toString() + "=" + data.toString() + "&");
         }
          
         // Make a fetch request, the url can just be the get data
-        // Django will automatically prepend /calc/ to it.
 
-        const response = await fetch(getStr,  { 
+        const response = await fetch(URL_HEAD+getStr,  { 
             method : 'GET',
             headers: {"Content-Type": "application/json",},
         });
