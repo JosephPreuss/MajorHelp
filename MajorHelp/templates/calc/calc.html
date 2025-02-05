@@ -9,7 +9,8 @@
 
 {% block script %}
 <script>
-    const URL_HEAD = "/calc/info/"
+    const DNE = "DOESNOTEXIST";
+    const URL_HEAD = "/calc/info/";
 
     const inputData = {
         uni      :  null,
@@ -110,37 +111,59 @@
     }
 
     function updateData(data) {
+        dataValid = true;
+
         const total = "$" + data['minTui'] + ' - $' + data['maxTui'];
 
         document.getElementById("total1").textContent=total;
         document.getElementById("total2").textContent=total;
 
-
-        document.getElementById("output").style.display = 'block';
+    
 
 
         uni = data["uni"];
-        document.getElementById("uniName").textContent = uni['name'];
-        document.getElementById("uniTui").textContent = "$" + uni['baseMinTui'] + ' - $' + uni['baseMaxTui'];
-        document.getElementById("uniFees").textContent = "$" + uni['fees'];
+        if (uni["name"] !== DNE) {  // If Uni exists
+            document.getElementById("uniName").textContent = uni['name'];
+            document.getElementById("uniTui").textContent = "$" + uni['baseMinTui'] + ' - $' + uni['baseMaxTui'];
+            document.getElementById("uniFees").textContent = "$" + uni['fees'];
+        } else {
+            console.error("No university of name " + inputData["uni"] + " exists.");
+            dataValid = false;
+        }
+
+
 
 
         major = data["major"];
-        document.getElementById("majorName").textContent = major['name'];
-        document.getElementById("majorTui").textContent = "$" + major['baseMinTui'] + ' - $' + major['baseMaxTui'];
-        document.getElementById("majorFees").textContent = "$" + major['fees'];
-
+        if (major["name"] !== DNE) {  // If major exists
+            document.getElementById("majorName").textContent = major['name'];
+            document.getElementById("majorTui").textContent = "$" + major['baseMinTui'] + ' - $' + major['baseMaxTui'];
+            document.getElementById("majorFees").textContent = "$" + major['fees'];
+        } else {
+            console.error("No Major of name " + inputData["major"] + " exists.");
+            dataValid = false;
+        }
 
         aid = data["aid"];
-        
-        if (aid["name"] !== "") {
-            document.getElementById("financialAidOutput").style.display = 'inline';
-            document.getElementById("aidName").textContent = aid['name'];
-            document.getElementById("aidTui").textContent = "-$" + aid['amount'];
-        } else {
+        if (aid["name"] !== "") {  // If aid is not empty, ie aid was specified
+
+            if (aid["name"] !== DNE) {  // If aid was specified and exists
+                document.getElementById("financialAidOutput").style.display = 'inline';
+                document.getElementById("aidName").textContent = aid['name'];
+                document.getElementById("aidTui").textContent = "-$" + aid['amount'];
+
+            } else {  // aid was specified but does not exist
+                console.error("No Financial Aid of name " + inputData["aid"] + " exists.");
+                dataValid = false;
+            }
+        } else {  // aid is empty, ie no aid was specified
             document.getElementById("financialAidOutput").style.display = 'none';
         }
 
+        if (dataValid) // then display the output tuition.
+            document.getElementById("output").style.display = 'block';
+        else
+            document.getElementById("output").style.display = 'none';
     }
 </script>
 {% endblock script %}
