@@ -37,6 +37,11 @@
     max-width: 60%;
 }
 
+.error {
+    display : none;  /* to be overriden by js*/
+    color : #ff0047;
+}
+
 #output {
     max-width: 25%;
     padding: 0px 50px 0px 50px
