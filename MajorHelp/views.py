@@ -495,7 +495,7 @@ class CalcInfo(View):
         # For now we'll have to rely on the user inputting the name of the university exactly.
         uniObj = None
         try:
-            uniObj = University.objects.get(name=inData["university"])
+            uniObj = University.objects.get(name__iexact=inData["university"])
 
         except University.DoesNotExist as error:
             # print("No university of name: \"" + inData["university"] + "\" was found.")
@@ -530,7 +530,7 @@ class CalcInfo(View):
 
         majorObj = None
         try: 
-            majorObj = Major.objects.get(major_name=inData["major"])
+            majorObj = Major.objects.get(major_name__iexact=inData["major"])
 
         except Major.DoesNotExist as error:
             # print("No major of name: \"" + inData["major"] + "\" was found.")
@@ -560,7 +560,7 @@ class CalcInfo(View):
         if (inData["aid"] != ""):
             aidObj = None
             try:
-                aidObj = FinancialAid.objects.get(name=inData["aid"])
+                aidObj = FinancialAid.objects.get(name__iexact=inData["aid"])
             except FinancialAid.DoesNotExist as error:
                 # print("No financial aid of name: \"" + inData["aid"] + "\" was found.")
 
