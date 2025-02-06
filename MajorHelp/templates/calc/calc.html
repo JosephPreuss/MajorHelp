@@ -110,8 +110,18 @@
         updateData(data);
     }
 
+    let dataValid = true;
+
     function updateData(data) {
-        dataValid = true;
+        if (!dataValid) {
+            let ele = document.getElementsByClassName("error");
+
+            for (var i = 0; i < ele.length; i++){
+                ele[i].style.display = "none";
+            }
+
+            dataValid = true;
+        }
 
         const total = "$" + data['minTui'] + ' - $' + data['maxTui'];
 
@@ -124,10 +134,19 @@
         uni = data["uni"];
         if (uni["name"] !== DNE) {  // If Uni exists
             document.getElementById("uniName").textContent = uni['name'];
-            document.getElementById("uniTui").textContent = "$" + uni['baseMinTui'] + ' - $' + uni['baseMaxTui'];
+            document.getElementById("uniTui").textContent = 
+                "$" + uni['baseMinTui'] + ' - $' + uni['baseMaxTui'];
+
             document.getElementById("uniFees").textContent = "$" + uni['fees'];
-        } else {
+        } else {  
+            // If Uni does NOT exist...
+
             console.error("No university of name " + inputData["uni"] + " exists.");
+            document.getElementById("uniError").textContent = 
+                "No university \"" + inputData["uni"] + "\" was found.";
+
+            // Show the error message.
+            document.getElementById("uniError").style.display = 'inline';
             dataValid = false;
         }
 
@@ -140,7 +159,14 @@
             document.getElementById("majorTui").textContent = "$" + major['baseMinTui'] + ' - $' + major['baseMaxTui'];
             document.getElementById("majorFees").textContent = "$" + major['fees'];
         } else {
-            console.error("No Major of name " + inputData["major"] + " exists.");
+            // If Major does NOT exist...
+
+            console.error("No major of name " + inputData["major"] + " exists.");
+            document.getElementById("majorError").textContent = 
+                "No major \"" + inputData["major"] + "\" was found.";
+
+            // Show the error message.
+            document.getElementById("majorError").style.display = 'inline';
             dataValid = false;
         }
 
@@ -154,6 +180,11 @@
 
             } else {  // aid was specified but does not exist
                 console.error("No Financial Aid of name " + inputData["aid"] + " exists.");
+                document.getElementById("aidError").textContent = 
+                    "No aid \"" + inputData["aid"] + "\" was found.";
+
+                // Show the error message
+                document.getElementById("aidError").style.display = 'inline';
                 dataValid = false;
             }
         } else {  // aid is empty, ie no aid was specified
@@ -223,7 +254,7 @@
             <form onsubmit="Input('aid'); return false">
                 <input type="text" name="aid" id="aid" placeholder="" value="">
             </form>
-            <span id="aidErro" class="error">Error</span>   
+            <span id="aidError" class="error">Error</span>   
         </div>
 
         <!--
