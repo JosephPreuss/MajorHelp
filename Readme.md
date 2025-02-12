@@ -31,4 +31,7 @@ To run all the unit tests, use the command:
 
 ```bash
 python manage.py test
+```
 
+## Credits
+Placeholder data and descriptions are acquired from usnews.com
