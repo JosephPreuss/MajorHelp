@@ -27,6 +27,23 @@
         .filter-buttons { display: flex; justify-content: center; gap: 10px; margin-bottom: 20px; }
         .filter-buttons button { padding: 10px 20px; font-size: 16px; cursor: pointer; background-color: #4CAF50; color: white; border-radius: 5px; border: none; }
         .filter-buttons button:hover { background-color: #45a049; }
+        .fixed-button {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        z-index: 1000;
+        }
+        .fixed-button a {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border-radius: 5px;
+            text-decoration: none;
+        }
+        .fixed-button a:hover {
+            background-color: #45a049;
+        }
     </style>
     <script>
         const departmentOptions = [
@@ -65,12 +82,12 @@
             departmentFilterSection.style.display = "none";
             schoolFilterSection.style.display = "none";
 
-            if (filter === "major") {
-                majorFilterSection.style.display = "flex";
+            if (filter === "school") {
+                schoolFilterSection.style.display = "flex";
             } else if (filter === "department") {
                 departmentFilterSection.style.display = "flex";
-            } else if (filter === "school") {
-                schoolFilterSection.style.display = "flex";
+            } else if (filter === "major") {
+                majorFilterSection.style.display = "flex";
             }
         }
 
@@ -90,7 +107,7 @@
         <h1 style="display: inline-block; text-align: center; width: 100%; color: white">Search Again</h1>
         <form action="{% url 'MajorHelp:search' %}" method="get" style="display: inline;">
             <div id="search-field-container" style="display: inline;">
-                <input type="text" id="search-query" name="query" placeholder="Enter Major name..." value="{{ query }}">
+                <input type="text" id="search-query" name="query" placeholder="Enter major name..." value="{{ query }}">
             </div>
             <input type="hidden" id="filter" name="filter" value="major">
             <button type="submit">Search</button>
@@ -101,13 +118,15 @@
     <div class="filter-buttons">
         <div class="filter-dropdown">
             <select id="filter-select" onchange="setActiveFilter(this.value)">
-                <option value="major" selected>Major</option>
+                <option value="major">Major</option>
                 <option value="department">Department</option>
-                <option value="school">School</option>
+                <option value="school"selected>School</option>
             </select>
         </div>
     </div>
-
+    <div class="fixed-button">
+        <a href="{% url 'MajorHelp:university-request' %}">Request University</a>
+    </div>
     <!-- Filter Section -->
     <div id="filters-section">
         <div class="filter-section" id="department-filter" style="display: none;">

@@ -68,6 +68,11 @@ class UserAdmin(admin.ModelAdmin):
     list_display = ('username', 'email', 'role')
     list_filter = ('role',)
 
+class UniversityRequestAdmin(admin.ModelAdmin):
+    list_display = ('user', 'request_text', 'submitted_at')
+    list_filter = ('submitted_at',)
+    search_fields = ('request_text', 'user__username')
+
 # Registering models
 admin.site.register(University, UniversityAdmin)
 admin.site.register(UniversityRating, UniversityRatingAdmin)
@@ -76,3 +81,4 @@ admin.site.register(Major, MajorAdmin)
 admin.site.register(MajorReview, MajorReviewAdmin)
 admin.site.register(CustomUser, UserAdmin)
 admin.site.register(FinancialAid)
+admin.site.register(UniversityRequest, UniversityRequestAdmin)

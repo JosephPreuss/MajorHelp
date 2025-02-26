@@ -47,6 +47,7 @@ urlpatterns = [
     path('search/school/<str:query>/', SchoolResultsView.as_view(), name='school_results'),
     path('search/department/<str:query>/', DepartmentResultsView.as_view(), name='department_results'),
     path('search/major/<str:query>/', views.MajorResultsView.as_view(), name='major_results'),
+    path('search/university-request/', UniversityRequestView.as_view(), name='university-request'),
 
     #urls for major overviews
     path('MajorOverview/<slashslug:slug>/', views.MajorOverviewView.as_view(), name='major-detail'),

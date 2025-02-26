@@ -171,6 +171,23 @@
         .filter-buttons button:hover {
             background-color: #45a049;
         }
+        .fixed-button {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        z-index: 1000;
+        }
+        .fixed-button a {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border-radius: 5px;
+            text-decoration: none;
+        }
+        .fixed-button a:hover {
+            background-color: #45a049;
+        }
     </style>
 
     <script>
@@ -266,7 +283,9 @@
         </select>
     </div>
 </div>
-
+<div class="fixed-button">
+    <a href="{% url 'MajorHelp:university-request' %}">Request University</a>
+</div>
 <!-- Filter Section (Adjusted for dropdown implementation) -->
 <div id="filters-section">
     <div class="filter-section" id="department-filter" style="display: none;">

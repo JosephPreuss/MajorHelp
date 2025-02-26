@@ -633,3 +633,19 @@ def LeaveMajorReview(request, slug):
     return render(request, 'leave_review.html', {'major': major})
 
 # Render review stars in Major Overview
+class UniversityRequestView(View):
+    def get(self, request):
+        return render(request, 'search/universityRequest.html')
+
+    def post(self, request):
+        request_text = request.POST.get('request_text')
+        if request_text:
+            UniversityRequest.objects.create(
+                user=request.user if request.user.is_authenticated else None,
+                request_text=request_text
+            )
+            messages.success(request, 'Your university request has been submitted.')
+            return redirect('MajorHelp:home')
+        else:
+            messages.error(request, 'Please enter your request.')
+            return render(request, 'search/universityRequest.html')

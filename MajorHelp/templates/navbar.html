@@ -7,15 +7,17 @@
             Major<span class="highlight">Help</span>
         </a>
     </div>
+    
     <ul class="nav-links">
         <li><a href="{% url 'MajorHelp:search' %}">Search</a></li>
         <li><a href="{% url 'MajorHelp:about' %}">About</a></li>
         <li><a href="{% url 'MajorHelp:contact' %}">Contact</a></li>
         <li><a href="{% url 'MajorHelp:calc' %}">Tuition Calculator</a></li>
     </ul>
+
     <div class="auth-buttons">
         {% if user.is_authenticated %}
-            <form action="{% url 'logout' %}" method="post" style="display: inline;">
+            <form action="{% url 'logout' %}" method="post" class="logout-form">
                 {% csrf_token %}
                 <button type="submit" class="logout-button">Logout</button>
             </form>
@@ -26,4 +28,121 @@
         {% endif %}
     </div>
 </nav>
+
+<style>
+    /* NAVBAR STYLES - FIXED ACROSS ALL PAGES */
+    .navbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: white !important;
+        padding: 10px 15px !important; /* Reduced padding */
+        width: 100% !important;
+        max-width: 100vw !important; /* Prevents overflow */
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05) !important;
+        box-sizing: border-box !important; /* Ensures padding doesn't cause extra width */
+        overflow-x: hidden !important;
+    }
+
+    .logo .brand {
+        font-size: 22px !important;
+        font-weight: bold !important;
+        text-decoration: none !important;
+        color: black !important;
+    }
+
+    .highlight {
+        color: #4DC3FF !important;
+    }
+
+    .nav-links {
+        display: flex !important;
+        gap: 25px !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        list-style: none !important;
+        margin-left: auto !important;
+    }
+
+    .nav-links a {
+        text-decoration: none !important;
+        color: inherit !important;
+        font-size: 16px !important;
+        font-weight: normal !important;
+    }
+
+    .auth-buttons {
+        display: flex !important;
+        gap: 10px !important;
+        align-items: center !important;
+        margin-left: auto !important;
+    }
+
+    .logout-form {
+        display: inline-block !important;
+    }
+
+    /* BUTTONS (FIXED SIZE & STYLE) */
+    .logout-button,
+    .settings-button,
+    .sign-in,
+    .register {
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        padding: 6px 18px !important;
+        font-size: 14px !important;
+        font-weight: bold !important;
+        text-decoration: none !important;
+        border: 2px solid #4DC3FF !important;
+        border-radius: 20px !important;
+        color: #4DC3FF !important;
+        background: transparent !important;
+        cursor: pointer !important;
+        transition: all 0.3s ease-in-out !important;
+        min-width: 80px !important;
+        text-align: center !important;
+        margin-left: 10px !important;
+    }
+
+    /* HOVER EFFECT */
+    .logout-button:hover,
+    .settings-button:hover,
+    .sign-in:hover,
+    .register:hover {
+        background: #E6F7FF !important;
+    }
+
+    /* ENSURE FIXED HEIGHT & STYLE */
+    .logout-button,
+    .settings-button,
+    .sign-in,
+    .register {
+        height: 36px !important;
+        line-height: 36px !important;
+        border-radius: 20px !important;
+        background: transparent !important;
+        border: 2px solid #4DC3FF !important;
+        color: #4DC3FF !important;
+        font-weight: bold !important;
+    }
+
+    /* Prevents any style overrides from other pages */
+    .logout-button, .settings-button {
+        all: unset !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        border: 2px solid #4DC3FF !important;
+        border-radius: 20px !important;
+        padding: 6px 20px !important;
+        font-size: 14px !important;
+        font-weight: bold !important;
+        text-decoration: none !important;
+        color: #4DC3FF !important;
+        cursor: pointer !important;
+        transition: all 0.3s ease-in-out !important;
+    }
+
+</style>
 {% endblock %}

@@ -5,9 +5,7 @@
     <meta charset="UTF-8">
     <title>Major Search Results</title>
     <style>
-        /* Copy all styles from the department_results.html 
-        made them all one line to save space in file
-        */
+    
         .filter-label { color: white; margin-right: 10px; }
         .search-container { display: flex; justify-content: center; align-items: center; flex-direction: column; margin: 20px; }
         #search-field-container { display: flex; align-items: center; margin-bottom: 10px; width: 100%; justify-content: center; }
@@ -29,6 +27,23 @@
         .filter-buttons { display: flex; justify-content: center; gap: 10px; margin-bottom: 20px; }
         .filter-buttons button { padding: 10px 20px; font-size: 16px; cursor: pointer; background-color: #4CAF50; color: white; border-radius: 5px; border: none; }
         .filter-buttons button:hover { background-color: #45a049; }
+        .fixed-button {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        z-index: 1000;
+        }
+        .fixed-button a {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border-radius: 5px;
+            text-decoration: none;
+        }
+        .fixed-button a:hover {
+            background-color: #45a049;
+        }
     </style>
     <script>
         const departmentOptions = [
@@ -108,6 +123,9 @@
                 <option value="school">School</option>
             </select>
         </div>
+    </div>
+    <div class="fixed-button">
+        <a href="{% url 'MajorHelp:university-request' %}">Request University</a>
     </div>
 
     <!-- Filter Section -->
