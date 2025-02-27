@@ -1,0 +1,103 @@
+/* MajorOverview.css */
+
+/*Taken from MajorOverviewPage.html and added into here plus added body, h1, and h2 from UniOverview.css */
+
+/* General Styles */
+body {
+    margin: 0;
+    padding-bottom: 110px;
+    background-color: #4ec7cf;;
+}
+
+h1 {
+    text-align: center;
+    font-size: 3.5rem;
+    color: #004080; /* Navy blue */
+    margin-top: 25px;
+    margin-bottom: 5px;
+}
+
+h2 {
+    text-align: center;
+    font-size: 2rem;
+    color: #666;
+    margin-top: 0;
+    margin-bottom: 10px;
+}
+/* similar to about-container in UniOverview.css */
+.container {
+    max-width: 1500px;
+    background-color: #fff;
+    padding: 20px;
+    margin: 0 auto;
+    margin-top: 20px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+}
+
+.description-container, .tuition-container, .courses-container, .university-info-container {
+    max-width: 1500px;
+    background-color: #fff;
+    padding: 20px;
+    margin: 20px auto;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+}
+
+.star-rating {
+    display: inline-block;
+    font-size: 30px;
+    color: #ddd;
+    cursor: pointer;
+}
+
+.star-rating .filled {
+    color: #ffbc00; /* Yellow color for filled stars */
+}
+
+.star-rating span {
+    color: #ddd; /* Gray for empty stars */
+}
+
+/* Ensuring the stars and text appear on the same line */
+.review {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.review-text {
+    margin-right: 15px; /* Adds space between text and stars */
+}
+
+/* Review Section Stars */
+.review-stars .filled {
+    color: #ffbc00; /* Yellow color for filled stars */
+}
+
+.review-stars span {
+    color: #ddd; /* Gray for empty stars */
+}
+
+/* Review Form Textarea */
+textarea {
+    width: 100%;
+    height: 100px;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+/* Button Style */
+button {
+    padding: 10px 15px;
+    border: none;
+    background-color: #4CAF50;
+    color: white;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+button:hover {
+    background-color: #45a049;
+}
