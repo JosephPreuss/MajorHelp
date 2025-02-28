@@ -34,7 +34,6 @@ MAJOR_NAMES = [
     "Fashion Merchandising & Design", "Supply Chain Management", "Rehabilitation Sciences",
     "Agriculture", "Cognitive Science", "Biomedical Informatics", "Acting & Performance Studies", 
     "Nutritional Science & Dietetics"
-
 ]
 
 # Standard college course naming format
