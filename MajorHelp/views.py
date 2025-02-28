@@ -57,8 +57,10 @@ class UniversityOverviewView(DetailView):
         
         #JUMP
         if self.request.user.is_authenticated:
-            user_review = UniversityReview.objects.filter(username=self.request.user.username, university=university).first()
+            self.request.user.refresh_from_db()
+            user_review = UniversityReview.objects.filter(username=self.request.user.username, university=university).exists()
             context['user_review'] = user_review  # If review exists, pass it to the template
+
         
         return context
         
