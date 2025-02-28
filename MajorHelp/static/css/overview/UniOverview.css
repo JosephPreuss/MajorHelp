@@ -2,7 +2,7 @@
 
 /* General Styles */
 body {
-    padding-bottom: 250px; 
+    padding-bottom: 50px; 
     background-color: #4ec7cf;
     min-height: 100vh; 
     height: auto;
@@ -287,9 +287,9 @@ h2 {
     max-width: 1500px; 
     background-color: #fff; /* White background */
     padding: 20px; /* Adds padding inside the box */
-    margin: 0 auto; /* Centers the box */
-    margin-top: 20px;
-    margin-bottom: 500px; /* Increase margin to avoid overlap with footer */
+    margin: 0 auto; 
+    margin-top: 10px;
+    margin-bottom: 30px;
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1); /* External shadow */
     border-radius: 10px; /* Rounded corners */
 }
@@ -328,6 +328,7 @@ h2 {
 .review-list ul {
     list-style: none;
     padding: 10px;
+    margin-bottom: 30px;
 }
 
 .review-list li {
@@ -347,6 +348,10 @@ h2 {
 .review-list p6 {
     text-align: center;
     color: #888;
+}
+
+.space {
+    visibility: hidden !important;
 }
 
 

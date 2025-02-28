@@ -1,6 +1,6 @@
 /* Footer Styling */
 .footer {
-    position: relative; 
+    position: fixed; 
     bottom: 0; 
     width: 100%;  
     height: 50px;  
@@ -10,7 +10,7 @@
     border-top: 1px solid #e6e6e6;  /* Optional: Subtle border for separation */
     box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);  /* Optional: Adds a clean shadow */
     z-index: 1000;  /* Ensures it stays above other content */
-    margin-top: auto;
+    
     /* Flexbox to center text vertically and horizontally */
     display: flex;  
     justify-content: center;  /* Horizontally centers the content */

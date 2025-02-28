@@ -368,7 +368,7 @@
                 <span class="result-type">{{ details.type }}</span>
             </h3>
             {% for department, majors in details.departments.items %}
-                <h4 class="department-header">{{ department }}</h4>
+                <h4 class="department-header">{{ department }}:</h4>
                 <ul class="major-list">
                     {% for major in majors %}
                         <li class="major-item">
@@ -398,7 +398,41 @@
             margin-left: 15px;
             box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1); 
         }
-        
+        .result-item h3 {
+            color: #10393c;
+        }
+    
+        .result-item h4 {
+            color: #26858c;
+        }
+    
+        .result-item ul {
+            color: #217278;
+            margin-left: 25px;
+            margin-bottom: 15px;
+        }
+    
+        .result-item a.result-link {
+            color: #008080;
+            font-size: 24px;
+            font-weight: 900
+        }
+    
+        .result-item a.major-link {
+            color: #008080;
+            font-size: 20px;
+            font-weight: 900
+        }
+    
+        .filter-section {
+            color: white;
+        }
+
+        .department-header {
+            padding-top: 25px;
+            text-decoration: underline;
+            margin-left: 25px;
+        }
     </style>
 </body>
 </html>
