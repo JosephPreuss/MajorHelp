@@ -2,101 +2,40 @@
 {% include "navbar.html" %}
 <html lang="en">
 <head>
+    {% load static %}
     <meta charset="UTF-8">
     <title>{{ major.major_name }}</title>
-    <style>
-        /* Style for Major Overview Content */
-        .major-overview-content {
-            padding: 20px;
-            padding-bottom: 100px;
-            box-sizing: border-box;
-        }
-
-        /* Star Rating Styling */
-        .star-rating {
-            display: inline-block;
-            font-size: 30px;
-            color: #ddd;
-            cursor: pointer;
-        }
-
-        .star-rating .filled {
-            color: #ffbc00; /* Yellow color for filled stars */
-        }
-
-        .star-rating span {
-            color: #ddd; /* Gray for empty stars */
-        }
-
-        /* Ensuring the stars and text appear on the same line */
-        .review {
-            display: flex;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-
-        .review-text {
-            margin-right: 15px; /* Adds space between text and stars */
-        }
-
-        /* Review Section Stars */
-        .review-stars .filled {
-            color: #ffbc00; /* Yellow color for filled stars */
-        }
-
-        .review-stars span {
-            color: #ddd; /* Gray for empty stars */
-        }
-
-        /* Review Form Textarea */
-        textarea {
-            width: 100%;
-            height: 100px;
-            padding: 10px;
-            border-radius: 5px;
-            border: 1px solid #ccc;
-        }
-
-        /* Button Style */
-        button {
-            padding: 10px 15px;
-            border: none;
-            background-color: #4CAF50;
-            color: white;
-            cursor: pointer;
-            font-size: 16px;
-        }
-
-        button:hover {
-            background-color: #45a049;
-        }
-    </style>
+    <link rel="stylesheet" href="{% static 'css/overview/MajorOverview.css' %}">
 </head>
 <body>
-    <div class="major-overview-content">
+    <div class="about-container">
         <h1>{{ major.major_name }}</h1>
         <h2>
             <a href="{% url 'MajorHelp:university-detail' slug=major.university.slug %}">{{ major.university.name }}</a>
         </h2>
+    </div>
 
+    <div class="description-container">
         <h3>Description</h3>
         <p>{{ major.major_description }}</p>
-
         <h3>Department</h3>
         <p>{{ major.department }}</p>
+    </div>
 
+    <div class="tuition-container">
         <h3>Undergrad Tuition</h3>
         <ul>
             <li>In-State Tuition: ${{ major.in_state_min_tuition }} - ${{ major.in_state_max_tuition }}</li>
             <li>Out-of-State Tuition: ${{ major.out_of_state_min_tuition }} - ${{ major.out_of_state_max_tuition }}</li>
         </ul>
-
         <h3>Graduate Tuition</h3>
         <ul>
             <li>In-State Tuition: ${{ major.grad_in_state_min_tuition }} - ${{ major.grad_in_state_max_tuition }}</li>
             <li>Out-of-State Tuition: ${{ major.grad_out_of_state_min_tuition }} - ${{ major.grad_out_of_state_max_tuition }}</li>
         </ul>
+    </div>
 
+    <div class="courses-container">
         <h3>Courses</h3>
         <ul>
             {% for course in major.major_courses.all %}
@@ -105,7 +44,9 @@
                 <li>No courses are currently available for this major.</li>
             {% endfor %}
         </ul>
+    </div>
 
+    <div class="university-info-container">
         <h3>University Information</h3>
         <p>Location: {{ major.university.location }}</p>
         <p>Type: 
@@ -115,105 +56,12 @@
                 Private
             {% endif %}
         </p>
-
         <h3>University Statistics</h3>
         <ul>
             <li>Graduation Rate: {{ major.university.GraduationRate }}%</li>
             <li>Total Undergrad Students: {{ major.university.TotalUndergradStudents }}</li>
             <li>Total Grad Students: {{ major.university.TotalGradStudents }}</li>
         </ul>
-        <h3>Average Rating</h3>
-        <div class="average-rating">
-            {% if average_rating %}
-                <!-- Loop to display the average stars -->
-                <div class="review-stars">
-                    {% for i in star_range %}
-                        {% if i <= average_rating %}
-                            <span class="filled">★</span>  <!-- Filled star (yellow) -->
-                        {% else %}
-                            <span>★</span>  <!-- Empty star (gray) -->
-                        {% endif %}
-                    {% endfor %}
-                </div>
-                <p>Average Rating: {{ average_rating }} / 5</p>
-            {% else %}
-                <p>No reviews yet.</p>
-            {% endif %}
-        </div>
-        <!-- Display Reviews -->
-        <h3>Reviews</h3>
-        <ul>
-            {% for review in major.major_reviews.all %}
-                <li class="review">
-                    <div class="review-text">
-                        <strong>{{ review.user.username }}</strong>: {{ review.review_text }} <br>
-                        <em>{{ review.pub_date|date:"F j, Y, g:i a" }}</em> <br>
-                    </div>
-                    <div class="review-stars">
-                        <!-- Show only filled stars based on rating -->
-                        {% for i in star_range %}
-                            {% if i <= review.rating %}
-                                <span class="filled">★</span>  <!-- Filled star (yellow) -->
-                            {% endif %}
-                        {% endfor %}
-                    </div>
-                </li>
-            {% empty %}
-                <li>No reviews yet. Be the first to leave a review!</li>
-            {% endfor %}
-        </ul>
-        <!-- Form for Leaving a Review -->
-        <!-- Review Submission Form -->
-        {% if user.is_authenticated and not user_review %}
-            <h3>Leave a Review</h3>
-            <form method="POST" action="{% url 'MajorHelp:leave-major-review' slug=major.slug %}">
-                {% csrf_token %}
-                <textarea name="review_text" placeholder="Write your review here..." required></textarea>
-
-                <h4>Rate this Major:</h4>
-                <div class="star-rating" id="rating-stars">
-                    <span class="star" data-value="1">★</span>
-                    <span class="star" data-value="2">★</span>
-                    <span class="star" data-value="3">★</span>
-                    <span class="star" data-value="4">★</span>
-                    <span class="star" data-value="5">★</span>
-                </div>
-
-                <input type="hidden" name="rating" id="rating-value" value="">
-
-                <button type="submit">Submit Review</button>
-            </form>
-        {% elif user.is_authenticated %}
-            <p>You have already submitted a review for this major!</p>
-        {% else %}
-            <p>You must be logged in to leave a review. <a href="{% url 'MajorHelp:login' %}">Log in</a> or <a href="{% url 'MajorHelp:signup' %}">Sign up</a>.</p>
-        {% endif %}
     </div>
-</body>
-</html>
-
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const stars = document.querySelectorAll('.star');
-            const ratingValueInput = document.getElementById('rating-value');
-
-            stars.forEach(star => {
-                star.addEventListener('click', function() {
-                    const rating = this.getAttribute('data-value');
-                    ratingValueInput.value = rating;
-
-                    // Update star colors
-                    stars.forEach(star => {
-                        if (star.getAttribute('data-value') <= rating) {
-                            star.classList.add('filled');
-                        } else {
-                            star.classList.remove('filled');
-                        }
-                    });
-                });
-            });
-        });
-    </script>
 </body>
 </html>

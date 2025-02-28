@@ -126,6 +126,9 @@ class UniversityReview(models.Model):
     pub_date = models.DateTimeField(auto_now_add=True)
     university = models.ForeignKey(University, on_delete=models.CASCADE, related_name='university_review')
     
+    class Meta:
+        unique_together = ('username', 'university')
+    
     def __str__(self):
         return f"{self.username}: {self.review_text}"
     

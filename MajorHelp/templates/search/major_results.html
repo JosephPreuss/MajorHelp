@@ -9,7 +9,7 @@
         .filter-label { color: white; margin-right: 10px; }
         .search-container { display: flex; justify-content: center; align-items: center; flex-direction: column; margin: 20px; }
         #search-field-container { display: flex; align-items: center; margin-bottom: 10px; width: 100%; justify-content: center; }
-        #search-query { padding: 10px; font-size: 16px; width: 300px; margin-right: 10px; border-radius: 5px; border: 1px solid #ccc; box-sizing: border-box; }
+        #search-query { padding: 10px; font-size: 16px; width: 300px; margin-right: 10px; margin-left: 20px; border-radius: 5px; border: 1px solid #ccc; box-sizing: border-box; }
         #filter-dropdown-container { display: flex; align-items: center; margin-left: 10px; }
         .filter-dropdown select { padding: 10px; font-size: 16px; width: 300px; border-radius: 5px; border: 1px solid #ccc; box-sizing: border-box; }
         button[type="submit"] { padding: 10px 20px; font-size: 16px; cursor: pointer; margin-top: 10px; border-radius: 5px; background-color: #4CAF50; color: white; border: none; box-sizing: border-box; }
@@ -199,7 +199,7 @@
 </form>
 
 <!-- Search Results -->
-<h2 style="font-size: 28px; color: white;">Search Results for "{{ query }}"</h2>
+<h2 style="font-size: 28px; color: white; margin-left: 20px;">Search Results for "{{ query }}"</h2>
 {% if results %}
     {% for university, details in results.items %}
         <div class="result-item">
@@ -209,7 +209,7 @@
                 <span class="result-type">{{ details.type }}</span>
             </h3>
             {% for department, majors in details.departments.items %}
-                <h4 class="department-header">{{ department }}</h4>
+                <h4 class="department-header">{{ department }}:</h4>
                 <ul class="major-list">
                     {% for major in majors %}
                         <li class="major-item">
@@ -227,6 +227,53 @@
 {% else %}
     <p style="color: white;">No majors found matching your request.</p>
 {% endif %}
+<style>
+    .result-item {
+        background-color: #d7f2f4; 
+        padding: 15px 20px; 
+        border-radius: 5px; 
+        margin-bottom: 20px;
+        border: 2.4px solid white;
+        margin-right: 20px;
+        margin-left: 15px;
+        box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1); 
+    }
+    .result-item h3 {
+        color: #10393c;
+    }
+
+    .result-item h4 {
+        color: #26858c;
+    }
+
+    .result-item ul {
+        color: #217278;
+        margin-left: 25px;
+        margin-bottom: 15px;
+    }
+
+    .result-item a.result-link {
+        color: #008080;
+        font-size: 24px;
+        font-weight: 900
+    }
+
+    .result-item a.major-link {
+        color: #008080;
+        font-size: 20px;
+        font-weight: 900
+    }
+
+    .filter-section {
+        color: white;
+    }
+
+    .department-header {
+        padding-top: 25px;
+        text-decoration: underline;
+        margin-left: 25px;
+    }
+</style>
 </body>
 </html>
 

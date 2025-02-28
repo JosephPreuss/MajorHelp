@@ -58,8 +58,10 @@ class UniversityOverviewView(DetailView):
         
         #JUMP
         if self.request.user.is_authenticated:
-            user_review = UniversityReview.objects.filter(username=self.request.user.username, university=university).first()
+            self.request.user.refresh_from_db()
+            user_review = UniversityReview.objects.filter(username=self.request.user.username, university=university).exists()
             context['user_review'] = user_review  # If review exists, pass it to the template
+
         
         return context
         
@@ -91,18 +93,28 @@ class SubmitRatingView(View):
 
 class LeaveUniversityReview(View):
     def post(self, request, username):
-        review_text = request.POST.get("review_text", "")
-        if review_text:
-            university_id = request.POST.get("university_id")
-            university = get_object_or_404(University, pk=university_id)
+        review_text = request.POST.get("review_text", "").strip()
+        university_id = request.POST.get("university_id")
+
+        if not review_text:
+            messages.error(request, 'Review text cannot be empty.')
+            return redirect('MajorHelp:university-detail', slug=university_id)
+
+        university = get_object_or_404(University, pk=university_id)
+
+        # Check if the user has already left a review for this university
+        existing_review = UniversityReview.objects.filter(username=request.user.username, university=university).exists()
+
+        if existing_review:
+            messages.error(request, 'You have already submitted a review for this university.')
+        else:
+            # Create and save the review
             UniversityReview.objects.create(
                 username=request.user.username,
                 review_text=review_text,
                 university=university
             )
-            messages.success(request, 'Your review has been submitted successfully!')
-        else:
-            messages.error(request, 'Review text cannot be empty.')
+            messages.success(request, 'Your review has been successfully submitted!')
 
         return redirect('MajorHelp:university-detail', slug=university.slug)
 

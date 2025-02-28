@@ -139,17 +139,21 @@
     </div>
 
     <!-- Form for leaving a review, visible only to logged-in users -->
-    {% if user.is_authenticated and user.role == 'alumni' or user.role == 'current_student' and not user_review%}
-        <div class="new-post-form">
-            <h6>Leave a Review:</h6>
-            <form action="{% url 'MajorHelp:create_review' user.username %}" method="post">
-                {% csrf_token %}
-                <input type="hidden" name="university_id" value="{{ university.id }}">
-                <textarea class="review-input" name="review_text" placeholder="Leave your review..." required></textarea>
-                <p></p>
-                <button class="submit-review" type="submit">Submit Review</button>
-            </form>
-        </div>
+    {% if user.is_authenticated%}
+        {%if user.role == 'alumni' or user.role == 'current_student'%}
+            {%if not user_review%}
+                <div class="new-post-form">
+                    <h6>Leave a Review:</h6>
+                    <form action="{% url 'MajorHelp:create_review' user.username %}" method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="university_id" value="{{ university.id }}">
+                        <textarea class="review-input" name="review_text" placeholder="Leave your review..." required></textarea>
+                        <p></p>
+                        <button class="submit-review" type="submit">Submit Review</button>
+                    </form>
+                </div>
+            {% endif %}
+        {% endif %}
     {% endif %}
 
     <!-- Display all reviews (visible to all users) -->
@@ -177,5 +181,19 @@
         {% endif %}
     </div>
 
+    <div class="space">
+        <p>_ </p>
+        <p>_ </p>
+        <p>_ </p>
+        <p>_ </p>
+        <p>_ </p>
+        <p>_ </p>
+    </div>
+
+    <style>
+        .space {
+            visibility: hidden !important;
+        }
+    </style>
 </body>
 </html>

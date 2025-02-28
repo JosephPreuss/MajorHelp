@@ -2,9 +2,12 @@
 
 /* General Styles */
 body {
-    margin: 0;
-    padding-bottom: 110px;
+    padding-bottom: 50px; 
     background-color: #4ec7cf;
+    min-height: 100vh; 
+    height: auto;
+    display: flex;
+    flex-direction: column;
 }
 
 h1 {
@@ -282,12 +285,12 @@ h2 {
 /* Review List */
 .review-list {
     max-width: 1500px; 
-    background-color: #fff; /* White background for the content box */
+    background-color: #fff; /* White background */
     padding: 20px; /* Adds padding inside the box */
-    margin: 0 auto; /* Centers the box */
-    margin-top: 20px;
-    margin-bottom: 100px;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1); /* External shadow for depth */
+    margin: 0 auto; 
+    margin-top: 10px;
+    margin-bottom: 30px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1); /* External shadow */
     border-radius: 10px; /* Rounded corners */
 }
 
@@ -325,6 +328,7 @@ h2 {
 .review-list ul {
     list-style: none;
     padding: 10px;
+    margin-bottom: 30px;
 }
 
 .review-list li {
@@ -346,6 +350,11 @@ h2 {
     color: #888;
 }
 
+.space {
+    visibility: hidden !important;
+}
+
+
 /* Links */
 a {
     color: #0073e6;
@@ -355,3 +364,4 @@ a {
 a:hover {
     text-decoration: underline;
 }
+
