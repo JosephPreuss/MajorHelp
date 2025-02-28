@@ -2,6 +2,7 @@
 
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import User
 
 class CustomUserCreationForm(UserCreationForm):
@@ -19,3 +20,6 @@ class CustomUserCreationForm(UserCreationForm):
         password1 = self.cleaned_data.get("password1")
         # You can add your own password validation here if neede
         return password1
+
+class CustomLoginForm(AuthenticationForm):
+    remember_me = forms.BooleanField(required=False, widget=forms.CheckboxInput())

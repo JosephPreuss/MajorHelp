@@ -144,3 +144,6 @@ LOGIN_URL = '/accounts/login/'
 LOGOUT_REDIRECT_URL = '/'
 
 AUTH_USER_MODEL = 'MajorHelp.CustomUser'
+
+SESSION_EXPIRE_AT_BROWSER_CLOSE = False  # Allows sessions to persist
+SESSION_COOKIE_AGE = 1209600  # 2 weeks (14 days)

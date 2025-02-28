@@ -33,7 +33,7 @@ urlpatterns = [
     path('create/review/<str:username>/', LeaveUniversityReview.as_view(), name="create_review"),
    
     # Adding login and signup views
-    path('accounts/login/', auth_views.LoginView.as_view(), name='login'),  # Login view
+    path('accounts/login/', CustomLoginView.as_view(), name='login'),  # Login view
     path('accounts/logout/', LogoutView.as_view(), name='logout'),
     path('accounts/signup/', views.SignUpView.as_view(), name='signup'),  # Custom signup view
     path('accounts/settings/', views.settings_view, name='settings'),

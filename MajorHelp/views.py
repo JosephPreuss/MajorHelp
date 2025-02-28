@@ -12,6 +12,7 @@ from django.views.generic import TemplateView
 from django.contrib.auth.forms import UserCreationForm
 from django.views import View
 from django.contrib.auth import login
+from django.contrib.auth.views import LoginView
 from .forms import CustomUserCreationForm
 from django import forms
 from django.contrib.auth.models import User
@@ -105,7 +106,19 @@ class LeaveUniversityReview(View):
 
         return redirect('MajorHelp:university-detail', slug=university.slug)
 
-    
+# Custom form for login
+class CustomLoginView(LoginView):
+    def form_valid(self, form):
+        remember_me = self.request.POST.get("remember_me")
+        
+        if not remember_me:
+            # Expire session when the browser closes
+            self.request.session.set_expiry(0)
+        else:
+            # Keep session active for 2 weeks
+            self.request.session.set_expiry(1209600)  
+        
+        return super().form_valid(form)
     
 # Custom form for SignUp
 class CustomUserCreationForm(forms.ModelForm):

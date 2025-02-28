@@ -1,4 +1,3 @@
-<!-- templates/registration/signup.html -->
 {% extends 'base.html' %}
 
 {% block title %}Sign Up{% endblock %}
@@ -35,6 +34,13 @@
                     {{ form.password }}
                     {{ form.password.errors }}
                 </div>
+
+                <!-- Password Strength Indicator -->
+                <div class="password-strength">
+                    <div id="strength-bar"></div>
+                    <p id="strength-text">Strength: Weak</p>
+                </div>
+
                 <div class="input-group">
                     {{ form.confirm_password.label_tag }}
                     {{ form.confirm_password }}
@@ -57,4 +63,46 @@
     </form>
     <p class="signup-footer">Already have an account? <a href="{% url 'MajorHelp:login' %}">Login here</a></p>
 </div>
+
+<!-- Password Strength Script -->
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const passwordInput = document.querySelector("#id_password"); 
+    const strengthBar = document.getElementById("strength-bar");
+    const strengthText = document.getElementById("strength-text");
+
+    passwordInput.addEventListener("input", function() {
+        let strength = 0;
+        const password = passwordInput.value;
+        
+        if (password.length > 6) strength++; 
+        if (password.length > 10) strength++; 
+        if (/[A-Z]/.test(password)) strength++; 
+        if (/[0-9]/.test(password)) strength++; 
+        if (/[^a-zA-Z0-9]/.test(password)) strength++; 
+
+        const strengthLevels = ["Weak", "Moderate", "Strong", "Very Strong"];
+        strengthText.textContent = "Strength: " + strengthLevels[Math.min(strength, strengthLevels.length - 1)];
+
+        strengthBar.style.width = (strength * 25) + "%";
+        strengthBar.style.backgroundColor = ["red", "orange", "yellow", "green"][Math.min(strength, 3)];
+    });
+});
+</script>
+
+<!-- CSS for Strength Bar -->
+<style>
+.password-strength {
+    width: 100%;
+    margin-top: 5px;
+}
+
+#strength-bar {
+    height: 5px;
+    width: 0%;
+    background-color: red;
+    transition: width 0.3s ease;
+}
+</style>
+
 {% endblock %}
