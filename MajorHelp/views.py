@@ -674,3 +674,86 @@ class UniversityRequestView(View):
         else:
             messages.error(request, 'Please enter your request.')
             return render(request, 'search/universityRequest.html')
+    
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from .models import University
+
+@csrf_exempt
+def university_search(request):
+    query = request.GET.get('query', '')
+
+    if not query:
+        return JsonResponse({"error": "No search query provided"}, status=400)
+
+    universities = University.objects.filter(name__icontains=query)
+
+    if not universities.exists():
+        return JsonResponse({"error": "No university found"}, status=404)
+
+    data = {"universities": []}
+    for uni in universities:
+        data["universities"].append({
+            "name": uni.name,
+            "location": uni.location,
+            "departments": list(uni.majors.values_list("department", flat=True).distinct()),
+        })
+
+    return JsonResponse(data)
+def major_list(request):
+    university_name = request.GET.get('university', '')
+    department = request.GET.get('department', '')
+
+    # Ensure university exists
+    university = University.objects.filter(name__icontains=university_name).first()
+    if not university:
+        return JsonResponse({"error": "University not found"}, status=404)
+
+    # Filter majors by university and department
+    majors = Major.objects.filter(university=university, department=department)
+    if not majors.exists():
+        return JsonResponse({"majors": []})  # Return empty list if no majors found
+
+    data = {"majors": [{"name": major.major_name} for major in majors]}
+    return JsonResponse(data)
+def major_info(request):
+    university_name = request.GET.get('university', '')
+    major_name = request.GET.get('major', '')
+    outstate = request.GET.get('outstate', 'false') == 'true'
+
+    # Ensure university exists
+    university = University.objects.filter(name__icontains=university_name).first()
+    if not university:
+        return JsonResponse({"error": "University not found"}, status=404)
+
+    # Ensure major exists
+    major = Major.objects.filter(university=university, major_name__icontains=major_name).first()
+    if not major:
+        return JsonResponse({"error": "Major not found"}, status=404)
+
+    # Determine correct tuition range
+    if outstate:
+        min_tuition = university.out_of_state_base_min_tuition + major.out_of_state_min_tuition
+        max_tuition = university.out_of_state_base_max_tuition + major.out_of_state_max_tuition
+    else:
+        min_tuition = university.in_state_base_min_tuition + major.in_state_min_tuition
+        max_tuition = university.in_state_base_max_tuition + major.in_state_max_tuition
+
+    data = {
+        "uni": {
+            "name": university.name,
+            "baseMinTui": university.in_state_base_min_tuition if not outstate else university.out_of_state_base_min_tuition,
+            "baseMaxTui": university.in_state_base_max_tuition if not outstate else university.out_of_state_base_max_tuition,
+            "fees": university.fees
+        },
+        "major": {
+            "name": major.major_name,
+            "baseMinTui": major.in_state_min_tuition if not outstate else major.out_of_state_min_tuition,
+            "baseMaxTui": major.in_state_max_tuition if not outstate else major.out_of_state_max_tuition,
+            "fees": major.fees
+        },
+        "minTui": min_tuition,
+        "maxTui": max_tuition
+    }
+
+    return JsonResponse(data)

@@ -1,5 +1,5 @@
 /* Extend css changes from the main stylesheet */
-@import url("styles.css");
+@import url("../css/common/styles.css");
 
 #title {
 	margin-left: 5vh;
