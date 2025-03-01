@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Check Your Email{% endblock %}
+
+{% block content %}
+    <body class="activation-page">
+        <div class="activation-content">
+            <div class="email-box">
+                <h2>Check Your Email</h2>
+                <p>An activation email has been sent to your inbox. Please check your email and follow the instructions to activate your account.</p>
+                <a href="{% url 'MajorHelp:login' %}" class="login-button">Return to Login</a>
+            </div>
+        </div>
+    </body>
+{% endblock %}

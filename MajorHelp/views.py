@@ -221,9 +221,12 @@ class SignUpView(View):
                 fail_silently=False,
             )
             messages.success(request, 'An activation email has been sent. Please check your inbox.')
-            return redirect('MajorHelp:login')  # Redirect to login page after sign-up
+            return redirect('MajorHelp:check_email')  # Redirect to login page after sign-up
         return render(request, 'registration/signup.html', {'form': form})
     
+
+def check_email_view(request):
+    return render(request, 'registration/check_email.html')
 
 def about(request):
     return render(request, 'About/about.html')

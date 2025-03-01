@@ -7,6 +7,7 @@ from django.urls.converters import register_converter
 from . import views
 from django.contrib.auth.views import LogoutView
 from MajorHelp.views import * # about,contact, SearchView, SchoolResultsView, DepartmentResultsView, LeaveReview
+from .forms import CustomAuthenticationForm
 
 app_name = "MajorHelp"
 
@@ -33,11 +34,13 @@ urlpatterns = [
     path('create/review/<str:username>/', LeaveUniversityReview.as_view(), name="create_review"),
    
     # Adding login and signup views
-    path('accounts/login/', CustomLoginView.as_view(), name='login'),  # Login view
+    path('accounts/login/', LoginView.as_view(authentication_form=CustomAuthenticationForm), name='login'),
     path('accounts/logout/', LogoutView.as_view(), name='logout'),
     path('accounts/signup/', views.SignUpView.as_view(), name='signup'),
     path('accounts/activate/<str:token>/', activate_account, name='activate_account'),
     path('accounts/settings/', views.settings_view, name='settings'),
+    path('accounts/check-email/', views.check_email_view, name='check_email'),
+
     
     # URLS for the Contact and About page
     path('about/', about, name='about'),
