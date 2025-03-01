@@ -26,9 +26,27 @@ import re
 from django.db.models import F, Value
 from django.db.models.functions import Cast
 from django.db.models import Min
+from django.core.signing import TimestampSigner
+from django.core.mail import send_mail
+from django.urls import reverse
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from .forms import CustomUserCreationForm
+from django.contrib.auth import get_user_model
+from django.views import View
+from django.shortcuts import render, redirect
+from django.contrib.auth import login
+from django.contrib import messages
+from django.core.mail import send_mail
+from django.urls import reverse
+from django.core.signing import TimestampSigner, BadSignature, SignatureExpired
+from .forms import CustomUserCreationForm
+from django.contrib.auth import get_user_model
 
 # Used to catch an exception if GET tries to get a value that isn't defined.
 from django.utils.datastructures import MultiValueDictKeyError
+
+
 
 def settings_view(request):
     return render(request, 'settings.html')  # Make sure you have a 'settings.html' template, or adjust accordingly
@@ -173,6 +191,8 @@ class CustomUserCreationForm(forms.ModelForm):
             user.save()
         return user
 
+User = get_user_model()
+signer = TimestampSigner()
 
 # SignUpView for user registration
 class SignUpView(View):
@@ -183,17 +203,50 @@ class SignUpView(View):
     def post(self, request):
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
-            user = form.save()  # Save the new user
-            login(request, user)  # Log the user in immediately after signup
-            messages.success(request, 'Account created successfully.')
-            return redirect('MajorHelp:home')  # Redirect to home page after successful signup
+            user = form.save(commit=False)
+            user.is_active = False  # Mark account as inactive until email verification
+            user.save()
+
+            # Generate a token that includes the user's primary key
+            token = signer.sign(user.pk)
+            activation_link = request.build_absolute_uri(
+    reverse('MajorHelp:activate_account', args=[token])
+)
+            # Send an activation email to the user
+            send_mail(
+                'Activate Your MajorHelp Account',
+                f'Please click the link to activate your account: {activation_link}',
+                'noreply@majorhelp.com',  # Replace with your sender email
+                [user.email],
+                fail_silently=False,
+            )
+            messages.success(request, 'An activation email has been sent. Please check your inbox.')
+            return redirect('MajorHelp:login')  # Redirect to login page after sign-up
         return render(request, 'registration/signup.html', {'form': form})
+    
 
 def about(request):
     return render(request, 'About/about.html')
     
 def contact(request):
     return render(request,'Contact/contact.html')
+
+def activate_account(request, token):
+    try:
+        # Unsign the token; valid for 1 day (86400 seconds)
+        user_pk = signer.unsign(token, max_age=86400)
+        user = User.objects.get(pk=user_pk)
+        user.is_active = True  # Activate the user
+        user.save()
+        messages.success(request, 'Your account has been activated. You can now log in.')
+        return redirect('MajorHelp:login')
+    except SignatureExpired:
+        messages.error(request, 'Activation link has expired. Please sign up again.')
+        return redirect('MajorHelp:signup')
+    except (BadSignature, User.DoesNotExist):
+        messages.error(request, 'Invalid activation link.')
+        return redirect('MajorHelp:signup')
+
 
 #the search function
 class SearchView(View):

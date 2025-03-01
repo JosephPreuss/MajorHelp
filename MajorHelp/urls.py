@@ -35,7 +35,8 @@ urlpatterns = [
     # Adding login and signup views
     path('accounts/login/', CustomLoginView.as_view(), name='login'),  # Login view
     path('accounts/logout/', LogoutView.as_view(), name='logout'),
-    path('accounts/signup/', views.SignUpView.as_view(), name='signup'),  # Custom signup view
+    path('accounts/signup/', views.SignUpView.as_view(), name='signup'),
+    path('accounts/activate/<str:token>/', activate_account, name='activate_account'),
     path('accounts/settings/', views.settings_view, name='settings'),
     
     # URLS for the Contact and About page
