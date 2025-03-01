@@ -14,8 +14,9 @@
     <link rel="stylesheet" href="{% static 'css/signup/signup.css' %}">
     <link rel="stylesheet" href="{% static 'css/settings/settings.css' %}">
 
-
-    <link rel="stylesheet" href="{% block stylesheet %}{% static 'css/common/styles.css' %}{% endblock %}">
+    {% block stylesheet %}
+    <link rel="stylesheet" href="{% static 'css/common/styles.css' %}">
+    {% endblock %}
     {# for use in script overriding #}
     {% block script %}{% endblock script %}
 

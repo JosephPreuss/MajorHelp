@@ -1,5 +1,5 @@
 /* Extend css changes from the main stylesheet */
-@import url("../css/common/styles.css");
+@import url("common/styles.css");
 
 #title {
 	margin-left: 5vh;
@@ -7,7 +7,7 @@
 }
 
 #inputOutput {
-    display:    flex;
+    display:flex;
 }
 
 .content-box {
@@ -25,16 +25,15 @@
 }
 
 /* Only affects inputOutput's immediate children. */
-#inputOutput > div {
-    margin-left:1vw;
-    margin-right:1vw;
-    margin-top:0.5vh;
-    margin-bottom:0.5vh;
-
+#input-output {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
 }
 
 #input {
-    max-width: 60%;
+    flex: 1;
+    max-width: 55%;
 }
 
 .error {
@@ -43,9 +42,11 @@
 }
 
 #output {
-    max-width: 25%;
-    padding: 0px 50px 0px 50px
+    flex: 1;
+    max-width: 40%;
+    display: none;
 }
+
 
 /*  Will likely be used later
 .outputList {

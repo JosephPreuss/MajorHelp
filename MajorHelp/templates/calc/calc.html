@@ -4,7 +4,7 @@
 {% block title %}Tuition Calculator{% endblock %}
 
 {% block stylesheet %}
-<link rel="stylesheet" href="{% static 'css/calc/calc.css' %}">
+<link rel="stylesheet" href="{% static 'css/calc.css' %}">
 <style>
     .result-item {
         padding: 10px;
@@ -15,12 +15,10 @@
         cursor: pointer;
         transition: background-color 0.3s ease;
         display: inline-block;
-
     }
     .result-item:hover {
         background-color: #008080;
         color: white;
-
     }
 </style>
 {% endblock stylesheet %}
@@ -116,19 +114,15 @@
                 let option = document.createElement("div");
                 option.classList.add("result-item");
                 option.innerHTML = `<strong>${major.name}</strong>`;
-                
-                // Ensure event listener is added
                 option.onclick = function() {
                     selectMajor(major.name);
                 };
-
                 majorContainer.appendChild(option);
             });
         } else {
             majorContainer.innerHTML = "<p>No majors found.</p>";
         }
     }
-
 
     async function selectMajor(major) {
         console.log("Major Clicked:", major);
@@ -147,16 +141,13 @@
         document.getElementById("major-tuition").textContent = `$${data.major.baseMinTui} - $${data.major.baseMaxTui}`;
         document.getElementById("major-fees").textContent = `$${data.major.fees}`;
         document.getElementById("total").textContent = `$${data.minTui} - $${data.maxTui}`;
+
         document.getElementById("output").style.display = 'block';
     }
 </script>
 {% endblock script %}
 
 {% block content %}
-<div>
-    <h1>Tuition Calculator</h1>
-</div>
-
 <div id="input-output">
     <div id="input" class="content-box">
         <h2>Start by choosing your <span class="color-text">school</span>.</h2>
@@ -175,19 +166,17 @@
         <h3 id="major-name">Selected Major: None</h3>
     </div>
 
-    <div id="output" class="content-box" style="display: none;">
+    <div id="output" class="content-box">
         <h2>Estimated <span class="color-text">Total</span></h2>
         <h1 id="total">$XX,XXX - $XX,XXX</h1>
-    
-        <h2>Details:</h2>
-    
+
         <h3>University Related Costs</h3>
         <b><span id="uni-name-output" class="color-text">XXXXXXXXX</span></b>
         <ul class="outputList">
             <li>Base Tuition <span id="uni-tuition">$X,XXX - $X,XXX</span></li>
             <li>Fees <span id="uni-fees">$X,XXX</span></li>
         </ul>
-    
+
         <h3>Major Related Costs</h3>
         <b><span id="major-name-output" class="color-text">XXXXXXXXXXXX</span></b>
         <ul class="outputList">
@@ -196,17 +185,4 @@
         </ul>
     </div>
 </div>
-<div class="space">
-    <p>_</p>
-    <p>_ </p>
-    <p>_ </p>
-    <p>_ </p>
-    <p>_ </p>
-    <p>_ </p>
-</div>
-<style>
-    .space {
-        visibility: hidden !important;
-    }
-</style>
 {% endblock content %}
