@@ -29,9 +29,6 @@ venv/
 *.sublime-workspace
 *.swp
 
-# Environment variables
-.env
-
 # Jupyter Notebook
 .ipynb_checkpoints
 
