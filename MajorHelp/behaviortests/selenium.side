@@ -318,6 +318,140 @@
       ],
       "value": ""
     }]
+  }, {
+    "id": "69c14306-7e4d-4f8a-9658-dbcbf0973d84",
+    "name": "test_clickLogIn",
+    "commands": [{
+      "id": "c5d28c4c-8e17-44f5-9180-c5fedb5397b5",
+      "comment": "",
+      "command": "open",
+      "target": "/",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "2e2b3638-769c-4eab-91cc-2412cd0eb299",
+      "comment": "",
+      "command": "setWindowSize",
+      "target": "1908x2036",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "f36fda50-1d77-429d-8283-3d747287748f",
+      "comment": "",
+      "command": "click",
+      "target": "linkText=Search",
+      "targets": [
+        ["linkText=Search", "linkText"],
+        ["css=li:nth-child(1) > a", "css:finder"],
+        ["xpath=//a[contains(text(),'Search')]", "xpath:link"],
+        ["xpath=//a[contains(@href, '/search/')]", "xpath:href"],
+        ["xpath=//li/a", "xpath:position"],
+        ["xpath=//a[contains(.,'Search')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "a372f62e-b58f-412d-95a4-74089c3d76d2",
+      "comment": "",
+      "command": "click",
+      "target": "id=search-query",
+      "targets": [
+        ["id=search-query", "id"],
+        ["name=query", "name"],
+        ["css=#search-query", "css:finder"],
+        ["xpath=//select[@id='search-query']", "xpath:attributes"],
+        ["xpath=//div[@id='search-field-container']/select", "xpath:idRelative"],
+        ["xpath=//select", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "96ecd498-a0eb-48fa-852d-f984de3a0adb",
+      "comment": "",
+      "command": "select",
+      "target": "id=search-query",
+      "targets": [],
+      "value": "label=Engineering and Technology"
+    }, {
+      "id": "c97d3c05-5cca-4642-a25f-534da5883f7f",
+      "comment": "",
+      "command": "click",
+      "target": "css=option:nth-child(6)",
+      "targets": [
+        ["css=option:nth-child(6)", "css:finder"],
+        ["xpath=//option[@value='Engineering and Technology']", "xpath:attributes"],
+        ["xpath=//select[@id='search-query']/option[6]", "xpath:idRelative"],
+        ["xpath=//option[6]", "xpath:position"],
+        ["xpath=//option[contains(.,'Engineering and Technology')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "7cb12d85-0b7b-4f62-b455-bc1246fc4eaa",
+      "comment": "",
+      "command": "click",
+      "target": "css=button",
+      "targets": [
+        ["css=button", "css:finder"],
+        ["xpath=//button[@type='submit']", "xpath:attributes"],
+        ["xpath=//button", "xpath:position"],
+        ["xpath=//button[contains(.,'Search')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "d48dff46-14b5-4e19-af28-532fc4099eaf",
+      "comment": "",
+      "command": "click",
+      "target": "linkText=UofSC",
+      "targets": [
+        ["linkText=UofSC", "linkText"],
+        ["css=.result-item:nth-child(15) .result-link", "css:finder"],
+        ["xpath=//a[contains(text(),'UofSC')]", "xpath:link"],
+        ["xpath=//a[contains(@href, '/UniversityOverview/universityofsouthcarolina/')]", "xpath:href"],
+        ["xpath=//h3/a", "xpath:position"],
+        ["xpath=//a[contains(.,'UofSC')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "3c484ecf-88c4-4a1d-81b4-d07189446642",
+      "comment": "",
+      "command": "click",
+      "target": "linkText=Sign In",
+      "targets": [
+        ["linkText=Sign In", "linkText"],
+        ["css=.sign-in", "css:finder"],
+        ["xpath=//a[contains(text(),'Sign In')]", "xpath:link"],
+        ["xpath=//a[contains(@href, '/accounts/login/')]", "xpath:href"],
+        ["xpath=//div[2]/a", "xpath:position"],
+        ["xpath=//a[contains(.,'Sign In')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "f8f1f9a8-2cd9-4b44-bffa-9786504f1ff4",
+      "comment": "",
+      "command": "mouseOver",
+      "target": "linkText=Sign In",
+      "targets": [
+        ["linkText=Sign In", "linkText"],
+        ["css=.sign-in", "css:finder"],
+        ["xpath=//a[contains(text(),'Sign In')]", "xpath:link"],
+        ["xpath=//a[contains(@href, '/accounts/login/')]", "xpath:href"],
+        ["xpath=//div[2]/a", "xpath:position"],
+        ["xpath=//a[contains(.,'Sign In')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "8f3b9245-9750-4e7a-bef7-fbbf8a8806cd",
+      "comment": "",
+      "command": "mouseOut",
+      "target": "linkText=Sign In",
+      "targets": [
+        ["linkText=Sign In", "linkText"],
+        ["css=.sign-in", "css:finder"],
+        ["xpath=//a[contains(text(),'Sign In')]", "xpath:link"],
+        ["xpath=//a[contains(@href, '/accounts/login/')]", "xpath:href"],
+        ["xpath=//div[2]/a", "xpath:position"],
+        ["xpath=//a[contains(.,'Sign In')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }]
   }],
   "suites": [{
     "id": "57100e8b-40be-4e85-a66f-7a189c165fb2",
