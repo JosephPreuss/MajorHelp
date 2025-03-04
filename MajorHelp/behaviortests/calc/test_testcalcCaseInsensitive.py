@@ -10,7 +10,7 @@ from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 
-class TestCalccaseinsensitive():
+class TestTestcalcCaseInsensitive():
   def setup_method(self, method):
     self.driver = webdriver.Firefox()
     self.vars = {}
@@ -18,43 +18,32 @@ class TestCalccaseinsensitive():
   def teardown_method(self, method):
     self.driver.quit()
   
-  def test_calccaseinsensitive(self):
+  def test_testcalcCaseInsensitive(self):
     self.driver.get("http://127.0.0.1:8000/")
-    self.driver.set_window_size(1908, 2036)
     self.driver.find_element(By.LINK_TEXT, "Tuition Calculator").click()
     self.driver.find_element(By.ID, "uni-search").click()
-    self.driver.find_element(By.ID, "uni-search").send_keys("UOFSC")
-    self.driver.find_element(By.CSS_SELECTOR, ".result-item").click()
-    self.driver.find_element(By.ID, "uni-search").click()
     self.driver.find_element(By.ID, "uni-search").send_keys("uofsc")
+    WebDriverWait(self.driver, 30).until(expected_conditions.visibility_of_element_located((By.CSS_SELECTOR, ".result-item")))
     self.driver.find_element(By.CSS_SELECTOR, ".result-item").click()
-    element = self.driver.find_element(By.ID, "uni-search")
-    actions = ActionChains(self.driver)
-    actions.move_to_element(element).click_and_hold().perform()
-    element = self.driver.find_element(By.ID, "uni-search")
-    actions = ActionChains(self.driver)
-    actions.move_to_element(element).perform()
-    element = self.driver.find_element(By.ID, "uni-search")
-    actions = ActionChains(self.driver)
-    actions.move_to_element(element).release().perform()
-    self.driver.find_element(By.ID, "uni-search").click()
-    self.driver.find_element(By.ID, "uni-search").send_keys("UofSC")
     self.driver.find_element(By.ID, "uni-search").click()
     self.driver.find_element(By.ID, "uni-search").click()
     element = self.driver.find_element(By.ID, "uni-search")
     actions = ActionChains(self.driver)
     actions.double_click(element).perform()
+    self.driver.find_element(By.ID, "uni-search").send_keys("UOFSC")
+    WebDriverWait(self.driver, 30).until(expected_conditions.visibility_of_element_located((By.CSS_SELECTOR, ".result-item")))
+    self.driver.find_element(By.CSS_SELECTOR, ".result-item").click()
     self.driver.find_element(By.ID, "uni-search").click()
     self.driver.find_element(By.ID, "uni-search").click()
-    self.driver.find_element(By.ID, "uni-search").send_keys("uOFsc")
+    element = self.driver.find_element(By.ID, "uni-search")
+    actions = ActionChains(self.driver)
+    actions.double_click(element).perform()
+    self.driver.find_element(By.ID, "uni-search").send_keys("UoFsC")
+    WebDriverWait(self.driver, 30).until(expected_conditions.visibility_of_element_located((By.CSS_SELECTOR, ".result-item")))
     self.driver.find_element(By.CSS_SELECTOR, ".result-item").click()
     self.driver.find_element(By.ID, "outstate").click()
-    self.driver.find_element(By.ID, "outstate").click()
-    self.driver.find_element(By.ID, "input").click()
-    self.driver.find_element(By.ID, "department-dropdown").click()
     dropdown = self.driver.find_element(By.ID, "department-dropdown")
     dropdown.find_element(By.XPATH, "//option[. = 'Engineering and Technology']").click()
     self.driver.find_element(By.CSS_SELECTOR, "option:nth-child(6)").click()
-    self.driver.find_element(By.CSS_SELECTOR, ".result-item").click()
-    self.driver.find_element(By.CSS_SELECTOR, ".result-item").click()
+    self.driver.find_element(By.CSS_SELECTOR, "strong").click()
   
