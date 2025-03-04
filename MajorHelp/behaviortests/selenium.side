@@ -108,34 +108,6 @@
         ["xpath=//a[contains(.,'Sign In')]", "xpath:innerText"]
       ],
       "value": ""
-    }, {
-      "id": "f8f1f9a8-2cd9-4b44-bffa-9786504f1ff4",
-      "comment": "",
-      "command": "mouseOver",
-      "target": "linkText=Sign In",
-      "targets": [
-        ["linkText=Sign In", "linkText"],
-        ["css=.sign-in", "css:finder"],
-        ["xpath=//a[contains(text(),'Sign In')]", "xpath:link"],
-        ["xpath=//a[contains(@href, '/accounts/login/')]", "xpath:href"],
-        ["xpath=//div[2]/a", "xpath:position"],
-        ["xpath=//a[contains(.,'Sign In')]", "xpath:innerText"]
-      ],
-      "value": ""
-    }, {
-      "id": "8f3b9245-9750-4e7a-bef7-fbbf8a8806cd",
-      "comment": "",
-      "command": "mouseOut",
-      "target": "linkText=Sign In",
-      "targets": [
-        ["linkText=Sign In", "linkText"],
-        ["css=.sign-in", "css:finder"],
-        ["xpath=//a[contains(text(),'Sign In')]", "xpath:link"],
-        ["xpath=//a[contains(@href, '/accounts/login/')]", "xpath:href"],
-        ["xpath=//div[2]/a", "xpath:position"],
-        ["xpath=//a[contains(.,'Sign In')]", "xpath:innerText"]
-      ],
-      "value": ""
     }]
   }, {
     "id": "405e75e3-3b9f-45e2-81ac-3eb82d971493",

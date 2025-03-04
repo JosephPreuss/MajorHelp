@@ -29,10 +29,4 @@ class TestTestclickLogIn():
     self.driver.find_element(By.CSS_SELECTOR, "button").click()
     self.driver.find_element(By.LINK_TEXT, "UofSC").click()
     self.driver.find_element(By.LINK_TEXT, "Sign In").click()
-    element = self.driver.find_element(By.LINK_TEXT, "Sign In")
-    actions = ActionChains(self.driver)
-    actions.move_to_element(element).perform()
-    element = self.driver.find_element(By.CSS_SELECTOR, "body")
-    actions = ActionChains(self.driver)
-    actions.move_to_element(element, 0, 0).perform()
   
