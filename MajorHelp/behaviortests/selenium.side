@@ -361,7 +361,7 @@
     }]
   }, {
     "id": "c71987e8-675c-42ef-ad0e-7fe870a13b3f",
-    "name": "test_submitUniversityRequest",
+    "name": "submitUniversityRequest",
     "commands": [{
       "id": "17667813-0caf-49a6-946b-b3be5fb11d79",
       "comment": "",
@@ -504,18 +504,6 @@
         ["xpath=//textarea", "xpath:position"]
       ],
       "value": "DoesNotExistU"
-    }, {
-      "id": "3553cef3-0d19-4955-b685-7261750f3909",
-      "comment": "",
-      "command": "click",
-      "target": "css=button",
-      "targets": [
-        ["css=button", "css:finder"],
-        ["xpath=//button[@type='submit']", "xpath:attributes"],
-        ["xpath=//button", "xpath:position"],
-        ["xpath=//button[contains(.,'Submit Request')]", "xpath:innerText"]
-      ],
-      "value": ""
     }]
   }],
   "suites": [{

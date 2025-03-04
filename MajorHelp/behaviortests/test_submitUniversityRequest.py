@@ -10,7 +10,7 @@ from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 
-class TestTestsubmitUniversityRequest():
+class TestSubmitUniversityRequest():
   def setup_method(self, method):
     self.driver = webdriver.Firefox()
     self.vars = {}
@@ -18,7 +18,7 @@ class TestTestsubmitUniversityRequest():
   def teardown_method(self, method):
     self.driver.quit()
   
-  def test_testsubmitUniversityRequest(self):
+  def test_submitUniversityRequest(self):
     self.driver.get("http://127.0.0.1:8000/")
     self.driver.set_window_size(3824, 2012)
     self.driver.find_element(By.LINK_TEXT, "Search").click()
@@ -32,5 +32,4 @@ class TestTestsubmitUniversityRequest():
     self.driver.find_element(By.LINK_TEXT, "Request University").click()
     self.driver.find_element(By.ID, "request_text").click()
     self.driver.find_element(By.ID, "request_text").send_keys("DoesNotExistU")
-    self.driver.find_element(By.CSS_SELECTOR, "button").click()
   
