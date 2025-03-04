@@ -359,6 +359,164 @@
       ],
       "value": ""
     }]
+  }, {
+    "id": "c71987e8-675c-42ef-ad0e-7fe870a13b3f",
+    "name": "test_submitUniversityRequest",
+    "commands": [{
+      "id": "17667813-0caf-49a6-946b-b3be5fb11d79",
+      "comment": "",
+      "command": "open",
+      "target": "/",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "ec935924-1fe6-461a-8d22-c3442dd36d17",
+      "comment": "",
+      "command": "setWindowSize",
+      "target": "3824x2012",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "81d5183d-cb08-4f37-b6e2-8c907de4e713",
+      "comment": "",
+      "command": "click",
+      "target": "linkText=Search",
+      "targets": [
+        ["linkText=Search", "linkText"],
+        ["css=li:nth-child(1) > a", "css:finder"],
+        ["xpath=//a[contains(text(),'Search')]", "xpath:link"],
+        ["xpath=//a[contains(@href, '/search/')]", "xpath:href"],
+        ["xpath=//li/a", "xpath:position"],
+        ["xpath=//a[contains(.,'Search')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "9b7eba83-303e-42b5-bf3a-8dbbc052e00a",
+      "comment": "",
+      "command": "click",
+      "target": "id=filter-dropdown",
+      "targets": [
+        ["id=filter-dropdown", "id"],
+        ["name=filter-dropdown", "name"],
+        ["css=#filter-dropdown", "css:finder"],
+        ["xpath=//select[@id='filter-dropdown']", "xpath:attributes"],
+        ["xpath=//div[2]/select", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "37d69e6e-4abd-4b73-a0e2-e41b0b67f539",
+      "comment": "",
+      "command": "select",
+      "target": "id=filter-dropdown",
+      "targets": [],
+      "value": "label=School"
+    }, {
+      "id": "1f79e871-9e7c-48d8-984a-637685846b71",
+      "comment": "",
+      "command": "click",
+      "target": "id=school-option",
+      "targets": [
+        ["id=school-option", "id"],
+        ["css=#school-option", "css:finder"],
+        ["xpath=//option[@id='school-option']", "xpath:attributes"],
+        ["xpath=//select[@id='filter-dropdown']/option[2]", "xpath:idRelative"],
+        ["xpath=//option[2]", "xpath:position"],
+        ["xpath=//option[contains(.,'School')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "c9eb2a1f-1861-4161-b348-15060f83678a",
+      "comment": "",
+      "command": "click",
+      "target": "id=search-query",
+      "targets": [
+        ["id=search-query", "id"],
+        ["name=query", "name"],
+        ["css=#search-query", "css:finder"],
+        ["xpath=//input[@id='search-query']", "xpath:attributes"],
+        ["xpath=//div[@id='search-field-container']/input", "xpath:idRelative"],
+        ["xpath=//input", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "49f43d0b-9c92-4cab-960c-db2a7101d8f1",
+      "comment": "",
+      "command": "type",
+      "target": "id=search-query",
+      "targets": [
+        ["id=search-query", "id"],
+        ["name=query", "name"],
+        ["css=#search-query", "css:finder"],
+        ["xpath=//input[@id='search-query']", "xpath:attributes"],
+        ["xpath=//div[@id='search-field-container']/input", "xpath:idRelative"],
+        ["xpath=//input", "xpath:position"]
+      ],
+      "value": "DoesNotExistU"
+    }, {
+      "id": "529e3563-22eb-4a9e-bee9-681322ecedea",
+      "comment": "",
+      "command": "click",
+      "target": "css=button",
+      "targets": [
+        ["css=button", "css:finder"],
+        ["xpath=//button[@type='submit']", "xpath:attributes"],
+        ["xpath=//button", "xpath:position"],
+        ["xpath=//button[contains(.,'Search')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "6b99c1bf-e50a-4dd7-b90d-da2aa55e630c",
+      "comment": "",
+      "command": "click",
+      "target": "linkText=Request University",
+      "targets": [
+        ["linkText=Request University", "linkText"],
+        ["css=.fixed-button > a", "css:finder"],
+        ["xpath=//a[contains(text(),'Request University')]", "xpath:link"],
+        ["xpath=//a[contains(@href, '/search/university-request/')]", "xpath:href"],
+        ["xpath=//div[4]/a", "xpath:position"],
+        ["xpath=//a[contains(.,'Request University')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "53264c61-3d45-450a-b5c9-0e644b42f88a",
+      "comment": "",
+      "command": "click",
+      "target": "id=request_text",
+      "targets": [
+        ["id=request_text", "id"],
+        ["name=request_text", "name"],
+        ["css=#request_text", "css:finder"],
+        ["xpath=//textarea[@id='request_text']", "xpath:attributes"],
+        ["xpath=//textarea", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "c3094340-1272-4d8e-a739-045fb83eb52a",
+      "comment": "",
+      "command": "type",
+      "target": "id=request_text",
+      "targets": [
+        ["id=request_text", "id"],
+        ["name=request_text", "name"],
+        ["css=#request_text", "css:finder"],
+        ["xpath=//textarea[@id='request_text']", "xpath:attributes"],
+        ["xpath=//textarea", "xpath:position"]
+      ],
+      "value": "DoesNotExistU"
+    }, {
+      "id": "3553cef3-0d19-4955-b685-7261750f3909",
+      "comment": "",
+      "command": "click",
+      "target": "css=button",
+      "targets": [
+        ["css=button", "css:finder"],
+        ["xpath=//button[@type='submit']", "xpath:attributes"],
+        ["xpath=//button", "xpath:position"],
+        ["xpath=//button[contains(.,'Submit Request')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }]
   }],
   "suites": [{
     "id": "57100e8b-40be-4e85-a66f-7a189c165fb2",
