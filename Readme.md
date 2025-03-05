@@ -1,3 +1,13 @@
+
+{% windows %}
+Hello World!
+{% endwindows %}
+
+{% linux %}
+Goodbye!
+{% endlinux %}
+
+
 # MajorHelp
 
 MajorHelp is a web application that helps students find universities, majors, and related information to assist them in making informed decisions. It includes features like user reviews, tuition calculators, and saved colleges for a personalized experience. For detailed descriptions and design decisions, refer to our [wiki pages](https://github.com/SCCapstone/pestopanini/wiki).
@@ -8,13 +18,14 @@ MajorHelp is a web application that helps students find universities, majors, an
 > It is highly recommended to run MajorHelp with a [Python Virtual Environment](https://docs.python.org/3/library/venv.html) so that dependencies for this project are kept local and not system wide. 
 > This guide was written with virtual environments in mind, so some commands may have to be run while inside the environment
 
-{% powershell %}
-Hello World!
-{% endpowershell %}
 
-{% bash %}
+{% windows %}
+Hello World!
+{% endwindows %}
+
+{% linux %}
 Goodbye!
-{% endbash %}
+{% endlinux %}
 
 
 ## Deployment
