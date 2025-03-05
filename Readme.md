@@ -64,14 +64,14 @@ To host MajorHelp on a non local enviornment, see [Deployment](#deployment)
 ### Activating Venv
 
 ```powershell copy
-<venv>\Scripts\Activate.ps1
+venv\Scripts\Activate.ps1
 ```
 
 <details>
 <summary> (Using cmd?) </summary>
 
 ```cmd copy
-<venv>\Scripts\activate.bat
+venv\Scripts\activate.bat
 ```
 
 </details>
@@ -248,6 +248,9 @@ For deployment, choose a hosting provider like Heroku, AWS, or DigitalOcean. Set
 
 # Testing
 
+> [!NOTE]
+> The behavoral tests in ``MajorHelp/behaviortests/`` will fail if the server is not already running locally.
+
 ## Windows
 <details>
 <summary> Windows Guide </summary>
@@ -287,8 +290,7 @@ py manage.py runserver
 <br>
 
 
-> [!NOTE]
-> The behavoral tests in ``MajorHelp/behaviortests/`` will fail if the server is not already running locally.
+
 
 #### Running the tests
 
@@ -331,9 +333,6 @@ Next, make sure you have a local instance of the server running, preferably in a
 ```bash copy
 python manage.py runserver
 ```
-
-> [!NOTE]
-> The behavoral tests in ``MajorHelp/behaviortests/`` will fail if the server is not already running locally.
 
 
 #### Running the tests
