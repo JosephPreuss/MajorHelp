@@ -8,13 +8,13 @@ MajorHelp is a web application that helps students find universities, majors, an
 > It is highly recommended to run MajorHelp with a [Python Virtual Environment](https://docs.python.org/3/library/venv.html) so that dependencies for this project are kept local and not system wide. 
 > This guide was written with virtual environments in mind, so some commands may have to be run while inside the environment
 
-{% windows %}
+{% powershell %}
 Hello World!
-{% endwindows %}
+{% endpowershell %}
 
-{% linux %}
+{% bash %}
 Goodbye!
-{% endlinux %}
+{% endbash %}
 
 
 ## Deployment
