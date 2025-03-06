@@ -13,6 +13,34 @@ from .models import *
 
 # Create your tests here.
 
+class RequestTests(TestCase):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.url = reverse("MajorHelp:university-request")
+
+    def testUniversityRequestViewGET(self):
+        response = self.client.get(self.url)
+
+        # check status code
+        self.assertEqual(response.status_code, 200)
+
+        self.assertEqual(response['content-type'], 'text/html; charset=utf-8')
+
+    def testUniversityRequestViewPOST(self):
+        name = "testUni"
+
+        post = self.client.post(self.url, {'request_text': name})
+
+        self.assertEqual(post.status_code, 302)
+
+        # Assert that a request was put into the database
+        
+        self.assertTrue(UniversityRequest.objects.filter(request_text=name).exists())
+        
+
+
+
 class CalcTests(TestCase):
     @classmethod
     def setUpTestData(cls):
