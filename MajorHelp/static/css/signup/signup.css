@@ -70,11 +70,11 @@
 /* Input Fields */
 .signup-form input,
 .signup-form select {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    font-size: 1rem;
+	width: 100%;
+	padding: 10px 3.5% 10px 0px;
+	border: 1px solid #ccc;
+	border-radius: 5px;
+	font-size: 1rem;
 }
 
 /* Confirm Button */
