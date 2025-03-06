@@ -20,7 +20,6 @@ class TestSubmitUniversityRequest():
   
   def test_submitUniversityRequest(self):
     self.driver.get("http://127.0.0.1:8000/")
-    self.driver.set_window_size(3824, 2012)
     self.driver.find_element(By.LINK_TEXT, "Search").click()
     self.driver.find_element(By.ID, "filter-dropdown").click()
     dropdown = self.driver.find_element(By.ID, "filter-dropdown")

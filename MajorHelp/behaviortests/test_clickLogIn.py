@@ -20,7 +20,6 @@ class TestTestclickLogIn():
   
   def test_testclickLogIn(self):
     self.driver.get("http://127.0.0.1:8000/")
-    self.driver.set_window_size(1908, 2036)
     self.driver.find_element(By.LINK_TEXT, "Search").click()
     self.driver.find_element(By.ID, "search-query").click()
     dropdown = self.driver.find_element(By.ID, "search-query")

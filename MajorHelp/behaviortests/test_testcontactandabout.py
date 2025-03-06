@@ -24,20 +24,18 @@ class TestTestcontactandabout():
     # 1 | open | http://127.0.0.1:8000/ | 
     self.driver.get("http://127.0.0.1:8000/")
     time.sleep(2)
-    # 2 | setWindowSize | 975x1032 | 
-    self.driver.set_window_size(975, 1032)
-    # 3 | click | linkText=About | 
+    # 2 | click | linkText=About | 
     self.driver.find_element(By.LINK_TEXT, "About").click()
     time.sleep(2)
-    # 4 | click | linkText=Contact | 
+    # 3 | click | linkText=Contact | 
     self.driver.find_element(By.LINK_TEXT, "Contact").click()
     time.sleep(2)
-    # 5 | click | linkText=MajorHelp | 
+    # 4 | click | linkText=MajorHelp | 
     self.driver.find_element(By.LINK_TEXT, "MajorHelp").click()
     time.sleep(2)
-    # 6 | click | linkText=Log in | 
+    # 5 | click | linkText=Log in | 
     self.driver.find_element(By.LINK_TEXT, "Log in").click()
     time.sleep(2)
-    # 7 | close |  | 
+    # 6 | close |  | 
     self.driver.close()
   
