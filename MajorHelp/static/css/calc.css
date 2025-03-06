@@ -84,3 +84,19 @@
 .outputNote:before {
     content: "(!)"
 }
+
+
+.result-item {
+    padding: 10px;
+    margin: 5px 0;
+    background-color: #f0f8ff;
+    border: 1px solid #008080;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    display: inline-block;
+}
+.result-item:hover {
+    background-color: #008080;
+    color: white;
+}
