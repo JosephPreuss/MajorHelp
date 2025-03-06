@@ -78,6 +78,7 @@
 
     function selectUniversity(name) {
         document.getElementById("uni-name").textContent = name;
+        document.getElementById("uni-box").style.visibility = "visible";
         document.getElementById("university-results").innerHTML = "";
         document.getElementById("department-dropdown").innerHTML =
             `<option value="" disabled selected>Select a Department</option>` +
@@ -118,6 +119,7 @@
         if (!data) return;
 
         document.getElementById("major-name").textContent = major;
+        document.getElementById("major-box").style.visibility = "visible";
         document.getElementById("major-name-output").textContent = major;
         document.getElementById("uni-name-output").textContent = university;
         document.getElementById("uni-tuition").textContent = `$${data.uni.baseMinTui} - $${data.uni.baseMaxTui}`;
@@ -137,7 +139,7 @@
         <h2>Start by choosing your <span class="color-text">school</span>.</h2>
         <input type="text" id="uni-search" placeholder="Enter your university" oninput="updateUniversityResults()">
         <div id="university-results" class="search-results"></div>
-        <h3 id="uni-name">Selected University: None</h3>
+        <h3 id="uni-box">You have selected <span id="uni-name" class="color-text">Nothing</span>.</h3>
         <input type="checkbox" id="outstate"> Out-of-State (Click major again to update)
 
         <h2>Select your <span class="color-text">department</span>.</h2>
@@ -147,7 +149,7 @@
         
         <h2>Now choose your <span class="color-text">major</span>.</h2>
         <div id="major-results" class="search-results"></div>
-        <h3 id="major-name">Selected Major: None</h3>
+        <h3 id="major-box">You have selected <span id="major-name" class="color-text">Nothing</span>.</h3>
     </div>
 
     <div id="output" class="content-box">
