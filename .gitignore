@@ -1,3 +1,4 @@
+
 # Python
 *.pyc
 *.pyo
@@ -10,6 +11,8 @@ build/
 eggs/
 *.egg
 MANIFEST
+venv/
+.pytest_cache/
 
 # Django
 *.log
@@ -21,7 +24,12 @@ media/
 staticfiles/
 __pycache__/
 *.log
-venv/
+
+# temp files
+*.tmp
+*.old
+*.sync-conflict*
+
 
 # IDEs
 .vscode/
@@ -41,3 +49,4 @@ Thumbs.db
 
 # Personal
 TODO
+LINKS
