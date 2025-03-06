@@ -19,7 +19,7 @@ class TestSearchwithnothing():
     self.driver.quit()
   
   def test_searchwithnothing(self):
-    self.driver.get("https://majorhelp.onrender.com/")
+    self.driver.get("http://127.0.0.1:8000/")
     time.sleep(2)
     self.driver.find_element(By.LINK_TEXT, "Search").click()
     time.sleep(2)

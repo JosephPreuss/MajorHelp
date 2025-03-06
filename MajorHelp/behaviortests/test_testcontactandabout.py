@@ -21,8 +21,8 @@ class TestTestcontactandabout():
   def test_testcontactandabout(self):
     # Test name: test_contact_and_about
     # Step # | name | target | value
-    # 1 | open | https://majorhelp.onrender.com/ | 
-    self.driver.get("https://majorhelp.onrender.com/")
+    # 1 | open | http://127.0.0.1:8000/ | 
+    self.driver.get("http://127.0.0.1:8000/")
     time.sleep(2)
     # 2 | setWindowSize | 975x1032 | 
     self.driver.set_window_size(975, 1032)
