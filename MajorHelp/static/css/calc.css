@@ -36,6 +36,14 @@
     max-width: 55%;
 }
 
+#uni-box {
+    visibility : hidden;
+}
+
+#major-box {
+    visibility : hidden;
+}
+
 .error {
     display : none;  /* to be overriden by js*/
     color : #ff0047;
@@ -83,4 +91,20 @@
 
 .outputNote:before {
     content: "(!)"
+}
+
+
+.result-item {
+    padding: 10px;
+    margin: 5px 0;
+    background-color: #f0f8ff;
+    border: 1px solid #008080;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    display: inline-block;
+}
+.result-item:hover {
+    background-color: #008080;
+    color: white;
 }
