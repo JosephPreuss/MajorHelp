@@ -258,6 +258,7 @@ class FinancialAid(models.Model):
     name = models.CharField(max_length=256)
     location = models.CharField(max_length=256)
     amount = models.IntegerField(default=0)
+    university = models.ForeignKey('University', on_delete=models.CASCADE, default=1)  # Assuming 1 is a valid University ID
     
     def __str__(self):
         return self.name
