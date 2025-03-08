@@ -22,6 +22,8 @@
         "Law and Criminal Justice"
     ];
 
+    aidData = null;
+
     async function fetchUniversityData(query) {
         try {
             const response = await fetch(`/api/university_search/?query=${query}`);
@@ -60,9 +62,9 @@
         }
     }
 
-    async function calculate(university, major, outstate) {
+    async function calculate(university, major, outstate, aid) {
         try {
-            const response = await fetch(`/api/calculate/?university=${encodeURIComponent(university)}&major=${encodeURIComponent(major)}&outstate=${outstate}`);
+            const response = await fetch(`/api/calculate/?university=${encodeURIComponent(university)}&major=${encodeURIComponent(major)}&outstate=${outstate}&aid=${aid}`);
             if (!response.ok) throw new Error('Calculation Failed.');
             return await response.json();
         } catch (error) {
@@ -92,9 +94,11 @@
         }
     }
 
-    function selectUniversity(name) {
+    async function selectUniversity(name) {
         // Check if any Financial Aid or misc applies
-        const aid = fetchFinancialAid(name);
+        aidData = await fetchFinancialAid(name);
+
+        // ..and save the info for later.
 
 
         document.getElementById("uni-name").textContent = name;
@@ -114,7 +118,7 @@
         const majorContainer = document.getElementById("major-results");
         majorContainer.innerHTML = "";
 
-        if (data.majors.length > 0) {
+        if (data && data.majors.length > 0) {
             data.majors.forEach(major => {
                 let option = document.createElement("div");
                 option.classList.add("result-item");
@@ -135,7 +139,48 @@
         const outstate = document.getElementById("outstate").checked;
         if (!university || !major) return;
 
-        const data = await calculate(university, major, outstate);
+        // Update input
+        document.getElementById("major-box").style.visibility = "visible";
+        document.getElementById("major-name").textContent = major;
+        
+
+        // Check if financial aid applies 
+        if (aidData.aids.length > 0) {
+            
+            document.getElementById("input-aid").style.display = "block";
+
+            aidContainer = document.getElementById("aid-results")
+
+            aidContainer.replaceChildren();
+
+            aidContainer.innerHTML = "<div class=\"result-item\" onclick=\"selectaid('None')\"><strong>None</strong></div>"
+
+            aidData.aids.forEach(aid => {
+                let option = document.createElement("div");
+                option.classList.add("result-item");
+                option.innerHTML = `<strong>${aid.name}</strong>`;
+                option.onclick = function() {
+                    selectaid(aid.name);
+                };
+                aidContainer.appendChild(option);
+            });
+        } else {
+            displayOutput(university, outstate, major)
+        }
+    }
+
+    function selectaid(aid) {
+        console.log("Aid Clicked:", aid)
+        const university = document.getElementById("uni-name").textContent;
+        const outstate = document.getElementById("outstate").checked;
+        const major = document.getElementById("major-name").textContent;
+
+        displayOutput(university, outstate, major, aid);
+
+    }
+
+    async function displayOutput(university, outstate, major, aid=null) {
+        const data = await calculate(university, major, outstate, aid);
         if (!data) return;
 
         document.getElementById("major-name").textContent = major;
@@ -147,6 +192,23 @@
         document.getElementById("major-tuition").textContent = `$${data.major.baseMinTui} - $${data.major.baseMaxTui}`;
         document.getElementById("major-fees").textContent = `$${data.major.fees}`;
         document.getElementById("total").textContent = `$${data.minTui} - $${data.maxTui}`;
+        document.getElementById("total-bottom").textContent = `$${data.minTui} - $${data.maxTui}`;
+
+
+        if(aid !== null && aid !== "None") {
+            // Financial Aid was applied
+
+            document.getElementById("summary").textContent = `${data.uni.name} • ${data.major.name} • ${data.aid.name}`;
+            document.getElementById("summary-bottom").textContent = `${data.uni.name} • ${data.major.name} • ${data.aid.name}`;
+
+            document.getElementById("aid-output").style.display = "block";
+            document.getElementById("aid-name-output").innerText = data.aid.name;
+            document.getElementById("aid-amount").innerText = `- $${data.aid.amount}`
+        } else { 
+
+            document.getElementById("summary").textContent = `${data.uni.name} • ${data.major.name}`;
+            document.getElementById("summary-bottom").textContent = `${data.uni.name} • ${data.major.name}`;
+        }
 
         document.getElementById("output").style.display = 'block';
     }
@@ -171,18 +233,20 @@
         <div id="major-results" class="search-results"></div>
         <h3 id="major-box">You have selected <span id="major-name" class="color-text">None</span>.</h3>
 
-        <div class="input-aid">
+        <div id="input-aid" class="input-aid">
             <h2>Do any of these apply to <span class="color-text">you</span>?</h2>
             <div id="aid-results" class="search-results">
-                <div class="result-item"><strong>None</strong></div>
+                <!-- To be filled by JS -->
             </div>
-            <h3 id="aid-box">You have selected <span id="aid-name" class="color-text">None</span>.</h3>
+            <h3 id="aid-box" class="aid-results">You have selected <span id="aid-name" class="color-text">None</span>.</h3>
         </div>
     </div>
 
     <div id="output" class="content-box">
+        <h3 id="summary">XXXX • XXX • XXXXXXX</h3>
         <h2>Estimated <span class="color-text">Total</span></h2>
         <h1 id="total">$XX,XXX - $XX,XXX</h1>
+
 
         <h3>University Related Costs</h3>
         <b><span id="uni-name-output" class="color-text">XXXXXXXXX</span></b>
@@ -197,6 +261,19 @@
             <li>Base Tuition <span id="major-tuition">$X,XXX - $X,XXX</span></li>
             <li>Fees <span id="major-fees">$X,XXX</span></li>
         </ul>
+
+        <div id="aid-output">
+            <h3>Financial Aid</h3>
+            <b><span id="aid-name-output" class="color-text">XXXXXXXXX</span></b>
+            <ul class="outputList">
+                <li>Scholarship Reward <span id="aid-amount">- $X,XXX</span></li>
+            </ul>
+        </div>
+
+        <h3>Estimated <span class="color-text">Total</span></h3>
+        <h2 id="total-bottom">$XX,XXX - $XX,XXX</h2>
+
+        <h4 id="summary-bottom">XXXX • XXX • XXXXXXX</h4>
     </div>
 </div>
 {% endblock content %}

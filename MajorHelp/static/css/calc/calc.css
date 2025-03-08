@@ -73,6 +73,9 @@
     display : none; /* to be overriden by js*/
 }
 
+.aid-results {
+    display : none; /* to be overriden by js*/
+}
 
 /* 
     This targets the spans contained in the list elements of every
@@ -97,6 +100,10 @@
 
 .outputNote:before {
     content: "(!)"
+}
+
+#aid-output {
+    display : none;
 }
 
 
