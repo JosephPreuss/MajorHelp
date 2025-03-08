@@ -4,7 +4,7 @@
 {% block title %}Tuition Calculator{% endblock %}
 
 {% block stylesheet %}
-<link rel="stylesheet" href="{% static 'css/calc.css' %}">
+<link rel="stylesheet" href="{% static 'css/calc/calc.css' %}">
 {% endblock stylesheet %}
 
 {% block script %}
@@ -33,6 +33,22 @@
         }
     }
 
+    async function fetchFinancialAid(query) {
+        try {
+            const response = await fetch(`/api/aid/?university=${encodeURIComponent(query)}`);
+            if (!response.ok) {
+                console.log(response.status + "\n" + response.statusText);
+                throw new Error("Error Fetching Aid");
+                return null;
+            }
+
+            return await response.json();
+        } catch (error) {
+            console.error(error);
+            return null;
+        }
+    }
+
     async function fetchMajors(university, department) {
         try {
             const response = await fetch(`/api/majors/?university=${encodeURIComponent(university)}&department=${encodeURIComponent(department)}`);
@@ -44,10 +60,10 @@
         }
     }
 
-    async function fetchMajorDetails(university, major, outstate) {
+    async function calculate(university, major, outstate) {
         try {
-            const response = await fetch(`/api/major_info/?university=${encodeURIComponent(university)}&major=${encodeURIComponent(major)}&outstate=${outstate}`);
-            if (!response.ok) throw new Error('Major not found');
+            const response = await fetch(`/api/calculate/?university=${encodeURIComponent(university)}&major=${encodeURIComponent(major)}&outstate=${outstate}`);
+            if (!response.ok) throw new Error('Calculation Failed.');
             return await response.json();
         } catch (error) {
             console.error(error);
@@ -77,6 +93,10 @@
     }
 
     function selectUniversity(name) {
+        // Check if any Financial Aid or misc applies
+        const aid = fetchFinancialAid(name);
+
+
         document.getElementById("uni-name").textContent = name;
         document.getElementById("uni-box").style.visibility = "visible";
         document.getElementById("university-results").innerHTML = "";
@@ -115,7 +135,7 @@
         const outstate = document.getElementById("outstate").checked;
         if (!university || !major) return;
 
-        const data = await fetchMajorDetails(university, major, outstate);
+        const data = await calculate(university, major, outstate);
         if (!data) return;
 
         document.getElementById("major-name").textContent = major;
@@ -149,7 +169,15 @@
         
         <h2>Now choose your <span class="color-text">major</span>.</h2>
         <div id="major-results" class="search-results"></div>
-        <h3 id="major-box">You have selected <span id="major-name" class="color-text">Nothing</span>.</h3>
+        <h3 id="major-box">You have selected <span id="major-name" class="color-text">None</span>.</h3>
+
+        <div class="input-aid">
+            <h2>Do any of these apply to <span class="color-text">you</span>?</h2>
+            <div id="aid-results" class="search-results">
+                <div class="result-item"><strong>None</strong></div>
+            </div>
+            <h3 id="aid-box">You have selected <span id="aid-name" class="color-text">None</span>.</h3>
+        </div>
     </div>
 
     <div id="output" class="content-box">
