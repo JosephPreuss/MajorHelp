@@ -63,6 +63,7 @@ urlpatterns = [
     path('calc/', CalcView.as_view(), name='calc'),
     path('calc/info/', CalcInfo.as_view(), name='calcInfo'),
     path("api/university_search/", university_search, name="university_search"),
+    path("api/aid/", aid_list, name="aid_list"),
     path("api/majors/", major_list, name="major_list"),
-    path("api/major_info/", major_info, name="major_info"),
+    path("api/calculate/", calculate, name="calculate"),
 ]
