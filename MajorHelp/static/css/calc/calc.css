@@ -68,6 +68,12 @@
 }
 */
 
+
+.input-aid {
+    display : none; /* to be overriden by js*/
+}
+
+
 /* 
     This targets the spans contained in the list elements of every
     unordered list of the class outputList. A bit of a mouthful but
