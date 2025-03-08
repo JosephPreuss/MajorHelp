@@ -11,6 +11,17 @@ from django.contrib.auth.models import User
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from pestopanini import settings
 
+
+class FinancialAid(models.Model):
+    name = models.CharField(max_length=256)
+    location = models.CharField(max_length=256)
+    amount = models.IntegerField(default=0)
+    
+    def __str__(self):
+        return self.name
+
+
+
 # Model for university
 class University(models.Model):
     name = models.TextField()
@@ -49,6 +60,8 @@ class University(models.Model):
 
     # Automatically populated slug
     slug = models.SlugField(default="", editable=False, null=False, unique=True)
+
+    applicableAids = models.ManyToManyField(FinancialAid, related_name="university", blank=True)
 
     def save(self, *args, **kwargs):
         if not self.slug:  # Only generate slug if it's not already set
@@ -252,16 +265,6 @@ class MajorReview(models.Model):
 
     def __str__(self):
         return f"{self.user.username}: {self.review_text}"
-
-
-class FinancialAid(models.Model):
-    name = models.CharField(max_length=256)
-    location = models.CharField(max_length=256)
-    amount = models.IntegerField(default=0)
-    
-    def __str__(self):
-        return self.name
-
 
 # Custom User Manager
 class CustomUserManager(BaseUserManager):

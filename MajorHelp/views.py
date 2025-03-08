@@ -740,12 +740,12 @@ def university_search(request):
     query = request.GET.get('query', '')
 
     if not query:
-        return JsonResponse({"error": "No search query provided"}, status=400)
+        return HttpResponse("Error - No search query provided", status=400)
 
     universities = University.objects.filter(name__icontains=query)
 
     if not universities.exists():
-        return JsonResponse({"error": "No university found"}, status=404)
+        return HttpResponse("Error - No university found", status=404)
 
     data = {"universities": []}
     for uni in universities:
@@ -756,6 +756,30 @@ def university_search(request):
         })
 
     return JsonResponse(data)
+
+def aid_list(request):
+    uniQuery = request.GET['university']
+    uniObj = None
+
+    if not uniQuery:
+        return HttpResponse("Error - No university provided.", status=400)
+
+    try:
+        uniObj = University.objects.get(name__iexact=uniQuery)
+    except University.DoesNotExist as error:
+        return HttpResponse("Error - No university found.", status=404)
+    
+    data = {"aids" : []}
+    for aid in uniObj.applicableAids.all():
+        data["aids"].append({
+            'name'      : aid.name,
+            'location'  : aid.location,
+            'amount'    : aid.amount,
+        })
+    
+    return JsonResponse(data)
+
+
 def major_list(request):
     university_name = request.GET.get('university', '')
     department = request.GET.get('department', '')
@@ -763,7 +787,7 @@ def major_list(request):
     # Ensure university exists
     university = University.objects.filter(name__icontains=university_name).first()
     if not university:
-        return JsonResponse({"error": "University not found"}, status=404)
+        return HttpResponse("Error - University not found", status=404)
 
     # Filter majors by university and department
     majors = Major.objects.filter(university=university, department=department)
@@ -771,31 +795,54 @@ def major_list(request):
         return JsonResponse({"majors": []})  # Return empty list if no majors found
 
     data = {"majors": [{"name": major.major_name} for major in majors]}
+
     return JsonResponse(data)
-def major_info(request):
-    university_name = request.GET.get('university', '')
-    major_name = request.GET.get('major', '')
-    outstate = request.GET.get('outstate', 'false') == 'true'
+
+
+def calculate(request):
+    
+    university_name = request.GET['university']
+    major_name = request.GET['major']
+    outstate = request.GET['outstate'] == 'true'
+    aid_name = request.GET['aid']
 
     # Ensure university exists
     university = University.objects.filter(name__icontains=university_name).first()
     if not university:
-        return JsonResponse({"error": "University not found"}, status=404)
+        return HttpResponse("Error - University not found", status=404)
 
     # Ensure major exists
     major = Major.objects.filter(university=university, major_name__icontains=major_name).first()
     if not major:
-        return JsonResponse({"error": "Major not found"}, status=404)
+        return HttpResponse("Error - Major not found", status=404)
+
+    # Get aid
+    aid = 0
+
+    if aid_name != "null" and aid_name != "None":
+        aidObj = FinancialAid.objects.filter(name=aid_name).first()
+        if not aidObj:
+            return HttpResponse("Error - Financial Aid not found.", status=404)
+        
+        aid = aidObj.amount
+    
+
 
     # Determine correct tuition range
     if outstate:
         min_tuition = university.out_of_state_base_min_tuition + major.out_of_state_min_tuition
         max_tuition = university.out_of_state_base_max_tuition + major.out_of_state_max_tuition
     else:
-        min_tuition = university.in_state_base_min_tuition + major.in_state_min_tuition
+        min_tuition = university.in_state_base_min_tuition + major.in_state_min_tuition 
         max_tuition = university.in_state_base_max_tuition + major.in_state_max_tuition
 
+    # Apply Aid
+    min_tuition -= aid
+    max_tuition -= aid
+
     data = {
+        "minTui": min_tuition,
+        "maxTui": max_tuition,
         "uni": {
             "name": university.name,
             "baseMinTui": university.in_state_base_min_tuition if not outstate else university.out_of_state_base_min_tuition,
@@ -808,8 +855,10 @@ def major_info(request):
             "baseMaxTui": major.in_state_max_tuition if not outstate else major.out_of_state_max_tuition,
             "fees": major.fees
         },
-        "minTui": min_tuition,
-        "maxTui": max_tuition
+        "aid" : {} if not aid else {
+            "name" : aidObj.name,
+            "amount" : aidObj.amount,
+        },
     }
 
     return JsonResponse(data)
