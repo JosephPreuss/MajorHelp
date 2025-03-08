@@ -740,12 +740,12 @@ def university_search(request):
     query = request.GET.get('query', '')
 
     if not query:
-        return JsonResponse({"error": "No search query provided"}, status=400)
+        return HttpResponse("Error - No search query provided", status=400)
 
     universities = University.objects.filter(name__icontains=query)
 
     if not universities.exists():
-        return JsonResponse({"error": "No university found"}, status=404)
+        return HttpResponse("Error - No university found", status=404)
 
     data = {"universities": []}
     for uni in universities:
@@ -756,6 +756,30 @@ def university_search(request):
         })
 
     return JsonResponse(data)
+
+def aid_list(request):
+    uniQuery = request.GET['university']
+    uniObj = None
+
+    if not uniQuery:
+        return HttpResponse("Error - No university provided.", status=400)
+
+    try:
+        uniObj = University.objects.get(name__iexact=uniQuery)
+    except University.DoesNotExist as error:
+        return HttpResponse("Error - No university found.", status=404)
+    
+    data = {"aids": []}
+    for aid in uniObj.applicableAids.all():
+        data["aids"].append({
+            'name'      : aid.name,
+            'location'  : aid.location,
+            'amount'    : aid.amount,
+        })
+    
+    return JsonResponse(data)
+
+
 def major_list(request):
     university_name = request.GET.get('university', '')
     department = request.GET.get('department', '')
@@ -763,7 +787,7 @@ def major_list(request):
     # Ensure university exists
     university = University.objects.filter(name__icontains=university_name).first()
     if not university:
-        return JsonResponse({"error": "University not found"}, status=404)
+        return HttpResponse("Error - University not found", status=404)
 
     # Filter majors by university and department
     majors = Major.objects.filter(university=university, department=department)
@@ -771,11 +795,15 @@ def major_list(request):
         return JsonResponse({"majors": []})  # Return empty list if no majors found
 
     data = {"majors": [{"name": major.major_name} for major in majors]}
+
     return JsonResponse(data)
-def major_info(request):
-    university_name = request.GET.get('university', '')
-    major_name = request.GET.get('major', '')
-    outstate = request.GET.get('outstate', 'false') == 'true'
+
+
+def calculate(request):
+    
+    university_name = request.GET['university']
+    major_name = request.GET['major']
+    outstate = request.GET['outstate'] == 'true'
 
     # Ensure university exists
     university = University.objects.filter(name__icontains=university_name).first()
