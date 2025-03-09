@@ -6,6 +6,10 @@
 	color: white;
 }
 
+#calculator {
+    display : none;
+}
+
 .content-box {
     max-width: 900px; 
     background-color: #fff; /* White background for the content box */

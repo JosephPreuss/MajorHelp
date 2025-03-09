@@ -1,36 +1,37 @@
 /*
 
 Elements with unique ids that need to be appended to:
+type    id              oninput / onchange
+---------------------------------------------------
+div     calculator
+div     input
+input   uni-search      updateUniversityResults
+div     uni-results
+h3      uni-box
+span    uni-name
+input   outstate
+select  dept-dropdown   updateMajorResults
+div     major-results
+h3      major-box
+span    major-name
+div     input-aid
+div     aid-results
+h3      aid-box
 
-div calculator
-div input
-input uni-search
-div uni-results
-h3 uni-box
-span uni-name
-input outstate
-select dept-dropdown
-div major-results
-h3 major-box
-span major-name
-div input-aid
-div aid-results
-h3 aid-box
-
-div output
-h3 summary
-h1 total
-span uni-name-output
-span uni-tuition
-span uni-fees
-span major-name-output
-span major-tuition
-span major-fees
-div aid-output
-span aid-name-output
-span aid-amount
-h2 total-bottom
-h4 summary-bottom
+div     output
+h3      summary
+h1      total
+span    uni-name-output
+span    uni-tuition
+span    uni-fees
+span    major-name-output
+span    major-tuition
+span    major-fees
+div     aid-output
+span    aid-name-output
+span    aid-amount
+h2      total-bottom
+h4      summary-bottom
 
 */
 
@@ -47,7 +48,49 @@ const DEPARTMENT_CHOICES = [
     "Law and Criminal Justice"
 ];
 
-aidData = null;
+// Both for the calculator to handle two or more input fields at once and also
+// to enable preset saving in the future.
+const calcInput = [
+    {
+        'presetName'    :   "Preset 0",     // For later implimentation
+        'uni'           :   "",
+        'outstate'      :   false,
+        'dept'          :   "",
+        'major'         :   "",
+        'aid'           :   "",
+    },
+
+    {
+        'presetName'    :   "Preset 1",     // For later implimentation
+        'uni'           :   "",
+        'outstate'      :   false,
+        'dept'          :   "",
+        'major'         :   "",
+        'aid'           :   "",
+    },
+]
+
+async function updateUniversityResults(calc) {
+    const query = document.getElementById(`uni-search-${calc}`).value.trim();
+    if(!query) return;
+
+    const data = await fetchUniversityData(query);
+    if (data === null) return;
+    const resultsContainer = document.getElementById(`uni-results-${calc}`);
+    resultsContainer.innerHTML = "";
+
+    if (data && data.universities.length > 0) {
+        data.universities.forEach(uni => {
+            let option = document.createElement("div");
+            option.classList.add("result-item");
+            option.innerHTML = `<strong>${uni.name}</strong> - ${uni.location}`;
+            option.onclick = () => selectUniversity(calc, uni.name);
+            resultsContainer.appendChild(option);
+        });
+    } else {
+        resultsContainer.innerHTML = "<p>No universities found.</p>";
+    }
+}
 
 async function fetchUniversityData(query) {
     try {
@@ -57,6 +100,113 @@ async function fetchUniversityData(query) {
     } catch (error) {
         console.error(error);
         return null;
+    }
+}
+
+async function selectUniversity(calc, name) {
+
+    // Update the input display
+    document.getElementById(`uni-name-${calc}`).textContent = name;
+    document.getElementById(`uni-box-${calc}`).style.visibility = "visible";
+    document.getElementById(`uni-results-${calc}`).innerHTML = "";
+    document.getElementById(`dept-dropdown-${calc}`).innerHTML =
+        `<option value="" disabled selected>Select a Department</option>` +
+        DEPARTMENT_CHOICES.map(dept => `<option value="${dept}">${dept}</option>`).join('');
+
+    // Clear the major list if it is populated already
+    document.getElementById(`major-results-${calc}`).replaceChildren();
+    document.getElementById(`major-box-${calc}`).style.visibility = "hidden";
+
+    // Clear the Financial Aid list if its populated already
+    document.getElementById(`input-aid-${calc}`).style.display = "none";
+    document.getElementById(`aid-results-${calc}`).replaceChildren();
+
+    // Finally update the JSON
+    calcInput[calc]['uni'] = name;
+}
+
+async function updateMajorResults(calc) {
+    // Get data
+    const university = document.getElementById(`uni-name-${calc}`).textContent;
+    const department = document.getElementById(`dept-dropdown-${calc}`).value;
+    if (!university || !department) return;
+
+    const majorContainer = document.getElementById(`major-results-${calc}`);
+    majorContainer.innerHTML = "";
+
+    const data = await fetchMajors(university, department);
+    if (data && data.majors.length > 0) {
+        data.majors.forEach(major => {
+            let option = document.createElement("div");
+            option.classList.add("result-item");
+            option.innerHTML = `<strong>${major.name}</strong>`;
+            option.onclick = function() {
+                selectMajor(calc, major.name);
+            };
+            majorContainer.appendChild(option);
+        });
+    } else {
+        majorContainer.innerHTML = "<p>No majors found.</p>";
+    }
+
+    // Update dept in JSON
+    calcInput[calc]['dept'] = department;
+}
+
+async function fetchMajors(university, department) {
+    try {
+        const response = await fetch(`/api/majors/?university=${encodeURIComponent(university)}&department=${encodeURIComponent(department)}`);
+        if (!response.ok) throw new Error('Majors not found');
+        return await response.json();
+    } catch (error) {
+        console.error(error);
+        return null;
+    }
+}
+
+async function selectMajor(calc, major) {
+    console.log("Major Clicked:", major);
+    const university = document.getElementById(`uni-name-${calc}`).textContent;
+    const outstate = document.getElementById(`outstate-${calc}`).checked;
+    if (!university || !major) return;
+
+    // Update input
+    document.getElementById(`major-box-${calc}`).style.visibility = "visible";
+    document.getElementById(`major-name-${calc}`).textContent = major;
+
+    // Check if financial aid applies.
+    aidData = await fetchFinancialAid(university);
+    if (aidData === null) return;
+
+    // Update the JSON
+    calcInput[calc]['outstate'] = outstate;
+    calcInput[calc]['major'] = major;
+    
+    if (aidData.aids.length > 0) {
+        
+        document.getElementById(`input-aid-${calc}`).style.display = "block";
+
+        aidContainer = document.getElementById(`aid-results-${calc}`)
+
+        aidContainer.replaceChildren();
+
+        aidContainer.innerHTML = "<div class=\"result-item\" onclick=\"selectaid('None')\"><strong>None</strong></div>"
+
+        aidData.aids.forEach(aid => {
+            let option = document.createElement("div");
+            option.classList.add("result-item");
+            option.innerHTML = `<strong>${aid.name}</strong>`;
+            option.onclick = function() {
+                selectaid(calc, aid.name);
+            };
+            aidContainer.appendChild(option);
+        });
+    } else {
+        // clear financial aid from the output if it was applied
+        document.getElementById(`aid-output-${calc}`).style.display = "none";
+        document.getElementById(`aid-name-${calc}`).innerText = "None";
+
+        displayOutput(calc, university, outstate, major)
     }
 }
 
@@ -76,15 +226,58 @@ async function fetchFinancialAid(query) {
     }
 }
 
-async function fetchMajors(university, department) {
-    try {
-        const response = await fetch(`/api/majors/?university=${encodeURIComponent(university)}&department=${encodeURIComponent(department)}`);
-        if (!response.ok) throw new Error('Majors not found');
-        return await response.json();
-    } catch (error) {
-        console.error(error);
-        return null;
+
+function selectaid(calc, aid) {
+    console.log("Aid Clicked:", aid)
+    document.getElementById(`aid-name-${calc}`).innerText = aid;
+
+    const university = document.getElementById(`uni-name-${calc}`).textContent;
+    const outstate = document.getElementById(`outstate-${calc}`).checked;
+    const major = document.getElementById(`major-name-${calc}`).textContent;
+
+    calcInput[calc]['aid'] = aid;
+
+    displayOutput(calc, university, outstate, major, aid);
+
+}
+
+
+async function displayOutput(calc, university, outstate, major, aid=null) {
+    const data = await calculate(university, major, outstate, aid);
+    if (!data) return;
+
+    document.getElementById(`major-name-${calc}`).textContent = major;
+    document.getElementById(`major-box-${calc}`).style.visibility = "visible";
+    document.getElementById(`major-name-output-${calc}`).textContent = major;
+    document.getElementById(`uni-name-output-${calc}`).textContent = university;
+    document.getElementById(`uni-tuition-${calc}`).textContent = `$${data.uni.baseMinTui} - $${data.uni.baseMaxTui}`;
+    document.getElementById(`uni-fees-${calc}`).textContent = `$${data.uni.fees}`;
+    document.getElementById(`major-tuition-${calc}`).textContent = `$${data.major.baseMinTui} - $${data.major.baseMaxTui}`;
+    document.getElementById(`major-fees-${calc}`).textContent = `$${data.major.fees}`;
+    document.getElementById(`total-${calc}`).textContent = `$${data.minTui} - $${data.maxTui}`;
+    document.getElementById(`total-bottom-${calc}`).textContent = `$${data.minTui} - $${data.maxTui}`;
+
+
+    if(aid !== null && aid !== "None") {
+        // Financial Aid was applied
+
+        document.getElementById(`summary-${calc}`).textContent = `${data.uni.name} • ${data.major.name} • ${data.aid.name}`;
+        document.getElementById(`summary-bottom-${calc}`).textContent = `${data.uni.name} • ${data.major.name} • ${data.aid.name}`;
+
+        document.getElementById(`aid-output-${calc}`).style.display = "block";
+        document.getElementById(`aid-name-output-${calc}`).innerText = data.aid.name;
+        document.getElementById(`aid-amount-${calc}`).innerText = `- $${data.aid.amount}`
+    } else { 
+
+        // clear financial aid from the output if it was applied
+        document.getElementById(`aid-output-${calc}`).style.display = "none";
+        document.getElementById(`aid-name-${calc}`).innerText = "None";
+
+        document.getElementById(`summary-${calc}`).textContent = `${data.uni.name} • ${data.major.name}`;
+        document.getElementById(`summary-bottom-${calc}`).textContent = `${data.uni.name} • ${data.major.name}`;
     }
+
+    document.getElementById(`output-${calc}`).style.display = 'block';
 }
 
 async function calculate(university, major, outstate, aid) {
@@ -96,162 +289,4 @@ async function calculate(university, major, outstate, aid) {
         console.error(error);
         return null;
     }
-}
-
-async function updateUniversityResults() {
-    const query = document.getElementById("uni-search").value.trim();
-    if (!query) return;
-    
-    const data = await fetchUniversityData(query);
-    const resultsContainer = document.getElementById("uni-results");
-    resultsContainer.innerHTML = "";
-
-    if (data && data.universities.length > 0) {
-        data.universities.forEach(uni => {
-            let option = document.createElement("div");
-            option.classList.add("result-item");
-            option.innerHTML = `<strong>${uni.name}</strong> - ${uni.location}`;
-            option.onclick = () => selectUniversity(uni.name);
-            resultsContainer.appendChild(option);
-        });
-    } else {
-        resultsContainer.innerHTML = "<p>No universities found.</p>";
-    }
-}
-
-async function selectUniversity(name) {
-    // Check if any Financial Aid or misc applies
-    aidData = await fetchFinancialAid(name);
-
-    // ..and save the info for later.
-
-
-    document.getElementById("uni-name").textContent = name;
-    document.getElementById("uni-box").style.visibility = "visible";
-    document.getElementById("uni-results").innerHTML = "";
-    document.getElementById("dept-dropdown").innerHTML =
-        `<option value="" disabled selected>Select a Department</option>` +
-        DEPARTMENT_CHOICES.map(dept => `<option value="${dept}">${dept}</option>`).join('');
-
-    // Clear the major list if it is populated already
-    document.getElementById("major-results").replaceChildren();
-    document.getElementById("major-box").style.visibility = "hidden";
-
-    // Clear the Financial Aid list if its populated already
-    document.getElementById("input-aid").style.display = "none";
-    document.getElementById("aid-results").replaceChildren();
-}
-
-async function updateMajorResults() {
-    const university = document.getElementById("uni-name").textContent;
-    const department = document.getElementById("dept-dropdown").value;
-    if (!university || !department) return;
-
-    const data = await fetchMajors(university, department);
-    const majorContainer = document.getElementById("major-results");
-    majorContainer.innerHTML = "";
-
-    if (data && data.majors.length > 0) {
-        data.majors.forEach(major => {
-            let option = document.createElement("div");
-            option.classList.add("result-item");
-            option.innerHTML = `<strong>${major.name}</strong>`;
-            option.onclick = function() {
-                selectMajor(major.name);
-            };
-            majorContainer.appendChild(option);
-        });
-    } else {
-        majorContainer.innerHTML = "<p>No majors found.</p>";
-    }
-}
-
-async function selectMajor(major) {
-    console.log("Major Clicked:", major);
-    const university = document.getElementById("uni-name").textContent;
-    const outstate = document.getElementById("outstate").checked;
-    if (!university || !major) return;
-
-    // Update input
-    document.getElementById("major-box").style.visibility = "visible";
-    document.getElementById("major-name").textContent = major;
-    
-
-    // Check if financial aid applies 
-    if (aidData.aids.length > 0) {
-        
-        document.getElementById("input-aid").style.display = "block";
-
-        aidContainer = document.getElementById("aid-results")
-
-        aidContainer.replaceChildren();
-
-        aidContainer.innerHTML = "<div class=\"result-item\" onclick=\"selectaid('None')\"><strong>None</strong></div>"
-
-        aidData.aids.forEach(aid => {
-            let option = document.createElement("div");
-            option.classList.add("result-item");
-            option.innerHTML = `<strong>${aid.name}</strong>`;
-            option.onclick = function() {
-                selectaid(aid.name);
-            };
-            aidContainer.appendChild(option);
-        });
-    } else {
-        // clear financial aid from the output if it was applied
-        document.getElementById("aid-output").style.display = "none";
-        document.getElementById("aid-name").innerText = "None";
-
-        displayOutput(university, outstate, major)
-    }
-}
-
-function selectaid(aid) {
-    console.log("Aid Clicked:", aid)
-    document.getElementById("aid-name").innerText = aid;
-
-    const university = document.getElementById("uni-name").textContent;
-    const outstate = document.getElementById("outstate").checked;
-    const major = document.getElementById("major-name").textContent;
-
-    displayOutput(university, outstate, major, aid);
-
-}
-
-async function displayOutput(university, outstate, major, aid=null) {
-    const data = await calculate(university, major, outstate, aid);
-    if (!data) return;
-
-    document.getElementById("major-name").textContent = major;
-    document.getElementById("major-box").style.visibility = "visible";
-    document.getElementById("major-name-output").textContent = major;
-    document.getElementById("uni-name-output").textContent = university;
-    document.getElementById("uni-tuition").textContent = `$${data.uni.baseMinTui} - $${data.uni.baseMaxTui}`;
-    document.getElementById("uni-fees").textContent = `$${data.uni.fees}`;
-    document.getElementById("major-tuition").textContent = `$${data.major.baseMinTui} - $${data.major.baseMaxTui}`;
-    document.getElementById("major-fees").textContent = `$${data.major.fees}`;
-    document.getElementById("total").textContent = `$${data.minTui} - $${data.maxTui}`;
-    document.getElementById("total-bottom").textContent = `$${data.minTui} - $${data.maxTui}`;
-
-
-    if(aid !== null && aid !== "None") {
-        // Financial Aid was applied
-
-        document.getElementById("summary").textContent = `${data.uni.name} • ${data.major.name} • ${data.aid.name}`;
-        document.getElementById("summary-bottom").textContent = `${data.uni.name} • ${data.major.name} • ${data.aid.name}`;
-
-        document.getElementById("aid-output").style.display = "block";
-        document.getElementById("aid-name-output").innerText = data.aid.name;
-        document.getElementById("aid-amount").innerText = `- $${data.aid.amount}`
-    } else { 
-
-        // clear financial aid from the output if it was applied
-        document.getElementById("aid-output").style.display = "none";
-        document.getElementById("aid-name").innerText = "None";
-
-        document.getElementById("summary").textContent = `${data.uni.name} • ${data.major.name}`;
-        document.getElementById("summary-bottom").textContent = `${data.uni.name} • ${data.major.name}`;
-    }
-
-    document.getElementById("output").style.display = 'block';
 }
