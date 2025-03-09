@@ -198,6 +198,10 @@ async function selectMajor(major) {
             aidContainer.appendChild(option);
         });
     } else {
+        // clear financial aid from the output if it was applied
+        document.getElementById("aid-output").style.display = "none";
+        document.getElementById("aid-name").innerText = "None";
+
         displayOutput(university, outstate, major)
     }
 }
@@ -240,6 +244,10 @@ async function displayOutput(university, outstate, major, aid=null) {
         document.getElementById("aid-name-output").innerText = data.aid.name;
         document.getElementById("aid-amount").innerText = `- $${data.aid.amount}`
     } else { 
+
+        // clear financial aid from the output if it was applied
+        document.getElementById("aid-output").style.display = "none";
+        document.getElementById("aid-name").innerText = "None";
 
         document.getElementById("summary").textContent = `${data.uni.name} • ${data.major.name}`;
         document.getElementById("summary-bottom").textContent = `${data.uni.name} • ${data.major.name}`;
