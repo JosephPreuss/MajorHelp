@@ -1,13 +1,9 @@
 /* Extend css changes from the main stylesheet */
-@import url("common/styles.css");
+@import url("/static/css/common/styles.css");
 
 #title {
 	margin-left: 5vh;
 	color: white;
-}
-
-#inputOutput {
-    display:flex;
 }
 
 .content-box {
@@ -17,30 +13,29 @@
     margin: 0 auto; 
     margin-top: 20px;
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1); 
-    border-radius: 10px; 
+    border-radius: 10px;  
 }
 
 .color-text {
     color : #4fc7cf;
 }
 
-/* Only affects inputOutput's immediate children. */
-#input-output {
+.input-output {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
 }
 
-#input {
+.input {
     flex: 1;
     max-width: 55%;
 }
 
-#uni-box {
+.uni-box {
     visibility : hidden;
 }
 
-#major-box {
+.major-box {
     visibility : hidden;
 }
 
@@ -49,7 +44,7 @@
     color : #ff0047;
 }
 
-#output {
+.output {
     flex: 1;
     max-width: 40%;
     display: none;
@@ -73,9 +68,6 @@
     display : none; /* to be overriden by js*/
 }
 
-.aid-results {
-    display : none; /* to be overriden by js*/
-}
 
 /* 
     This targets the spans contained in the list elements of every

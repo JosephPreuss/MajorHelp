@@ -1,3 +1,39 @@
+/*
+
+Elements with unique ids that need to be appended to:
+
+div calculator
+div input
+input uni-search
+div uni-results
+h3 uni-box
+span uni-name
+input outstate
+select dept-dropdown
+div major-results
+h3 major-box
+span major-name
+div input-aid
+div aid-results
+h3 aid-box
+
+div output
+h3 summary
+h1 total
+span uni-name-output
+span uni-tuition
+span uni-fees
+span major-name-output
+span major-tuition
+span major-fees
+div aid-output
+span aid-name-output
+span aid-amount
+h2 total-bottom
+h4 summary-bottom
+
+*/
+
 const DEPARTMENT_CHOICES = [
     "Humanities and Social Sciences",
     "Natural Sciences and Mathematics",
@@ -67,7 +103,7 @@ async function updateUniversityResults() {
     if (!query) return;
     
     const data = await fetchUniversityData(query);
-    const resultsContainer = document.getElementById("university-results");
+    const resultsContainer = document.getElementById("uni-results");
     resultsContainer.innerHTML = "";
 
     if (data && data.universities.length > 0) {
@@ -92,8 +128,8 @@ async function selectUniversity(name) {
 
     document.getElementById("uni-name").textContent = name;
     document.getElementById("uni-box").style.visibility = "visible";
-    document.getElementById("university-results").innerHTML = "";
-    document.getElementById("department-dropdown").innerHTML =
+    document.getElementById("uni-results").innerHTML = "";
+    document.getElementById("dept-dropdown").innerHTML =
         `<option value="" disabled selected>Select a Department</option>` +
         DEPARTMENT_CHOICES.map(dept => `<option value="${dept}">${dept}</option>`).join('');
 
@@ -108,7 +144,7 @@ async function selectUniversity(name) {
 
 async function updateMajorResults() {
     const university = document.getElementById("uni-name").textContent;
-    const department = document.getElementById("department-dropdown").value;
+    const department = document.getElementById("dept-dropdown").value;
     if (!university || !department) return;
 
     const data = await fetchMajors(university, department);
@@ -168,6 +204,8 @@ async function selectMajor(major) {
 
 function selectaid(aid) {
     console.log("Aid Clicked:", aid)
+    document.getElementById("aid-name").innerText = aid;
+
     const university = document.getElementById("uni-name").textContent;
     const outstate = document.getElementById("outstate").checked;
     const major = document.getElementById("major-name").textContent;

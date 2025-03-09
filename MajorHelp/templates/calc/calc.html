@@ -12,64 +12,64 @@
 {% endblock script %}
 
 {% block content %}
-<div id="input-output">
-    <div id="input" class="content-box">
+<div id="calculator" class="input-output">
+    <div id="input" class="input content-box">
         <h2>Start by choosing your <span class="color-text">school</span>.</h2>
-        <input type="text" id="uni-search" placeholder="Enter your university" oninput="updateUniversityResults()">
-        <div id="university-results" class="search-results"></div>
-        <h3 id="uni-box">You have selected <span id="uni-name" class="color-text">Nothing</span>.</h3>
-        <input type="checkbox" id="outstate"> Out-of-State (Click major again to update)
+        <input type="text" id="uni-search" class="uni-search" placeholder="Enter your university" oninput="updateUniversityResults()">
+        <div id="uni-results" class="uni-results search-results"></div>
+        <h3 id="uni-box" class="uni-box">You have selected <span id="uni-name" class="uni-name color-text">Nothing</span>.</h3>
+        <input type="checkbox" id="outstate" class="outstate"> Out-of-State (Click major again to update)
 
         <h2>Select your <span class="color-text">department</span>.</h2>
-        <select id="department-dropdown" onchange="updateMajorResults()">
+        <select id="dept-dropdown" class="dept-dropdown" onchange="updateMajorResults()">
             <option value="" disabled selected>Select a Department</option>
         </select>
         
         <h2>Now choose your <span class="color-text">major</span>.</h2>
-        <div id="major-results" class="search-results"></div>
-        <h3 id="major-box">You have selected <span id="major-name" class="color-text">None</span>.</h3>
+        <div id="major-results" class="major-results search-results"></div>
+        <h3 id="major-box" class="major-box">You have selected <span id="major-name" class="major-name color-text">None</span>.</h3>
 
         <div id="input-aid" class="input-aid">
             <h2>Do any of these apply to <span class="color-text">you</span>?</h2>
-            <div id="aid-results" class="search-results">
+            <div id="aid-results" class="aid-results search-results">
                 <!-- To be filled by JS -->
             </div>
-            <h3 id="aid-box" class="aid-results">You have selected <span id="aid-name" class="color-text">None</span>.</h3>
+            <h3 id="aid-box" class="aid-box aid-results">You have selected <span id="aid-name" class="color-text">None</span>.</h3>
         </div>
     </div>
 
-    <div id="output" class="content-box">
-        <h3 id="summary">XXXX • XXX • XXXXXXX</h3>
+    <div id="output" class="output content-box">
+        <h3 id="summary" class="summary">XXXX • XXX • XXXXXXX</h3>
         <h2>Estimated <span class="color-text">Total</span></h2>
-        <h1 id="total">$XX,XXX - $XX,XXX</h1>
+        <h1 id="total" class="total">$XX,XXX - $XX,XXX</h1>
 
 
         <h3>University Related Costs</h3>
-        <b><span id="uni-name-output" class="color-text">XXXXXXXXX</span></b>
+        <b><span id="uni-name-output" class="uni-name-output color-text">XXXXXXXXX</span></b>
         <ul class="outputList">
-            <li>Base Tuition <span id="uni-tuition">$X,XXX - $X,XXX</span></li>
-            <li>Fees <span id="uni-fees">$X,XXX</span></li>
+            <li>Base Tuition <span id="uni-tuition" class="uni-tuition">$X,XXX - $X,XXX</span></li>
+            <li>Fees <span id="uni-fees" class="uni-fees">$X,XXX</span></li>
         </ul>
 
         <h3>Major Related Costs</h3>
-        <b><span id="major-name-output" class="color-text">XXXXXXXXXXXX</span></b>
+        <b><span id="major-name-output" class="major-name-output color-text">XXXXXXXXXXXX</span></b>
         <ul class="outputList">
-            <li>Base Tuition <span id="major-tuition">$X,XXX - $X,XXX</span></li>
-            <li>Fees <span id="major-fees">$X,XXX</span></li>
+            <li>Base Tuition <span id="major-tuition" class="major-tuition">$X,XXX - $X,XXX</span></li>
+            <li>Fees <span id="major-fees" class="major-fees">$X,XXX</span></li>
         </ul>
 
-        <div id="aid-output">
+        <div id="aid-output" class="aid-output">
             <h3>Financial Aid</h3>
-            <b><span id="aid-name-output" class="color-text">XXXXXXXXX</span></b>
+            <b><span id="aid-name-output" class="aid-name-output color-text">XXXXXXXXX</span></b>
             <ul class="outputList">
-                <li>Scholarship Reward <span id="aid-amount">- $X,XXX</span></li>
+                <li>Scholarship Reward <span id="aid-amount" class="aid-amount">- $X,XXX</span></li>
             </ul>
         </div>
 
         <h3>Estimated <span class="color-text">Total</span></h3>
-        <h2 id="total-bottom">$XX,XXX - $XX,XXX</h2>
+        <h2 id="total-bottom" class="total-bottom">$XX,XXX - $XX,XXX</h2>
 
-        <h4 id="summary-bottom">XXXX • XXX • XXXXXXX</h4>
+        <h4 id="summary-bottom" class="summary-bottom">XXXX • XXX • XXXXXXX</h4>
     </div>
 </div>
 {% endblock content %}
