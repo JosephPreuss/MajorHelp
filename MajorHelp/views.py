@@ -512,7 +512,7 @@ class CalcView(View):
     def get(self, request):
         # TODO(jpreuss) Pass the json back to the frontend to prepopulate
         #               the already filled data.
-        return render(request, 'calc/calc.html') 
+        return render(request, 'calc/calc_page.html') 
 
 
 # LeaveMajorReview View - Exclusive for leaving reviews for a major at a specific school
