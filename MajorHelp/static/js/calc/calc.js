@@ -1,16 +1,16 @@
 /*
 
 Elements with unique ids that need to be appended to:
-type    id              oninput / onchange
----------------------------------------------------
+type    id              oninput / onchange function
+------------------------------------------------------
 div     calculator
 div     input
-input   uni-search      updateUniversityResults
+input   uni-search          updateUniversityResults
 div     uni-results
 h3      uni-box
 span    uni-name
 input   outstate
-select  dept-dropdown   updateMajorResults
+select  dept-dropdown       updateMajorResults
 div     major-results
 h3      major-box
 span    major-name
@@ -35,6 +35,8 @@ h4      summary-bottom
 
 */
 
+calcCount = 0;
+
 const DEPARTMENT_CHOICES = [
     "Humanities and Social Sciences",
     "Natural Sciences and Mathematics",
@@ -51,7 +53,7 @@ const DEPARTMENT_CHOICES = [
 // Both for the calculator to handle two or more input fields at once and also
 // to enable preset saving in the future.
 const calcInput = [
-    {
+/*     {
         'presetName'    :   "Preset 0",     // For later implimentation
         'uni'           :   "",
         'outstate'      :   false,
@@ -67,10 +69,88 @@ const calcInput = [
         'dept'          :   "",
         'major'         :   "",
         'aid'           :   "",
-    },
+    }, */
 ]
 
+function hidePanel() {
+    document.getElementById("panel-open").style.display = "none";
+    document.getElementById("panel-closed").style.display = "block";
+}
+
+function expandPanel() {
+    document.getElementById("panel-closed").style.display = "none";
+    document.getElementById("panel-open").style.display = "block";
+}
+
+function dismiss() {
+    document.getElementById("calc-panel").style.display = "none";
+}
+
+function initializeCalculators() {
+    const calculators = document.querySelectorAll("#calculators .calculator"); // Ingores master copy
+    calculators.forEach((calc) => {
+        const calcNum = parseInt(calc.id.split("-")[1]); // Extract number from id (e.g., "calculator-0" -> 0)
+        const uniSearch = calc.querySelector(".uni-search");
+        const deptDropdown = calc.querySelector(".dept-dropdown");
+
+        // Attach event listeners
+        uniSearch.addEventListener("input", () => updateUniversityResults(calcNum));
+        deptDropdown.addEventListener("change", () => updateMajorResults(calcNum));
+
+        // Add new entry to calcInput array
+        calcInput.push({
+            'presetName': `Preset ${calcCount}`,
+            'uni': "",
+            'outstate': false,
+            'dept': "",
+            'major': "",
+            'aid': ""
+        });
+
+        calcCount++;
+    });
+}
+
+function newCalc() {
+    const masterCalc = document.getElementById("calculator-master-container").children[0];
+    const clone = masterCalc.cloneNode(true);
+
+    // While it might be tempting to just put in calcCount directly, that variable mutates.
+    const calc = calcCount;//document.querySelectorAll("#calculators .calculator").length;
+
+    clone.id = `calculator-${calcCount}`;
+
+    // Update all IDs
+    clone.querySelectorAll("[id]").forEach((el) => {
+        el.id = el.id + calcCount; // Append calcCount to IDs
+    });
+
+    // Attach event listeners to the new calculator
+    const uniSearch = clone.querySelector(".uni-search");
+    const deptDropdown = clone.querySelector(".dept-dropdown");
+    uniSearch.addEventListener("input", () => updateUniversityResults(calc));
+    deptDropdown.addEventListener("change", () => updateMajorResults(calc));
+
+
+    // Add new calculator to DOM
+    document.getElementById("calculators").appendChild(clone);
+
+    // Add new entry to calcInput array
+    calcInput.push({
+        'presetName': `Preset ${calcCount}`,
+        'uni': "",
+        'outstate': false,
+        'dept': "",
+        'major': "",
+        'aid': ""
+    });
+
+    calcCount++;
+  }
+
+
 async function updateUniversityResults(calc) {
+    console.log(calc);
     const query = document.getElementById(`uni-search-${calc}`).value.trim();
     if(!query) return;
 
@@ -290,3 +370,10 @@ async function calculate(university, major, outstate, aid) {
         return null;
     }
 }
+
+// Run initialization after DOM is loaded
+document.addEventListener("DOMContentLoaded", () => {
+    initializeCalculators();
+    // Attach click listener for "New Calculator"
+    //document.querySelector(".fake-link[onclick='newCalc()']").addEventListener("click", newCalc);
+});

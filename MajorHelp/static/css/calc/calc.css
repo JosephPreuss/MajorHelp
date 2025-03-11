@@ -6,8 +6,68 @@
 	color: white;
 }
 
-#calculator {
-    display : none;
+#calc-panel {
+    padding : 10px;
+}
+
+.fake-link {
+    /* rules for a tags */
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    text-decoration: none;
+    list-style: none;
+
+    text-decoration: underline;
+}
+
+.fake-link:hover {
+    cursor: pointer;
+}
+
+
+/* Style the container as a table-like structure */
+.calc-table {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    border: 1px solid #ccc; /* Optional: table-like border */
+}
+  
+  /* Each entry is a row */
+.calc-entry {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #ccc; /* Row separator */
+}
+  
+  /* Columns within each row */
+.calc-entry span {
+    flex: 1; /* Equal width for all columns */
+    text-align: left;
+    padding: 0 10px;
+}
+  
+  /* Specific styling for each column */
+.calc-name {
+    font-weight: bold;
+}
+  
+.calc-details {
+    color: #555;
+}
+  
+.calc-actions {
+    text-align: right;
+}
+  
+  /* Right-align the "Hide" link */
+.right-align {
+    float: right;
+    cursor: pointer;
 }
 
 .content-box {
@@ -24,7 +84,7 @@
     color : #4fc7cf;
 }
 
-.input-output {
+.calculator {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
@@ -85,6 +145,7 @@
     name "itemizedNumber" and apply it to the span, as it controls the 
     "$X,XXX" and places it to the right.
 */
+.right-align,
 .outputList > li span {
     float:right;
     text-align: right;
@@ -117,3 +178,7 @@
     background-color: #008080;
     color: white;
 }
+
+.master-template {
+    display: none !important; /* Ensure it’s never visible */
+  }
