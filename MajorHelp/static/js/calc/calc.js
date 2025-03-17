@@ -88,9 +88,27 @@ function dismiss() {
 }
 
 function initializeCalculators() {
+
+    // Initialize pre-existing panels
+    const panels = document.querySelectorAll("#calc-table .calc-entry"); // Ignores master
+    panels.forEach((panel) => {
+
+        // Extract number from id (e.g., "entry-0" -> 0)
+        const panelNum = parseInt(panel.id.split("-")[1]);
+
+
+        // Attach event listeners
+        panel.querySelector(".clear").addEventListener('click', () => clearCalc(panelNum));
+
+        console.log(panel.querySelector(".clear"));
+    });
+
+    // Initialize the calculators themselves
     const calculators = document.querySelectorAll("#calculators .calculator"); // Ingores master copy
     calculators.forEach((calc) => {
-        const calcNum = parseInt(calc.id.split("-")[1]); // Extract number from id (e.g., "calculator-0" -> 0)
+
+        // Extract number from id (e.g., "calculator-0" -> 0)
+        const calcNum = parseInt(calc.id.split("-")[1]); 
         const uniSearch = calc.querySelector(".uni-search");
         const deptDropdown = calc.querySelector(".dept-dropdown");
 
@@ -133,7 +151,7 @@ function newCalc() {
     // TBI
 
     // Update contents of the panel
-    panel.querySelectorAll(".calc-name")[0].textContent += calc;
+    panel.querySelector(".calc-name").textContent += calc;
 
     // Add the panel to DOM
     document.getElementById("calc-table").appendChild(panel);
@@ -175,6 +193,81 @@ function newCalc() {
     calcCount++;
   }
 
+function clearCalc(calc) {
+
+    // clear the frontend JSON
+    calcInput[calc] =  {
+        'presetName': `Calculator ${calc}`,
+        'uni': "",
+        'outstate': false,
+        'dept': "",
+        'major': "",
+        'aid': ""
+    };
+
+    // Reset the HTML contents
+
+    // reset the calculator's panel
+
+    // Get the panel DOM
+    const panel = document.getElementById(`entry-${calc}`);
+
+    // Reset the name
+    panel.querySelector(".calc-name").innerText = `Calculator ${calc}`;
+
+    // Reset the summary
+
+    // Get the container containing the summary
+    const summary = panel.querySelector(".calc-details");
+
+    Array.from(summary.children).forEach(child => {
+        child.innerText = "None";
+    });
+
+    // Hide the aid span
+    summary.querySelector(".aid").style.display = "none";
+    
+
+    // reset the calculator itself
+
+    // get the calculator DOM
+    const calculator = document.getElementById(`calculator-${calc}`);
+
+    // Hide the output div
+    calculator.querySelector(".output").style.display = "None";
+
+    // clear the contents of the input div
+
+    // University
+    calculator.querySelector(".uni-search").value = "";
+
+    calculator.querySelector(".uni-results").replaceChildren();
+
+    calculator.querySelector(".uni-box").style.visibility = "hidden";
+    calculator.querySelector(".uni-name").innerText = "Nothing";
+
+    // outstate
+    calculator.querySelector(".outstate").checked = false;
+
+    // department
+    calculator.querySelector(".dept-dropdown").replaceChildren();
+    calculator.querySelector(".dept-dropdown").innerHTML = 
+        "<option value=\"\" disabled selected>Select a Department</option>";
+
+    // Major
+    calculator.querySelector(".major-results").replaceChildren();
+
+    calculator.querySelector(".major-box").style.visibility = "hidden";
+    calculator.querySelector(".major-name").innerText = "Nothing";
+
+    // Financial Aid
+    calculator.querySelector(".input-aid").style.display = "None";
+
+    calculator.querySelector(".aid-results").replaceChildren();
+
+    calculator.querySelector(".aid-box").style.visibility = "hidden";
+    calculator.querySelector(".aid-name").innerText = "Nothing";
+}
 
 async function updateUniversityResults(calc) {
     console.log(calc);
@@ -367,7 +460,7 @@ async function displayOutput(calc, university, outstate, major, aid=null) {
 
         // local variables
         panel = document.getElementById("calc-table").children[calc];
-        presetName = panel.querySelectorAll(".calc-name")[0];
+        presetName = panel.querySelector(".calc-name");
 
 
         // Update the preset name (if needed)
@@ -390,10 +483,10 @@ async function displayOutput(calc, university, outstate, major, aid=null) {
 
 
         // Regardless of above, Update the summary in the panel
-        panel.querySelectorAll(".uni")[0].textContent = university;
-        panel.querySelectorAll(".major")[0].textContent = major;
+        panel.querySelector(".uni").textContent = university;
+        panel.querySelector(".major").textContent = major;
 
-        aidBox = panel.querySelectorAll(".aid")[0];
+        aidBox = panel.querySelector(".aid");
 
         if (aid !== null && aid !== "None") {
 
