@@ -10,6 +10,7 @@
     padding : 10px;
 }
 
+.calc-actions span,
 .fake-link {
     /* rules for a tags */
     margin: 0;
@@ -27,7 +28,7 @@
 
 
 /* Style the container as a table-like structure */
-.calc-table {
+#calc-table {
     display: flex;
     flex-direction: column;
     width: 100%;
@@ -48,7 +49,7 @@
 .calc-entry span {
     flex: 1; /* Equal width for all columns */
     text-align: left;
-    padding: 0 10px;
+    padding: 0 5px;
 }
   
   /* Specific styling for each column */
@@ -58,6 +59,16 @@
   
 .calc-details {
     color: #555;
+}
+
+.calc-details span {
+    padding: 0px;
+}
+
+/* Makes sure that these elements are separated by a dot
+   the ":not(:first-child)" prevents a leading dot */
+.calc-details span:not(:first-child):before{
+    content:" • ";
 }
   
 .calc-actions {

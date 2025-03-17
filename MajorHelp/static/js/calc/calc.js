@@ -35,6 +35,7 @@ h4      summary-bottom
 
 */
 
+loggedIn = false;
 calcCount = 0;
 
 const DEPARTMENT_CHOICES = [
@@ -99,7 +100,7 @@ function initializeCalculators() {
 
         // Add new entry to calcInput array
         calcInput.push({
-            'presetName': `Preset ${calcCount}`,
+            'presetName': `Calculator ${calcCount}`,
             'uni': "",
             'outstate': false,
             'dept': "",
@@ -112,17 +113,43 @@ function initializeCalculators() {
 }
 
 function newCalc() {
+
+    // While it might be tempting to just put in calcCount directly, that global mutates.
+    const calc = calcCount;
+
+
+    
+
+    // Duplicate the calculator's panel
+    const masterPanel = document.getElementById("calculator-master-panel-container").children[0];
+    const panel = masterPanel.cloneNode(true);
+
+    // Update the IDs
+    panel.querySelectorAll("[id]").forEach((el) => {
+        el.id = el.id + calc;
+    });
+    
+    // Attach event listeners to the panel
+    // TBI
+
+    // Update contents of the panel
+    panel.querySelectorAll(".calc-name")[0].textContent += calc;
+
+    // Add the panel to DOM
+    document.getElementById("calc-table").appendChild(panel);
+
+
+
+
+    // Duplicate the calculator itself
     const masterCalc = document.getElementById("calculator-master-container").children[0];
     const clone = masterCalc.cloneNode(true);
-
-    // While it might be tempting to just put in calcCount directly, that variable mutates.
-    const calc = calcCount;//document.querySelectorAll("#calculators .calculator").length;
 
     clone.id = `calculator-${calcCount}`;
 
     // Update all IDs
     clone.querySelectorAll("[id]").forEach((el) => {
-        el.id = el.id + calcCount; // Append calcCount to IDs
+        el.id = el.id + calc; // Append calcCount to IDs
     });
 
     // Attach event listeners to the new calculator
@@ -137,7 +164,7 @@ function newCalc() {
 
     // Add new entry to calcInput array
     calcInput.push({
-        'presetName': `Preset ${calcCount}`,
+        'presetName': `Calculator ${calcCount}`,
         'uni': "",
         'outstate': false,
         'dept': "",
@@ -261,8 +288,12 @@ async function selectMajor(calc, major) {
     // Update the JSON
     calcInput[calc]['outstate'] = outstate;
     calcInput[calc]['major'] = major;
-    
+
+
+    // Check if financial aid applies
     if (aidData.aids.length > 0) {
+
+        // It does, so prompt the user
         
         document.getElementById(`input-aid-${calc}`).style.display = "block";
 
@@ -270,7 +301,7 @@ async function selectMajor(calc, major) {
 
         aidContainer.replaceChildren();
 
-        aidContainer.innerHTML = "<div class=\"result-item\" onclick=\"selectaid('None')\"><strong>None</strong></div>"
+        aidContainer.innerHTML = `<div class=\"result-item\" onclick=\"selectaid(${calc}, \'None\')\"><strong>None</strong></div>`
 
         aidData.aids.forEach(aid => {
             let option = document.createElement("div");
@@ -282,7 +313,10 @@ async function selectMajor(calc, major) {
             aidContainer.appendChild(option);
         });
     } else {
-        // clear financial aid from the output if it was applied
+        // It doesn't, so run the calculation now.
+
+        // (Just in case) Clear financial aid from the output if
+        // it was already applied.
         document.getElementById(`aid-output-${calc}`).style.display = "none";
         document.getElementById(`aid-name-${calc}`).innerText = "None";
 
@@ -325,6 +359,52 @@ function selectaid(calc, aid) {
 async function displayOutput(calc, university, outstate, major, aid=null) {
     const data = await calculate(university, major, outstate, aid);
     if (!data) return;
+
+    // Update panel
+
+    // Update the panel
+    if (loggedIn) {
+
+        // local variables
+        panel = document.getElementById("calc-table").children[calc];
+        presetName = panel.querySelectorAll(".calc-name")[0];
+
+
+        // Update the preset name (if needed)
+
+        // matches either the current selected university OR the default
+        // "Calculator 1,2,3..." preset name
+        regex = "[C,c]alculator (\\d)+";
+
+        if (presetName.textContent === calcInput[calc]['uni'] || 
+            RegExp(regex).test(presetName.textContent))
+        {
+
+            // User has not redefined the default present name,
+            // for readability, redefine the preset name to the 
+            // University name.
+            presetName.textContent = university;
+
+            calcInput[calc]['presetName'] = university;
+        }
+
+
+        // Regardless of above, Update the summary in the panel
+        panel.querySelectorAll(".uni")[0].textContent = university;
+        panel.querySelectorAll(".major")[0].textContent = major;
+
+        aidBox = panel.querySelectorAll(".aid")[0];
+
+        if (aid !== null && aid !== "None") {
+
+            aidBox.style.display = "inline";
+            aidBox.textContent = aid;
+        } else {
+            aidBox.style.display = "none";
+        }
+
+    }
+
 
     document.getElementById(`major-name-${calc}`).textContent = major;
     document.getElementById(`major-box-${calc}`).style.visibility = "visible";
@@ -373,7 +453,11 @@ async function calculate(university, major, outstate, aid) {
 
 // Run initialization after DOM is loaded
 document.addEventListener("DOMContentLoaded", () => {
+    // check if user is logged in
+    if (document.getElementById("panel-open")) {
+        loggedIn = true;
+    }
+    console.log(loggedIn ? "User is logged in." : "User is anonymous.");
+
     initializeCalculators();
-    // Attach click listener for "New Calculator"
-    //document.querySelector(".fake-link[onclick='newCalc()']").addEventListener("click", newCalc);
 });

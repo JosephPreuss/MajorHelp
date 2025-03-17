@@ -20,17 +20,8 @@
     <div id="panel-open" style="display: none;">
         <p>Create, save, and load calculations here.   <span onclick="hidePanel()" class="right-align fake-link">Hide.</span></p>
         <br>
-        <div class="calc-table">
-            <div id="entry-1" class="calc-entry">
-              <span class="calc-name">calculator 1</span>
-              <span class="calc-details">UofSC • CIS • Palmetto Fellows</span>
-              <span class="calc-actions">Save Duplicate Clear Delete</span>
-            </div>
-            <div id="entry-2" class="calc-entry">
-              <span class="calc-name">calculator 2</span>
-              <span class="calc-details">UofSC • CIS • Palmetto Fellows</span>
-              <span class="calc-actions">Save Duplicate Clear Delete</span>
-            </div>
+        <div id="calc-table">
+            {% include 'calc/calc_panel.html' with num="0" %}
         </div>
         <br>
         <span class="fake-link" onclick="newCalc()">New Calculator</span>
@@ -60,10 +51,14 @@
 
 </div>
 
-<!-- Master copy hidden -->
-<div id="calculator-master-container" class="master-template" style="display: none;">
-    {% include 'calc/calc_template.html'%}
+<!-- Master copies are hidden -->
+<div id="calculator-master-panel-container" class="master-template" style="display: none;">
+{% include 'calc/calc_panel.html' %}
 </div>
+<div id="calculator-master-container" class="master-template" style="display: none;">
+    {% include 'calc/calc_template.html' %}
+</div>
+
 
 
 {% endblock content %}
