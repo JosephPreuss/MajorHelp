@@ -142,13 +142,16 @@ function newCalc() {
     const masterPanel = document.getElementById("calculator-master-panel-container").children[0];
     const panel = masterPanel.cloneNode(true);
 
+    panel.id += calc;
+
     // Update the IDs
     panel.querySelectorAll("[id]").forEach((el) => {
         el.id = el.id + calc;
     });
     
     // Attach event listeners to the panel
-    // TBI
+    panel.querySelector(".clear").addEventListener('click', () => clearCalc(calc));
+
 
     // Update contents of the panel
     panel.querySelector(".calc-name").textContent += calc;
