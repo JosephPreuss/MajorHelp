@@ -99,8 +99,7 @@ function initializeCalculators() {
 
         // Attach event listeners
         panel.querySelector(".clear").addEventListener('click', () => clearCalc(panelNum));
-
-        console.log(panel.querySelector(".clear"));
+        panel.querySelector(".delete").addEventListener('click', () => deleteCalc(panelNum));
     });
 
     // Initialize the calculators themselves
@@ -135,8 +134,38 @@ function newCalc() {
     // While it might be tempting to just put in calcCount directly, that global mutates.
     const calc = calcCount;
 
+    // check if calc isn't pointing to a previously created calculator
+    if (calc < calcInput.length) {
 
-    
+        // simply reshow the calculator
+        document.getElementById(`entry-${calc}`).style.display = "flex";
+        document.getElementById(`calculator-${calc}`).style.display = "flex";
+
+        // restore the json
+        calcInput[calc] = {
+            'presetName': `Calculator ${calc}`,
+            'uni': "",
+            'outstate': false,
+            'dept': "",
+            'major': "",
+            'aid': ""
+        };
+
+        
+        // point calcCount to the next availiable calculator
+        for (var i = 0; i < calcInput.length; i++) {
+            if (Object.keys(calcInput[i]).length === 0) {
+                calcCount = i;
+                return;
+            }
+        }
+
+        // There are no empty slots, point to the end of the list
+        calcCount = calcInput.length;
+        
+        return;
+    }
+
 
     // Duplicate the calculator's panel
     const masterPanel = document.getElementById("calculator-master-panel-container").children[0];
@@ -151,6 +180,7 @@ function newCalc() {
     
     // Attach event listeners to the panel
     panel.querySelector(".clear").addEventListener('click', () => clearCalc(calc));
+    panel.querySelector(".delete").addEventListener('click', () => deleteCalc(calc));
 
 
     // Update contents of the panel
@@ -193,8 +223,16 @@ function newCalc() {
         'aid': ""
     });
 
+    // point calcCount to the next availiable calculator
+    for (var i = 0; i < calcInput.length; i++) {
+        if (Object.keys(calcInput[i]).length === 0) {
+            calcCount = i;
+            return;
+        }
+    }
+
     calcCount++;
-  }
+}
 
 function clearCalc(calc) {
 
@@ -272,8 +310,26 @@ function clearCalc(calc) {
     calculator.querySelector(".aid-name").innerText = "Nothing";
 }
 
+function deleteCalc(calc) {
+
+    // Clear the calculator
+    clearCalc(calc);
+
+    // Mark the calc input as empty
+    calcInput[calc] =  {};
+
+    // Hide the panel
+    document.getElementById(`entry-${calc}`).style.display = "None";
+    
+    // Hide the Calc
+    document.getElementById(`calculator-${calc}`).style.display = "None";
+
+    // point calcCount to the deleted calculator
+    if (calc < calcCount)
+        calcCount = calc;
+}
+
 async function updateUniversityResults(calc) {
-    console.log(calc);
     const query = document.getElementById(`uni-search-${calc}`).value.trim();
     if(!query) return;
 
