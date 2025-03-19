@@ -1,13 +1,85 @@
 /* Extend css changes from the main stylesheet */
-@import url("common/styles.css");
+@import url("/static/css/common/styles.css");
 
 #title {
 	margin-left: 5vh;
 	color: white;
 }
 
-#inputOutput {
-    display:flex;
+#calc-panel {
+    padding : 10px;
+}
+
+.calc-actions span,
+.fake-link {
+    /* rules for a tags */
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    text-decoration: none;
+    list-style: none;
+
+    text-decoration: underline;
+}
+
+.calc-actions span:hover,
+.fake-link:hover {
+    cursor: pointer;
+}
+
+
+/* Style the container as a table-like structure */
+#calc-table {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    border: 1px solid #ccc; /* Optional: table-like border */
+}
+  
+  /* Each entry is a row */
+.calc-entry {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #ccc; /* Row separator */
+}
+  
+  /* Columns within each row */
+.calc-entry span {
+    flex: 1; /* Equal width for all columns */
+    text-align: left;
+    padding: 0 5px;
+}
+  
+  /* Specific styling for each column */
+.calc-name {
+    font-weight: bold;
+}
+  
+.calc-details {
+    color: #555;
+}
+
+.calc-details span {
+    padding: 0px;
+}
+
+/* Makes sure that these elements are separated by a dot
+   the ":not(:first-child)" prevents a leading dot */
+.calc-details span:not(:first-child):before{
+    content:" • ";
+}
+  
+.calc-actions {
+    text-align: right;
+}
+  
+  /* Right-align the "Hide" link */
+.right-align {
+    float: right;
+    cursor: pointer;
 }
 
 .content-box {
@@ -17,30 +89,29 @@
     margin: 0 auto; 
     margin-top: 20px;
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1); 
-    border-radius: 10px; 
+    border-radius: 10px;  
 }
 
 .color-text {
     color : #4fc7cf;
 }
 
-/* Only affects inputOutput's immediate children. */
-#input-output {
+.calculator {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
 }
 
-#input {
+.input {
     flex: 1;
     max-width: 55%;
 }
 
-#uni-box {
+.uni-box {
     visibility : hidden;
 }
 
-#major-box {
+.major-box {
     visibility : hidden;
 }
 
@@ -49,7 +120,7 @@
     color : #ff0047;
 }
 
-#output {
+.output {
     flex: 1;
     max-width: 40%;
     display: none;
@@ -73,9 +144,6 @@
     display : none; /* to be overriden by js*/
 }
 
-.aid-results {
-    display : none; /* to be overriden by js*/
-}
 
 /* 
     This targets the spans contained in the list elements of every
@@ -89,6 +157,7 @@
     name "itemizedNumber" and apply it to the span, as it controls the 
     "$X,XXX" and places it to the right.
 */
+.right-align,
 .outputList > li span {
     float:right;
     text-align: right;
@@ -102,7 +171,7 @@
     content: "(!)"
 }
 
-#aid-output {
+.aid-output {
     display : none;
 }
 
@@ -121,3 +190,7 @@
     background-color: #008080;
     color: white;
 }
+
+.master-template {
+    display: none !important; /* Ensure it’s never visible */
+  }
