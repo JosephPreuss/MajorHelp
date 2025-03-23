@@ -434,7 +434,7 @@ async function selectMajor(calc, major) {
     document.getElementById(`major-name-${calc}`).textContent = major;
 
     // Check if financial aid applies.
-    aidData = await fetchFinancialAid(university);
+    const aidData = await fetchFinancialAid(university);
     if (aidData === null) return;
 
     // Update the JSON
@@ -482,7 +482,6 @@ async function fetchFinancialAid(query) {
         if (!response.ok) {
             console.log(response.status + "\n" + response.statusText);
             throw new Error("Error Fetching Aid");
-            return null;
         }
 
         return await response.json();
@@ -518,15 +517,15 @@ async function displayOutput(calc, university, outstate, major, aid=null) {
     if (loggedIn) {
 
         // local variables
-        panel = document.getElementById("calc-table").children[calc];
-        presetName = panel.querySelector(".calc-name");
+        const panel = document.getElementById("calc-table").children[calc];
+        const presetName = panel.querySelector(".calc-name");
 
 
         // Update the preset name (if needed)
 
         // matches either the current selected university OR the default
         // "Calculator 1,2,3..." preset name
-        regex = "[C,c]alculator (\\d)+";
+        const regex = "[C,c]alculator (\\d)+";
 
         if (presetName.textContent === calcInput[calc]['uni'] || 
             RegExp(regex).test(presetName.textContent))
@@ -545,7 +544,7 @@ async function displayOutput(calc, university, outstate, major, aid=null) {
         panel.querySelector(".uni").textContent = university;
         panel.querySelector(".major").textContent = major;
 
-        aidBox = panel.querySelector(".aid");
+        const aidBox = panel.querySelector(".aid");
 
         if (aid !== null && aid !== "None") {
 
