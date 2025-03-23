@@ -44,15 +44,24 @@ class RequestTests(TestCase):
 class CalcTests(TestCase):
     @classmethod
     def setUpTestData(cls):
+        exampleAid = FinancialAid.objects.create(name="exampleAid") 
         exampleUni = University.objects.create(name="exampleUni")
-        Major.objects.create(major_name="exampleMajor", slug="exampleMajor", university=exampleUni)
+
+        exampleUni.applicableAids.add(exampleAid)
+
+        Major.objects.create(
+            major_name="exampleMajor", slug="exampleMajor", university=exampleUni,
+            department='Humanities and Social Sciences'
+        )
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
         self.url = reverse("MajorHelp:calc")
-        # self.infoUrl = reverse("MajorHelp:calcInfo")
-        self.DNE = "DOESNOTEXIST"
+        self.uni = reverse("MajorHelp:university_search")
+        self.maj = reverse("MajorHelp:major_list")
+        self.aid = reverse("MajorHelp:aid_list")
+        self.cal = reverse("MajorHelp:calculate")
 
 
     # A simple test to make sure that the server returns the proper html page
@@ -64,6 +73,192 @@ class CalcTests(TestCase):
         self.assertEqual(response.status_code, 200)
 
         self.assertEqual(response['content-type'], 'text/html; charset=utf-8')
+
+
+    # ========================= University Search =============================
+
+
+    # The typical use case for the university search
+    def testUniversitySearch(self):
+        getData = "?query=exampleUni"
+
+        response = self.client.get(self.uni+getData)
+
+        self.assertEqual(response.status_code, 200)
+        
+        self.assertEqual(response['content-type'], 'application/json')
+
+        data = json.loads(response.content)
+
+        self.assertEqual(data["universities"][0]["name"], "exampleUni")
+
+    # The api should return a 400 error if no query was provided
+    def testUniversitySearchNoQuery(self):
+
+        response = self.client.get(self.uni)
+
+        self.assertEqual(response.status_code, 400)
+
+    # Likewise, it should return 400 if the query is empty
+    def testUniversitySearchEmptyQuery(self):
+        getData = "?query="
+
+        response = self.client.get(self.uni+getData)
+
+        self.assertEqual(response.status_code, 400)
+
+    # The api should return a 404 error if a non existient university was provided
+    def testUniversitySearchNoUniversity(self):
+        getData = "?query=DoesntExistU"
+
+        response = self.client.get(self.uni+getData)
+
+        self.assertEqual(response.status_code, 404)
+
+
+    # ========================= Major List ====================================
+
+
+    # The typical use case for the major List
+    def testMajorList(self):
+        getData = "?university=exampleUni&department=Humanities+and+Social+Sciences"
+
+        response = self.client.get(self.maj+getData)
+
+        self.assertEqual(response.status_code, 200)
+        
+        self.assertEqual(response['content-type'], 'application/json')
+
+        data = json.loads(response.content)
+
+        self.assertEqual(data["majors"][0]["name"], "exampleMajor")
+
+    # The api should return a 400 error if nothing was provided
+    def testMajorListNoUniversityOrDept(self):
+
+        response = self.client.get(self.maj)
+
+        self.assertEqual(response.status_code, 400)
+
+    def testMajorListNoUniversity(self):
+        getData = "?department=Humanities+and+Social+Sciences"
+
+        response = self.client.get(self.maj+getData)
+
+        self.assertEqual(response.status_code, 400)
+
+    # Likewise, it should return 400 if the query is empty
+    def testMajorListEmptyUniversity(self):
+        getData = "?University=&department=Humanities+and+Social+Sciences"
+
+        response = self.client.get(self.maj+getData)
+
+        self.assertEqual(response.status_code, 400)
+
+    def testMajorListNoDepartment(self):
+        getData = "?university=exampleUni"
+
+        response = self.client.get(self.maj+getData)
+
+        self.assertEqual(response.status_code, 400)
+
+    # Likewise, it should return 400 if the query is empty
+    def testMajorListEmptyDepartment(self):
+        getData = "?university=exampleUni&department="
+
+        response = self.client.get(self.maj+getData)
+
+        self.assertEqual(response.status_code, 400)
+
+    # The api should return a 404 error if a non existient University was provided
+    def testMajorListNonExistUniversity(self):
+        getData = "?university=DoesntExistU&department=Humanities+and+Social+Sciences"
+
+        response = self.client.get(self.maj+getData)
+
+        self.assertEqual(response.status_code, 404)
+
+
+    # ========================== Aid List =====================================
+
+
+    # The typical use case for the aid list
+    def testAidList(self):
+        getData = "?university=exampleUni"
+
+        response = self.client.get(self.aid+getData)
+
+        self.assertEqual(response.status_code, 200)
+        
+        self.assertEqual(response['content-type'], 'application/json')
+
+        data = json.loads(response.content)
+
+        self.assertEqual(data["aids"][0]["name"], "exampleAid")
+
+    # The api should return a 400 error if no university was provided
+    def testAidListNoQuery(self):
+
+        response = self.client.get(self.aid)
+
+        self.assertEqual(response.status_code, 400)
+
+    # Likewise, it should return 400 if the query is empty
+    def testAidListEmptyQuery(self):
+        getData = "?university="
+
+        response = self.client.get(self.aid+getData)
+
+        self.assertEqual(response.status_code, 400)
+
+    # The api should return a 404 error if a non existient university was provided
+    def testAidListNoUniversity(self):
+        getData = "?university=DoesntExistU"
+
+        response = self.client.get(self.aid+getData)
+
+        self.assertEqual(response.status_code, 404)
+
+
+    # ========================== calculator =====================================
+
+
+    # The typical use case for the calculator
+    def testCalc(self):
+
+        getData = "?university=exampleUni&major=exampleMajor&outstate=false"
+
+        response = self.client.get(self.cal+getData)
+
+        self.assertEqual(response.status_code, 200)
+    
+        # data = json.loads(response.content)
+
+        # print(data)
+
+        self.assertEqual(response['content-type'], 'application/json')
+
+    def testCalcWithAid(self):
+
+        getData = "?university=exampleUni&major=exampleMajor&outstate=false&aid=exampleAid"
+
+        response = self.client.get(self.cal+getData)
+
+        self.assertEqual(response.status_code, 200)
+    
+
+        self.assertEqual(response['content-type'], 'application/json')
+
+        data = json.loads(response.content)
+
+        # print(data)
+
+        self.assertEqual(data['aid']['name'], "exampleAid")
+    
+    def testCalcNoQuery(self):
+        response = self.client.get(self.cal)
+
+        self.assertEqual(response.status_code, 400)
 
 
 
