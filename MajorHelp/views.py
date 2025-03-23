@@ -644,6 +644,11 @@ def calculate(request):
     outstate = request.GET.get('outstate')
     aid_name = request.GET.get('aid')
 
+    print(aid_name)
+    print(aid_name == "None")
+    print( aid_name is None )
+    print( aid_name is None or aid_name == "None" or aid_name == "null")
+
     if not university_name:
         return HttpResponse("Error - No university provided.", status=400)
 
@@ -669,6 +674,7 @@ def calculate(request):
 
     # Get aid
     aid = 0
+    aidObj = None
 
     if aid_name and (not (aid_name == "" or aid_name == "None" or aid_name == "null")):
         aidObj = FinancialAid.objects.filter(name=aid_name).first()
@@ -706,7 +712,7 @@ def calculate(request):
             "baseMaxTui": major.in_state_max_tuition if not outstate else major.out_of_state_max_tuition,
             "fees": major.fees
         },
-        "aid" : {} if not aid_name else {
+        "aid" : {} if aid_name is None or aid_name == "null" or aid_name == "None" else {
             "name" : aidObj.name,
             "amount" : aidObj.amount,
         },
