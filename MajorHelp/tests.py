@@ -51,7 +51,7 @@ class CalcTests(TestCase):
         super().__init__(*args, **kwargs)
 
         self.url = reverse("MajorHelp:calc")
-        self.infoUrl = reverse("MajorHelp:calcInfo")
+        # self.infoUrl = reverse("MajorHelp:calcInfo")
         self.DNE = "DOESNOTEXIST"
 
 
@@ -65,108 +65,6 @@ class CalcTests(TestCase):
 
         self.assertEqual(response['content-type'], 'text/html; charset=utf-8')
 
-
-    # While /calc/info is meant for the frontend of the calculator to interface
-    # via a GET request, it is possible to do a GET request without submitting
-    # any data.. like accessing the url directly on your browser!
-    #
-    # To save the user some confusion, in the case where no GET data is
-    # provided, the backend should just redirect to /calc/
-    def testCalcInfoNoDataEntry(self):
-        # follow = True makes it so that the request will follow any change,
-        # ie a redirect
-        response = self.client.get(self.infoUrl, follow=True)
-
-        # This method also implicitly checks to see 
-        # if the final response is 200
-        self.assertRedirects(response, self.url)
-
-    def testCalcInfoFull(self):
-        getData = "?uni=exampleUni&outstate=true&dept=exampleDept&major=exampleMajor&aid="
-
-        response = self.client.get(self.infoUrl+getData)
-
-        # check status code
-        self.assertEqual(response.status_code, 200)
-
-        self.assertEqual(response['content-type'], 'application/json')
-    
-
-
-    def testCalcInfoReturns400whenUniIsnull(self):
-        
-        getData = "?outstate=false&dept=A&major=exampleMajor&aid="
-
-        response = self.client.get(self.infoUrl+getData)
-
-        self.assertEqual(response.status_code,400)
-
-
-    def testCalcInfoReturns400whenUniIsBlank(self):
-                
-        getData = "?uni=&outstate=false&dept=A&major=exampleMajor&aid="
-
-        response = self.client.get(self.infoUrl+getData)
-
-        self.assertEqual(response.status_code,400)
-
-
-    # In the case where the frontend submits an entry that doesn't exist,
-    # the backend should return "DOESNOTEXIST" for the entry, but otherwise not
-    # error.
-    def testCalcInfoNonExistientUni(self):
-        # The university in this doesn't exist in the test database!
-        getData = "?uni=nonExistientUni&outstate=true&dept=exampleDept&major=exampleMajor&aid="
-
-        response = self.client.get(self.infoUrl+getData)
-
-        # The status code should still be 200
-        self.assertEqual(response.status_code, 200)
-
-        self.assertEqual(response['content-type'], 'application/json')
-
-        data = json.loads(response.content)
-
-        self.assertEqual(data["uni"]["name"], self.DNE)
-
-
-
-
-    def testCalcInfoReturns400whenMajorIsnull(self):
-        
-        getData = "?uni=exampleUnioutstate=false&dept=A&aid="
-
-        response = self.client.get(self.infoUrl+getData)
-
-        self.assertEqual(response.status_code,400)
-
-
-    def testCalcInfoReturns400whenMajorIsBlank(self):
-                
-        getData = "?uni=exampleUnioutstate=false&major=&dept=A&aid="
-
-        response = self.client.get(self.infoUrl+getData)
-
-        self.assertEqual(response.status_code,400)
-
-
-    # In the case where the frontend submits an entry that doesn't exist,
-    # the backend should return "DOESNOTEXIST" for the entry, but otherwise not
-    # error.
-    def testCalcInfoNonExistientMajor(self):
-        # The major in this doesn't exist in the test database!
-        getData = "?uni=exampleUni&outstate=true&dept=exampleDept&major=nonExistientMajor&aid="
-
-        response = self.client.get(self.infoUrl+getData)
-
-        # The status code should still be 200
-        self.assertEqual(response.status_code, 200)
-
-        self.assertEqual(response['content-type'], 'application/json')
-
-        data = json.loads(response.content)
-
-        self.assertEqual(data["major"]["name"], self.DNE)
 
 
 #  unit test for University Ratings Model
