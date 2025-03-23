@@ -590,7 +590,7 @@ def university_search(request):
     return JsonResponse(data)
 
 def aid_list(request):
-    uniQuery = request.GET['university']
+    uniQuery = request.GET.get('university')
     uniObj = None
 
     if not uniQuery:
@@ -616,6 +616,12 @@ def major_list(request):
     university_name = request.GET.get('university', '')
     department = request.GET.get('department', '')
 
+    if not university_name:
+        return HttpResponse("Error - No university provided.", status=400)
+
+    if not department:
+        return HttpResponse("Error - No department provided.", status=400)
+
     # Ensure university exists
     university = University.objects.filter(name__icontains=university_name).first()
     if not university:
@@ -633,10 +639,23 @@ def major_list(request):
 
 def calculate(request):
     
-    university_name = request.GET['university']
-    major_name = request.GET['major']
-    outstate = request.GET['outstate'] == 'true'
-    aid_name = request.GET['aid']
+    university_name = request.GET.get('university')
+    major_name = request.GET.get('major')
+    outstate = request.GET.get('outstate')
+    aid_name = request.GET.get('aid')
+
+    if not university_name:
+        return HttpResponse("Error - No university provided.", status=400)
+
+    if not major_name:
+        return HttpResponse("Error - No major provided.", status=400)
+
+    if not outstate:
+        return HttpResponse("Error - No outstate provided.", status=400)
+
+    # effectively cast outstate to a boolean now that we know its validated
+    outstate = outstate == 'true'
+
 
     # Ensure university exists
     university = University.objects.filter(name__icontains=university_name).first()
@@ -651,7 +670,7 @@ def calculate(request):
     # Get aid
     aid = 0
 
-    if not (aid_name == "" or aid_name == "None" or aid_name == "null"):
+    if aid_name and (not (aid_name == "" or aid_name == "None" or aid_name == "null")):
         aidObj = FinancialAid.objects.filter(name=aid_name).first()
         if not aidObj:
             return HttpResponse("Error - Financial Aid not found.", status=404)
@@ -687,7 +706,7 @@ def calculate(request):
             "baseMaxTui": major.in_state_max_tuition if not outstate else major.out_of_state_max_tuition,
             "fees": major.fees
         },
-        "aid" : {} if not aid else {
+        "aid" : {} if not aid_name else {
             "name" : aidObj.name,
             "amount" : aidObj.amount,
         },
