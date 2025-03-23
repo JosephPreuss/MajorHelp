@@ -44,15 +44,24 @@ class RequestTests(TestCase):
 class CalcTests(TestCase):
     @classmethod
     def setUpTestData(cls):
+        exampleAid = FinancialAid.objects.create(name="exampleAid") 
         exampleUni = University.objects.create(name="exampleUni")
-        Major.objects.create(major_name="exampleMajor", slug="exampleMajor", university=exampleUni)
+
+        exampleUni.applicableAids.add(exampleAid)
+
+        Major.objects.create(
+            major_name="exampleMajor", slug="exampleMajor", university=exampleUni,
+            department='Humanities and Social Sciences'
+        )
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
         self.url = reverse("MajorHelp:calc")
-        self.infoUrl = reverse("MajorHelp:calcInfo")
-        self.DNE = "DOESNOTEXIST"
+        self.uni = reverse("MajorHelp:university_search")
+        self.maj = reverse("MajorHelp:major_list")
+        self.aid = reverse("MajorHelp:aid_list")
+        self.cal = reverse("MajorHelp:calculate")
 
 
     # A simple test to make sure that the server returns the proper html page
@@ -66,107 +75,191 @@ class CalcTests(TestCase):
         self.assertEqual(response['content-type'], 'text/html; charset=utf-8')
 
 
-    # While /calc/info is meant for the frontend of the calculator to interface
-    # via a GET request, it is possible to do a GET request without submitting
-    # any data.. like accessing the url directly on your browser!
-    #
-    # To save the user some confusion, in the case where no GET data is
-    # provided, the backend should just redirect to /calc/
-    def testCalcInfoNoDataEntry(self):
-        # follow = True makes it so that the request will follow any change,
-        # ie a redirect
-        response = self.client.get(self.infoUrl, follow=True)
+    # ========================= University Search =============================
 
-        # This method also implicitly checks to see 
-        # if the final response is 200
-        self.assertRedirects(response, self.url)
 
-    def testCalcInfoFull(self):
-        getData = "?uni=exampleUni&outstate=true&dept=exampleDept&major=exampleMajor&aid="
+    # The typical use case for the university search
+    def testUniversitySearch(self):
+        getData = "?query=exampleUni"
 
-        response = self.client.get(self.infoUrl+getData)
+        response = self.client.get(self.uni+getData)
 
-        # check status code
         self.assertEqual(response.status_code, 200)
+        
+        self.assertEqual(response['content-type'], 'application/json')
+
+        data = json.loads(response.content)
+
+        self.assertEqual(data["universities"][0]["name"], "exampleUni")
+
+    # The api should return a 400 error if no query was provided
+    def testUniversitySearchNoQuery(self):
+
+        response = self.client.get(self.uni)
+
+        self.assertEqual(response.status_code, 400)
+
+    # Likewise, it should return 400 if the query is empty
+    def testUniversitySearchEmptyQuery(self):
+        getData = "?query="
+
+        response = self.client.get(self.uni+getData)
+
+        self.assertEqual(response.status_code, 400)
+
+    # The api should return a 404 error if a non existient university was provided
+    def testUniversitySearchNoUniversity(self):
+        getData = "?query=DoesntExistU"
+
+        response = self.client.get(self.uni+getData)
+
+        self.assertEqual(response.status_code, 404)
+
+
+    # ========================= Major List ====================================
+
+
+    # The typical use case for the major List
+    def testMajorList(self):
+        getData = "?university=exampleUni&department=Humanities+and+Social+Sciences"
+
+        response = self.client.get(self.maj+getData)
+
+        self.assertEqual(response.status_code, 200)
+        
+        self.assertEqual(response['content-type'], 'application/json')
+
+        data = json.loads(response.content)
+
+        self.assertEqual(data["majors"][0]["name"], "exampleMajor")
+
+    # The api should return a 400 error if nothing was provided
+    def testMajorListNoUniversityOrDept(self):
+
+        response = self.client.get(self.maj)
+
+        self.assertEqual(response.status_code, 400)
+
+    def testMajorListNoUniversity(self):
+        getData = "?department=Humanities+and+Social+Sciences"
+
+        response = self.client.get(self.maj+getData)
+
+        self.assertEqual(response.status_code, 400)
+
+    # Likewise, it should return 400 if the query is empty
+    def testMajorListEmptyUniversity(self):
+        getData = "?University=&department=Humanities+and+Social+Sciences"
+
+        response = self.client.get(self.maj+getData)
+
+        self.assertEqual(response.status_code, 400)
+
+    def testMajorListNoDepartment(self):
+        getData = "?university=exampleUni"
+
+        response = self.client.get(self.maj+getData)
+
+        self.assertEqual(response.status_code, 400)
+
+    # Likewise, it should return 400 if the query is empty
+    def testMajorListEmptyDepartment(self):
+        getData = "?university=exampleUni&department="
+
+        response = self.client.get(self.maj+getData)
+
+        self.assertEqual(response.status_code, 400)
+
+    # The api should return a 404 error if a non existient University was provided
+    def testMajorListNonExistUniversity(self):
+        getData = "?university=DoesntExistU&department=Humanities+and+Social+Sciences"
+
+        response = self.client.get(self.maj+getData)
+
+        self.assertEqual(response.status_code, 404)
+
+
+    # ========================== Aid List =====================================
+
+
+    # The typical use case for the aid list
+    def testAidList(self):
+        getData = "?university=exampleUni"
+
+        response = self.client.get(self.aid+getData)
+
+        self.assertEqual(response.status_code, 200)
+        
+        self.assertEqual(response['content-type'], 'application/json')
+
+        data = json.loads(response.content)
+
+        self.assertEqual(data["aids"][0]["name"], "exampleAid")
+
+    # The api should return a 400 error if no university was provided
+    def testAidListNoQuery(self):
+
+        response = self.client.get(self.aid)
+
+        self.assertEqual(response.status_code, 400)
+
+    # Likewise, it should return 400 if the query is empty
+    def testAidListEmptyQuery(self):
+        getData = "?university="
+
+        response = self.client.get(self.aid+getData)
+
+        self.assertEqual(response.status_code, 400)
+
+    # The api should return a 404 error if a non existient university was provided
+    def testAidListNoUniversity(self):
+        getData = "?university=DoesntExistU"
+
+        response = self.client.get(self.aid+getData)
+
+        self.assertEqual(response.status_code, 404)
+
+
+    # ========================== calculator =====================================
+
+
+    # The typical use case for the calculator
+    def testCalc(self):
+
+        getData = "?university=exampleUni&major=exampleMajor&outstate=false"
+
+        response = self.client.get(self.cal+getData)
+
+        self.assertEqual(response.status_code, 200)
+    
+        # data = json.loads(response.content)
+
+        # print(data)
 
         self.assertEqual(response['content-type'], 'application/json')
+
+    def testCalcWithAid(self):
+
+        getData = "?university=exampleUni&major=exampleMajor&outstate=false&aid=exampleAid"
+
+        response = self.client.get(self.cal+getData)
+
+        self.assertEqual(response.status_code, 200)
     
 
-
-    def testCalcInfoReturns400whenUniIsnull(self):
-        
-        getData = "?outstate=false&dept=A&major=exampleMajor&aid="
-
-        response = self.client.get(self.infoUrl+getData)
-
-        self.assertEqual(response.status_code,400)
-
-
-    def testCalcInfoReturns400whenUniIsBlank(self):
-                
-        getData = "?uni=&outstate=false&dept=A&major=exampleMajor&aid="
-
-        response = self.client.get(self.infoUrl+getData)
-
-        self.assertEqual(response.status_code,400)
-
-
-    # In the case where the frontend submits an entry that doesn't exist,
-    # the backend should return "DOESNOTEXIST" for the entry, but otherwise not
-    # error.
-    def testCalcInfoNonExistientUni(self):
-        # The university in this doesn't exist in the test database!
-        getData = "?uni=nonExistientUni&outstate=true&dept=exampleDept&major=exampleMajor&aid="
-
-        response = self.client.get(self.infoUrl+getData)
-
-        # The status code should still be 200
-        self.assertEqual(response.status_code, 200)
-
         self.assertEqual(response['content-type'], 'application/json')
 
         data = json.loads(response.content)
 
-        self.assertEqual(data["uni"]["name"], self.DNE)
+        # print(data)
 
+        self.assertEqual(data['aid']['name'], "exampleAid")
+    
+    def testCalcNoQuery(self):
+        response = self.client.get(self.cal)
 
+        self.assertEqual(response.status_code, 400)
 
-
-    def testCalcInfoReturns400whenMajorIsnull(self):
-        
-        getData = "?uni=exampleUnioutstate=false&dept=A&aid="
-
-        response = self.client.get(self.infoUrl+getData)
-
-        self.assertEqual(response.status_code,400)
-
-
-    def testCalcInfoReturns400whenMajorIsBlank(self):
-                
-        getData = "?uni=exampleUnioutstate=false&major=&dept=A&aid="
-
-        response = self.client.get(self.infoUrl+getData)
-
-        self.assertEqual(response.status_code,400)
-
-
-    # In the case where the frontend submits an entry that doesn't exist,
-    # the backend should return "DOESNOTEXIST" for the entry, but otherwise not
-    # error.
-    def testCalcInfoNonExistientMajor(self):
-        # The major in this doesn't exist in the test database!
-        getData = "?uni=exampleUni&outstate=true&dept=exampleDept&major=nonExistientMajor&aid="
-
-        response = self.client.get(self.infoUrl+getData)
-
-        # The status code should still be 200
-        self.assertEqual(response.status_code, 200)
-
-        self.assertEqual(response['content-type'], 'application/json')
-
-        data = json.loads(response.content)
-
-        self.assertEqual(data["major"]["name"], self.DNE)
 
 
 #  unit test for University Ratings Model
