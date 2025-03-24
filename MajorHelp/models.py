@@ -303,7 +303,23 @@ class CustomUser(AbstractUser):
     REQUIRED_FIELDS = ['email']  # Require email during user creation
     
     objects = CustomUserManager()
-    
+
+
+    savedCalcs = models.JSONField(default=dict) # passing a callable nstead of {} to make sure everyone gets a independent json
+
+    # Format
+
+    # {
+    #     "calculator 0" : { # the identifier should have no caps
+    #         "calcName": "Calculator 0",
+    #         "uni": "",
+    #         "outstate": false,
+    #         "dept": "",
+    #         "major": "",
+    #         "aid": ""
+    #     },
+    # }
+
     def __str__(self):
         return self.username
     
