@@ -589,6 +589,53 @@ def university_search(request):
 
     return JsonResponse(data)
 
+@csrf_exempt
+def calc_list(request):
+    if not request.user.is_authenticated:
+        # 401 - Unauthorized
+        # https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/401
+        return HttpResponse("Error - You must be logged in", status=401)
+    
+    user = request.user
+
+    print(user)
+
+    query = request.GET.get('query')
+
+    if not query:
+        return HttpResponse("Error - No query provided", status=400)
+
+    # lower the query so that the filtering can be case insensitive
+    query = query.lower()
+
+    # dict_you_want = {key: old_dict[key] for key in your_keys}
+
+    # # Returns the values of the calculators matching the filtered_keys
+    # filtered_keys = ["Calculator 1", "Calculator 2"]
+    # calculators = {key: user.savedCalcs[key] for key in filtered_keys}
+    # 
+    # # Might be useful later
+
+    # >>> lst = ['a', 'ab', 'abc', 'bac']
+    # >>> [k for k in lst if 'ab' in k]
+    # ['ab', 'abc']
+
+
+    # Grab the saved calculators from the user:
+    savedCalcs = [x.lower() for x in list(user.savedCalcs.keys())]
+    # This converts a dict_keys to a list of strings and then lower cases them.
+
+
+    # Filter by the given query:
+    calculators = [calc for calc in savedCalcs if query in calc]
+
+
+    # Return the data
+    data = {"calculators": calculators}
+
+    return JsonResponse(data)
+    
+
 def aid_list(request):
     uniQuery = request.GET.get('university')
     uniObj = None
