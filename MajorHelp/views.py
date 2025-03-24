@@ -622,8 +622,8 @@ def calc_list(request):
 
 
     # Grab the saved calculators from the user:
-    savedCalcs = [x.lower() for x in list(user.savedCalcs.keys())]
-    # This converts a dict_keys to a list of strings and then lower cases them.
+    savedCalcs = list(user.savedCalcs.keys())
+    # This converts a dict_keys to a list of strings
 
 
     # Filter by the given query:
