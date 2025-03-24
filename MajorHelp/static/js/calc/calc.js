@@ -1,39 +1,4 @@
-/*
-
-Elements with unique ids that need to be appended to:
-type    id              oninput / onchange function
-------------------------------------------------------
-div     calculator
-div     input
-input   uni-search          updateUniversityResults
-div     uni-results
-h3      uni-box
-span    uni-name
-input   outstate
-select  dept-dropdown       updateMajorResults
-div     major-results
-h3      major-box
-span    major-name
-div     input-aid
-div     aid-results
-h3      aid-box
-
-div     output
-h3      summary
-h1      total
-span    uni-name-output
-span    uni-tuition
-span    uni-fees
-span    major-name-output
-span    major-tuition
-span    major-fees
-div     aid-output
-span    aid-name-output
-span    aid-amount
-h2      total-bottom
-h4      summary-bottom
-
-*/
+// Globals
 
 loggedIn = false;
 calcCount = 0;
@@ -52,10 +17,10 @@ const DEPARTMENT_CHOICES = [
 ];
 
 // Both for the calculator to handle two or more input fields at once and also
-// to enable preset saving in the future.
+// to enable calc saving in the future.
 const calcInput = [
 /*     {
-        'presetName'    :   "Preset 0",     // For later implimentation
+        'calcName'    :   "Calc 0",     // For later implimentation
         'uni'           :   "",
         'outstate'      :   false,
         'dept'          :   "",
@@ -64,7 +29,7 @@ const calcInput = [
     },
 
     {
-        'presetName'    :   "Preset 1",     // For later implimentation
+        'calcName'    :   "Calc 1",     // For later implimentation
         'uni'           :   "",
         'outstate'      :   false,
         'dept'          :   "",
@@ -117,7 +82,7 @@ function initializeCalculators() {
 
         // Add new entry to calcInput array
         calcInput.push({
-            'presetName': `Calculator ${calcCount}`,
+            'calcName': `Calculator ${calcCount}`,
             'uni': "",
             'outstate': false,
             'dept': "",
@@ -143,7 +108,7 @@ function newCalc() {
 
         // restore the json
         calcInput[calc] = {
-            'presetName': `Calculator ${calc}`,
+            'calcName': `Calculator ${calc}`,
             'uni': "",
             'outstate': false,
             'dept': "",
@@ -215,7 +180,7 @@ function newCalc() {
 
     // Add new entry to calcInput array
     calcInput.push({
-        'presetName': `Calculator ${calcCount}`,
+        'calcName': `Calculator ${calcCount}`,
         'uni': "",
         'outstate': false,
         'dept': "",
@@ -238,7 +203,7 @@ function clearCalc(calc) {
 
     // clear the frontend JSON
     calcInput[calc] =  {
-        'presetName': `Calculator ${calc}`,
+        'calcName': `Calculator ${calc}`,
         'uni': "",
         'outstate': false,
         'dept': "",
@@ -518,25 +483,25 @@ async function displayOutput(calc, university, outstate, major, aid=null) {
 
         // local variables
         const panel = document.getElementById("calc-table").children[calc];
-        const presetName = panel.querySelector(".calc-name");
+        const calcName = panel.querySelector(".calc-name");
 
 
-        // Update the preset name (if needed)
+        // Update the calc name (if needed)
 
         // matches either the current selected university OR the default
-        // "Calculator 1,2,3..." preset name
+        // "Calculator 1,2,3..." calc name
         const regex = "[C,c]alculator (\\d)+";
 
-        if (presetName.textContent === calcInput[calc]['uni'] || 
-            RegExp(regex).test(presetName.textContent))
+        if (calcName.textContent === calcInput[calc]['uni'] || 
+            RegExp(regex).test(calcName.textContent))
         {
 
             // User has not redefined the default present name,
-            // for readability, redefine the preset name to the 
+            // for readability, redefine the calc name to the 
             // University name.
-            presetName.textContent = university;
+            calcName.textContent = university;
 
-            calcInput[calc]['presetName'] = university;
+            calcInput[calc]['calcName'] = university;
         }
 
 
