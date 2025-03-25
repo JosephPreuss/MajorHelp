@@ -42,6 +42,10 @@ from django.urls import reverse
 from django.core.signing import TimestampSigner, BadSignature, SignatureExpired
 from .forms import CustomUserCreationForm
 from django.contrib.auth import get_user_model
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from .models import University
+import json
 
 # Used to catch an exception if GET tries to get a value that isn't defined.
 from django.utils.datastructures import MultiValueDictKeyError
@@ -563,9 +567,6 @@ class UniversityRequestView(View):
             messages.error(request, 'Please enter your request.')
             return render(request, 'search/universityRequest.html')
     
-from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
-from .models import University
 
 @csrf_exempt
 def university_search(request):
@@ -589,7 +590,6 @@ def university_search(request):
 
     return JsonResponse(data)
 
-@csrf_exempt
 def calc_list(request):
     if not request.user.is_authenticated:
         # 401 - Unauthorized
@@ -598,7 +598,6 @@ def calc_list(request):
     
     user = request.user
 
-    print(user)
 
     query = request.GET.get('query')
 
@@ -634,7 +633,57 @@ def calc_list(request):
     data = {"calculators": calculators}
 
     return JsonResponse(data)
+
+def save_calc(request):
+    if not request.user.is_authenticated:
+        # 401 - Unauthorized
+        # https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/401
+        return HttpResponse("Error - You must be logged in", status=401)
+
+
+    if request.method != 'POST':
+        return HttpResponseBadRequest("This url only accepts post requests.") # 400
+
+    # get the json
+    data = request.body.decode()
     
+    if not data:
+        return HttpResponseBadRequest("You must provide a json object.") # 400
+
+    # Validate and load the json
+    try:
+        data = json.loads(data)
+    except(ValueError):
+        return HttpResponseBadRequest("Malformed JSON - Could not load request body as JSON.") # 400
+
+    # The given json should only have one key
+    if len(data.keys()) != 1:
+        return HttpResponseBadRequest("Malformed JSON - JSON should only have one key.") # 400
+
+    # Get the only key
+    key = list(data.keys())[0]
+
+    # make sure the only key is lowercase
+    key = key.lower()
+
+
+    # There can be more validation to be done ofc
+
+    # Get the values
+    values = data[key]
+
+
+    # Get the user
+    user = request.user
+
+
+    # update the users saved calculators
+    user.savedCalcs[key] = values
+
+    # Save the user
+    user.save()
+
+    return HttpResponse(status=201)
 
 def aid_list(request):
     uniQuery = request.GET.get('university')

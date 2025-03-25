@@ -63,6 +63,7 @@ function initializeCalculators() {
 
 
         // Attach event listeners
+        panel.querySelector(".save").addEventListener('click', () => saveCalc(panelNum));
         panel.querySelector(".clear").addEventListener('click', () => clearCalc(panelNum));
         panel.querySelector(".delete").addEventListener('click', () => deleteCalc(panelNum));
     });
@@ -144,6 +145,7 @@ function newCalc() {
     });
     
     // Attach event listeners to the panel
+    panel.querySelector(".save").addEventListener('click', () => saveCalc(calc));
     panel.querySelector(".clear").addEventListener('click', () => clearCalc(calc));
     panel.querySelector(".delete").addEventListener('click', () => deleteCalc(calc));
 
@@ -197,6 +199,60 @@ function newCalc() {
     }
 
     calcCount++;
+}
+
+async function saveCalc(calc) {
+    // make the JSON of the calculator
+    const json = calcInput[calc];
+    const calcID = json['calcName'].toLowerCase();
+
+    const data = {}
+
+    data[calcID] = json;
+
+    // post the data to the backend
+    const response = fetch(`/api/save_calc/`, {
+        method: "POST",
+        body: JSON.stringify(data),
+        
+        // Manual CSRF Token
+        credentials: 'same-origin',
+        headers: {
+            "Accept" : "application/json",
+            "Content-Type" : "application/json",
+            "X-CSRFToken": getCookie("csrftoken"),
+        }
+    });
+
+    // https://stackoverflow.com/questions/62416617/add-csrf-in-fetch-js-for-django
+
+    if (!response.ok) {
+        
+        // Show error message here
+
+        new Error('University not found');
+        return;
+    }
+
+    // Show status message
+    
+}
+
+// https://docs.djangoproject.com/en/5.2/howto/csrf/#using-csrf
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
 }
 
 function clearCalc(calc) {
