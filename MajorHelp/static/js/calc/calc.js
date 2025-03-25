@@ -211,7 +211,7 @@ async function saveCalc(calc) {
     data[calcID] = json;
 
     // post the data to the backend
-    const response = fetch(`/api/save_calc/`, {
+    const response = await fetch(`/api/save_calc/`, {
         method: "POST",
         body: JSON.stringify(data),
         
@@ -228,14 +228,13 @@ async function saveCalc(calc) {
 
     if (!response.ok) {
         
-        // Show error message here
-
-        new Error('University not found');
+        // Show error notification
+        showNotification("Failed to save calculation. Please try again.", true);
         return;
     }
 
-    // Show status message
-    
+    // Show success notification
+    showNotification("Calculation saved successfully!");
 }
 
 // https://docs.djangoproject.com/en/5.2/howto/csrf/#using-csrf
@@ -253,6 +252,21 @@ function getCookie(name) {
         }
     }
     return cookieValue;
+}
+
+function showNotification(message, isError = false) {
+    const notification = document.getElementById("notification");
+    notification.textContent = message;
+    notification.className = "notification"; // Reset classes
+    if (isError) {
+        notification.classList.add("error");
+    }
+    notification.style.display = "block";
+
+    // Auto-hide after 3 seconds
+    setTimeout(() => {
+        notification.style.display = "none";
+    }, 3000);
 }
 
 function clearCalc(calc) {
