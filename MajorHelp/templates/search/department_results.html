@@ -1,10 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-{% include "navbar.html" %}
-<head>
-    <meta charset="UTF-8">
-    <title>Department Search Results</title>
+{% extends 'base.html' %}
 
+{% block title %}Department Search Results{% endblock %}
+    
+{% block stylesheet %}
     <style>
         .filter-label {
             color: white;
@@ -189,8 +187,59 @@
         .fixed-button a:hover {
             background-color: #45a049;
         }
-    </style>
+        .space {
+            visibility: hidden !important;
+        }
+        .result-item {
+            background-color: #d7f2f4; 
+            padding: 15px 20px; 
+            border-radius: 5px; 
+            margin-bottom: 20px;
+            border: 2.4px solid white;
+            margin-right: 20px;
+            margin-left: 15px;
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1); 
+        }
+        .result-item h3 {
+            color: #10393c;
+        }
+    
+        .result-item h4 {
+            color: #26858c;
+        }
+    
+        .result-item ul {
+            color: #217278;
+            margin-left: 25px;
+            margin-bottom: 15px;
+        }
+    
+        .result-item a.result-link {
+            color: #008080;
+            font-size: 24px;
+            font-weight: 900
+        }
+    
+        .result-item a.major-link {
+            color: #008080;
+            font-size: 20px;
+            font-weight: 900
+        }
+    
+        .filter-section {
+            color: white;
+        }
 
+        .department-header {
+            padding-top: 25px;
+            text-decoration: underline;
+            margin-left: 25px;
+        }
+    </style>
+{% endblock %}
+
+
+{% block script %}
     <script>
         const departmentOptions = [
             'Humanities and Social Sciences',
@@ -260,9 +309,10 @@
             document.getElementById("filter-form").submit();
         }
     </script>
-</head>
-<body>
+{% endblock %}
 
+
+{% block content %}
 <!-- Search Again Section -->
 <div>
     <h1 style="display: inline-block; text-align: center; width: 100%; color: white">Search Again</h1>
@@ -397,57 +447,4 @@
         <p>_ </p>
     </div>
 
-    <style>
-        .space {
-            visibility: hidden !important;
-        }
-    </style>
-    <style>
-        .result-item {
-            background-color: #d7f2f4; 
-            padding: 15px 20px; 
-            border-radius: 5px; 
-            margin-bottom: 20px;
-            border: 2.4px solid white;
-            margin-right: 20px;
-            margin-left: 15px;
-            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1); 
-        }
-        .result-item h3 {
-            color: #10393c;
-        }
-    
-        .result-item h4 {
-            color: #26858c;
-        }
-    
-        .result-item ul {
-            color: #217278;
-            margin-left: 25px;
-            margin-bottom: 15px;
-        }
-    
-        .result-item a.result-link {
-            color: #008080;
-            font-size: 24px;
-            font-weight: 900
-        }
-    
-        .result-item a.major-link {
-            color: #008080;
-            font-size: 20px;
-            font-weight: 900
-        }
-    
-        .filter-section {
-            color: white;
-        }
-
-        .department-header {
-            padding-top: 25px;
-            text-decoration: underline;
-            margin-left: 25px;
-        }
-    </style>
-</body>
-</html>
+{% endblock %}
