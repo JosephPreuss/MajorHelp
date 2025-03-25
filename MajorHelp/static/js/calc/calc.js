@@ -623,13 +623,101 @@ async function calculate(university, major, outstate, aid) {
     }
 }
 
-// Run initialization after DOM is loaded
 document.addEventListener("DOMContentLoaded", () => {
-    // check if user is logged in
     if (document.getElementById("panel-open")) {
         loggedIn = true;
     }
     console.log(loggedIn ? "User is logged in." : "User is anonymous.");
 
+    const scriptTag = document.getElementById("saved-calcs-data");
+
+    if (scriptTag) {
+        let savedCalculators = {};
+        try {
+            savedCalculators = JSON.parse(scriptTag.textContent);
+            console.log("Loaded saved data:", savedCalculators);
+        } catch (e) {
+            console.error("Failed to parse saved calculator data:", e);
+        }
+
+        loadSavedCalculators(savedCalculators);
+    }
+
     initializeCalculators();
 });
+
+async function loadSavedCalculators(savedCalculators) {
+    const waitForElement = (id) => {
+        return new Promise((resolve) => {
+            const check = () => {
+                const el = document.getElementById(id);
+                if (el) return resolve(el);
+                requestAnimationFrame(check);
+            };
+            check();
+        });
+    };
+
+    let index = 0;
+    for (const [key, data] of Object.entries(savedCalculators)) {
+        if (index !== 0) newCalc();
+
+        const panelId = `entry-${index}`;
+        const calcId = `calculator-${index}`;
+
+        await waitForElement(panelId);
+        await waitForElement(calcId);
+
+        const panel = document.getElementById(panelId);
+        const calc = document.getElementById(calcId);
+
+        calcInput[index] = {
+            calcName: data.calcName || `Calculator ${index}`,
+            uni: data.uni || "",
+            outstate: data.outstate || false,
+            dept: data.dept || "",
+            major: data.major || "",
+            aid: data.aid || ""
+        };
+
+        await selectUniversity(index, data.uni);
+
+        const deptDropdown = document.getElementById(`dept-dropdown-${index}`);
+        if (deptDropdown) {
+            deptDropdown.value = data.dept;
+            await updateMajorResults(index);
+        }
+
+        await selectMajor(index, data.major);
+
+        if (data.aid && data.aid !== "None") {
+            await new Promise((r) => setTimeout(r, 100));
+            selectaid(index, data.aid);
+        }
+
+        document.getElementById(`uni-name-${index}`).textContent = data.uni;
+        document.getElementById(`uni-box-${index}`).style.visibility = "visible";
+
+        document.getElementById(`major-name-${index}`).textContent = data.major;
+        document.getElementById(`major-box-${index}`).style.visibility = "visible";
+
+        document.getElementById(`aid-name-${index}`).textContent = data.aid || "None";
+        document.getElementById(`aid-box-${index}`).style.visibility = data.aid ? "visible" : "hidden";
+        document.getElementById(`input-aid-${index}`).style.display = data.aid ? "block" : "none";
+
+        panel.querySelector(".calc-name").textContent = data.calcName || `Calculator ${index}`;
+        panel.querySelector(".uni").textContent = data.uni || "None";
+        panel.querySelector(".major").textContent = data.major || "None";
+
+        const aidElem = panel.querySelector(".aid");
+        aidElem.textContent = data.aid || "None";
+        aidElem.style.display = data.aid ? "inline" : "none";
+
+        const outstateCheckbox = document.getElementById(`outstate-${index}`);
+        if (outstateCheckbox) outstateCheckbox.checked = data.outstate === true;
+
+        index++;
+    }
+
+    calcCount = index;
+}

@@ -514,9 +514,14 @@ class MajorOverviewView(DetailView):
 
 class CalcView(View):
     def get(self, request):
-        # TODO(jpreuss) Pass the json back to the frontend to prepopulate
-        #               the already filled data.
-        return render(request, 'calc/calc_page.html') 
+        saved_calcs = {}
+        if request.user.is_authenticated:
+            request.user.refresh_from_db()  # Make sure we get the latest data
+            saved_calcs = request.user.savedCalcs
+
+        return render(request, 'calc/calc_page.html', {
+            'saved_calcs': saved_calcs
+        })
 
 
 # LeaveMajorReview View - Exclusive for leaving reviews for a major at a specific school

@@ -7,6 +7,7 @@
 <link rel="stylesheet" href="{% static 'css/calc/calc.css' %}">
 {% endblock stylesheet %}
 
+
 {% block script %}
 <script src="{% static 'js/calc/calc.js' %}"></script>
 {% endblock script %}
@@ -36,7 +37,9 @@
     </div>
     {% endif %}
 </div>
-
+{% if user.is_authenticated %}
+{{ saved_calcs|json_script:"saved-calcs-data" }}
+{% endif %}
 <div id="calculators">
     {% comment %}
         Write 
