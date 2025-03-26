@@ -694,6 +694,13 @@ async function loadSavedCalculators(savedCalculators) {
             aid: data.aid || ""
         };
 
+        const removeSaveBtn = panel.querySelector(".remove-save");
+        if (removeSaveBtn) {
+            removeSaveBtn.style.display = "inline";
+            removeSaveBtn.addEventListener('click', () => removeSave(key)); // 👈 use key, not index
+        }
+
+
         await selectUniversity(index, data.uni);
 
         const deptDropdown = document.getElementById(`dept-dropdown-${index}`);
@@ -734,4 +741,35 @@ async function loadSavedCalculators(savedCalculators) {
     }
 
     calcCount = index;
+}
+
+async function removeSave(calcKey) {
+    console.log(`Removing save for key: ${calcKey}`);
+
+    const response = await fetch(`/api/save_calc/`, {
+        method: "DELETE",
+        body: JSON.stringify({ [calcKey]: true }),
+        credentials: 'same-origin',
+        headers: {
+            "Accept": "application/json",
+            "Content-Type": "application/json",
+            "X-CSRFToken": getCookie("csrftoken"),
+        }
+    });
+
+    if (!response.ok) {
+        showNotification("Failed to remove saved calculation.", true);
+        return;
+    }
+
+    showNotification("Saved calculation removed.");
+
+    // Hide Remove Save button for all panels that match this key
+    document.querySelectorAll(".calc-entry").forEach(panel => {
+        const name = panel.querySelector(".calc-name").textContent.toLowerCase();
+        if (name === calcKey.toLowerCase()) {
+            const removeBtn = panel.querySelector(".remove-save");
+            if (removeBtn) removeBtn.style.display = "none";
+        }
+    });
 }

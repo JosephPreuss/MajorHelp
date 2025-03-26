@@ -639,56 +639,32 @@ def calc_list(request):
 
     return JsonResponse(data)
 
+@csrf_exempt
 def save_calc(request):
     if not request.user.is_authenticated:
-        # 401 - Unauthorized
-        # https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/401
         return HttpResponse("Error - You must be logged in", status=401)
 
-
-    if request.method != 'POST':
-        return HttpResponseBadRequest("This url only accepts post requests.") # 400
-
-    # get the json
-    data = request.body.decode()
-    
-    if not data:
-        return HttpResponseBadRequest("You must provide a json object.") # 400
-
-    # Validate and load the json
-    try:
-        data = json.loads(data)
-    except(ValueError):
-        return HttpResponseBadRequest("Malformed JSON - Could not load request body as JSON.") # 400
-
-    # The given json should only have one key
-    if len(data.keys()) != 1:
-        return HttpResponseBadRequest("Malformed JSON - JSON should only have one key.") # 400
-
-    # Get the only key
-    key = list(data.keys())[0]
-
-    # make sure the only key is lowercase
-    key = key.lower()
-
-
-    # There can be more validation to be done ofc
-
-    # Get the values
-    values = data[key]
-
-
-    # Get the user
     user = request.user
 
+    if request.method == 'DELETE':
+        try:
+            data = json.loads(request.body.decode())
+            key = list(data.keys())[0].lower()
 
-    # update the users saved calculators
-    user.savedCalcs[key] = values
+            if key in user.savedCalcs:
+                del user.savedCalcs[key]
+                user.save()
+                return HttpResponse("Deleted", status=200)
+            else:
+                return HttpResponse("Key not found", status=404)
 
-    # Save the user
-    user.save()
+        except Exception as e:
+            return HttpResponseBadRequest("Invalid delete request: " + str(e))
 
-    return HttpResponse(status=201)
+    if request.method != 'POST':
+        return HttpResponseBadRequest("This url only accepts POST or DELETE.")  # 🚨 Update this line too
+
+    # ... your existing POST save logic ...
 
 def aid_list(request):
     uniQuery = request.GET.get('university')
