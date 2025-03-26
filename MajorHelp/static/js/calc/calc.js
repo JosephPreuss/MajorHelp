@@ -235,6 +235,19 @@ async function saveCalc(calc) {
 
     // Show success notification
     showNotification("Calculation saved successfully!");
+
+    // Automatically show the "Remove Save" button
+    const panel = document.getElementById(`entry-${calc}`);
+    const removeBtn = panel.querySelector(".remove-save");
+    if (removeBtn) {
+        removeBtn.style.display = "inline";
+    
+        // Get the current calc name (key for saving)
+        const calcKey = calcInput[calc].calcName.toLowerCase();
+    
+        // Re-bind the removeSave functionality
+        removeBtn.onclick = () => removeSave(calcKey);
+    }
 }
 
 // https://docs.djangoproject.com/en/5.2/howto/csrf/#using-csrf
@@ -736,7 +749,14 @@ async function loadSavedCalculators(savedCalculators) {
 
         const outstateCheckbox = document.getElementById(`outstate-${index}`);
         if (outstateCheckbox) outstateCheckbox.checked = data.outstate === true;
-
+        if (
+            data.uni &&
+            data.dept &&
+            data.major &&
+            typeof data.outstate !== 'undefined'
+        ) {
+            await displayOutput(index, data.uni, data.outstate, data.major, data.aid || null);
+        }
         index++;
     }
 

@@ -661,10 +661,22 @@ def save_calc(request):
         except Exception as e:
             return HttpResponseBadRequest("Invalid delete request: " + str(e))
 
-    if request.method != 'POST':
-        return HttpResponseBadRequest("This url only accepts POST or DELETE.")  # 🚨 Update this line too
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body.decode())
+            key = list(data.keys())[0].lower()
+            value = data[key]
 
-    # ... your existing POST save logic ...
+            # Save or update the calculator
+            user.savedCalcs[key] = value
+            user.save()
+            return HttpResponse("Saved", status=200)
+
+        except Exception as e:
+            return HttpResponseBadRequest("Error saving calculator: " + str(e))
+
+    return HttpResponseBadRequest("This url only accepts POST or DELETE.")
+
 
 def aid_list(request):
     uniQuery = request.GET.get('university')
