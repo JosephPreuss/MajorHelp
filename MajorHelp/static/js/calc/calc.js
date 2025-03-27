@@ -65,7 +65,7 @@ function initializeCalculators() {
         // Attach event listeners
         panel.querySelector(".save").addEventListener('click', () => saveCalc(panelNum));
         panel.querySelector(".clear").addEventListener('click', () => clearCalc(panelNum));
-        panel.querySelector(".delete").addEventListener('click', () => deleteCalc(panelNum));
+        panel.querySelector(".remove").addEventListener('click', () => removeCalc(panelNum));
     });
 
     // Initialize the calculators themselves
@@ -147,7 +147,7 @@ function newCalc() {
     // Attach event listeners to the panel
     panel.querySelector(".save").addEventListener('click', () => saveCalc(calc));
     panel.querySelector(".clear").addEventListener('click', () => clearCalc(calc));
-    panel.querySelector(".delete").addEventListener('click', () => deleteCalc(calc));
+    panel.querySelector(".delete").addEventListener('click', () => removeCalc(calc));
 
 
     // Update contents of the panel
@@ -238,15 +238,15 @@ async function saveCalc(calc) {
 
     // Automatically show the "Remove Save" button
     const panel = document.getElementById(`entry-${calc}`);
-    const removeBtn = panel.querySelector(".remove-save");
-    if (removeBtn) {
-        removeBtn.style.display = "inline";
+    const deleteBtn = panel.querySelector(".delete-save");
+    if (deleteBtn) {
+        deleteBtn.style.display = "inline";
     
         // Get the current calc name (key for saving)
         const calcKey = calcInput[calc].calcName.toLowerCase();
     
         // Re-bind the removeSave functionality
-        removeBtn.onclick = () => removeSave(calcKey);
+        deleteBtn.onclick = () => removeSave(calcKey);
     }
 }
 
@@ -358,7 +358,7 @@ function clearCalc(calc) {
     calculator.querySelector(".aid-name").innerText = "Nothing";
 }
 
-function deleteCalc(calc) {
+function removeCalc(calc) {
 
     // Clear the calculator
     clearCalc(calc);
@@ -707,10 +707,10 @@ async function loadSavedCalculators(savedCalculators) {
             aid: data.aid || ""
         };
 
-        const removeSaveBtn = panel.querySelector(".remove-save");
-        if (removeSaveBtn) {
-            removeSaveBtn.style.display = "inline";
-            removeSaveBtn.addEventListener('click', () => removeSave(key)); // 👈 use key, not index
+        const deleteSaveBtn = panel.querySelector(".delete-save");
+        if (deleteSaveBtn) {
+            deleteSaveBtn.style.display = "inline";
+            deleteSaveBtn.addEventListener('click', () => deleteSave(key)); // 👈 use key, not index
         }
 
 
@@ -763,7 +763,7 @@ async function loadSavedCalculators(savedCalculators) {
     calcCount = index;
 }
 
-async function removeSave(calcKey) {
+async function deleteSave(calcKey) {
     console.log(`Removing save for key: ${calcKey}`);
 
     const response = await fetch(`/api/save_calc/`, {
@@ -778,18 +778,18 @@ async function removeSave(calcKey) {
     });
 
     if (!response.ok) {
-        showNotification("Failed to remove saved calculation.", true);
+        showNotification("Failed to delete saved calculation.", true);
         return;
     }
 
-    showNotification("Saved calculation removed.");
+    showNotification("Saved calculation deleted.");
 
-    // Hide Remove Save button for all panels that match this key
+    // Hide delete Save button for all panels that match this key
     document.querySelectorAll(".calc-entry").forEach(panel => {
         const name = panel.querySelector(".calc-name").textContent.toLowerCase();
         if (name === calcKey.toLowerCase()) {
-            const removeBtn = panel.querySelector(".remove-save");
-            if (removeBtn) removeBtn.style.display = "none";
+            const deleteBtn = panel.querySelector(".delete-save");
+            if (deleteBtn) deleteBtn.style.display = "none";
         }
     });
 }
