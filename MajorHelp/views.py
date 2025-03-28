@@ -631,11 +631,38 @@ def calc_list(request):
 
 
     # Filter by the given query:
-    calculators = [calc for calc in savedCalcs if query in calc]
+    applicableKeys = [key for key in savedCalcs if query in key]
 
+    data = {"calculators" : []}
+
+    # Create a dictionary of the mix-case names to their corresponding keys
+    for key in applicableKeys:
+        data['calculators'].append(
+            user.savedCalcs[key]
+        )
+
+    print(data)
 
     # Return the data
-    data = {"calculators": calculators}
+
+    # Example return data:
+    #
+    #   {'calculators'  :   [
+    #       {
+    #           'calcName'  :   'UofSC',
+    #           'uni'       :   'UofSC',
+    #           'outstate'  :    False,
+    #           'dept'      :   'Engineering and Technology',
+    #           'major'     :   'CIS',
+    #           'aid'       :   'Palmetto Fellows'
+    #       },
+    #       {
+    #           'calcName'  :   'Custom Name',
+    #            ...
+    #       },
+    #       ...
+    #   ]}
+    #
 
     return JsonResponse(data)
 

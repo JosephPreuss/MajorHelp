@@ -650,29 +650,6 @@ async function calculate(university, major, outstate, aid) {
     }
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-    if (document.getElementById("panel-open")) {
-        loggedIn = true;
-    }
-    console.log(loggedIn ? "User is logged in." : "User is anonymous.");
-
-    const scriptTag = document.getElementById("saved-calcs-data");
-
-    if (scriptTag) {
-        let savedCalculators = {};
-        try {
-            savedCalculators = JSON.parse(scriptTag.textContent);
-            console.log("Loaded saved data:", savedCalculators);
-        } catch (e) {
-            console.error("Failed to parse saved calculator data:", e);
-        }
-
-        loadSavedCalculators(savedCalculators);
-    }
-
-    initializeCalculators();
-});
-
 async function loadSavedCalculators(savedCalculators) {
     const waitForElement = (id) => {
         return new Promise((resolve) => {
@@ -793,3 +770,74 @@ async function deleteSave(calcKey) {
         }
     });
 }
+
+async function updateCalcResults() {
+    const query = document.getElementById("loadCalc").value.trim();
+    if (!query) return;
+
+    const data = await fetchSavedCalculators(query);
+    if (!data === null) return;
+    const resultsContainer = document.getElementById("loadResults");
+    resultsContainer.innerHTML = "";
+
+    console.log(data, data.calculators.length > 0);
+
+    if (data && data.calculators.length > 0) {
+        data.calculators.forEach(calc => {
+            console.log(calc.calcName); 
+
+            let option = document.createElement("div");
+            option.classList.add("result-item");
+            option.innerHTML = `<strong>${calc.calcName}</strong>`;
+            option.onclick = () => loadSavedCalculator(calc);
+            resultsContainer.appendChild(option);
+        });
+    } else {
+        resultsContainer.innerHTML = "<p>No saved calculators found.</p>"; 
+    }
+}
+
+async function fetchSavedCalculators(query) {
+    try {
+        const response = await fetch(`/api/calcs/?query=${query}`);
+        if (!response.ok) throw new Error(`Could not find any saved Calculators with query ${query}.`);
+        return await response.json();
+    } catch(error) {
+        console.error(error);
+        return null;
+    }
+}
+
+function loadSavedCalculator(calc) {
+    // TODO modify newCalc to take an optional json parameter and apply it to the new calculator
+    //      instead of default values.
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    if (document.getElementById("panel-open")) {
+        loggedIn = true;
+        
+        // Set up load Calculator event listener
+        document.getElementById("loadCalc").addEventListener("input", () => updateCalcResults());
+    }
+    console.log(loggedIn ? "User is logged in." : "User is anonymous.");
+
+    const scriptTag = document.getElementById("saved-calcs-data");
+
+    if (scriptTag) {
+        let savedCalculators = {};
+        try {
+            savedCalculators = JSON.parse(scriptTag.textContent);
+            console.log("Loaded saved data:", savedCalculators);
+        } catch (e) {
+            console.error("Failed to parse saved calculator data:", e);
+        }
+        
+        // TODO, replace function call with a similar version that only gets the calculators from
+        //       the previous session.
+
+        //loadSavedCalculators(savedCalculators);
+    }
+
+    initializeCalculators(); 
+});
