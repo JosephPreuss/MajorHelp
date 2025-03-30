@@ -95,7 +95,7 @@ function initializeCalculators() {
     });
 }
 
-function newCalc() {
+function newCalc(values=null, load=false) {
 
     // While it might be tempting to just put in calcCount directly, that global mutates.
     const calc = calcCount;
@@ -108,97 +108,128 @@ function newCalc() {
         document.getElementById(`calculator-${calc}`).style.display = "flex";
 
         // restore the json
-        calcInput[calc] = {
-            'calcName': `Calculator ${calc}`,
-            'uni': "",
-            'outstate': false,
-            'dept': "",
-            'major': "",
-            'aid': ""
-        };
-
+        if (values) {
+            calcInput[calc] = values;
+        } else {
+            calcInput[calc] = {
+                'calcName': `Calculator ${calc}`,
+                'uni': "",
+                'outstate': false,
+                'dept': "",
+                'major': "",
+                'aid': ""
+            };
+        }
         
-        // point calcCount to the next availiable calculator
+/*         // point calcCount to the next availiable calculator
         for (var i = 0; i < calcInput.length; i++) {
             if (Object.keys(calcInput[i]).length === 0) {
                 calcCount = i;
                 return;
             }
         }
-
+ */
         // There are no empty slots, point to the end of the list
-        calcCount = calcInput.length;
+        // calcCount = calcInput.length;
         
-        return;
+    } else {
+        // calc is pointing to a new entry in calcInput.
+
+        // Duplicate the calculator's panel
+        const masterPanel = document.getElementById("calculator-master-panel-container").children[0];
+        const panel = masterPanel.cloneNode(true);
+
+        panel.id += calc;
+
+        // Update the IDs
+        panel.querySelectorAll("[id]").forEach((el) => {
+            el.id = el.id + calc;
+        });
+        
+        // Attach event listeners to the panel
+        panel.querySelector(".save").addEventListener('click', () => saveCalc(calc));
+        panel.querySelector(".clear").addEventListener('click', () => clearCalc(calc));
+        panel.querySelector(".remove").addEventListener('click', () => removeCalc(calc));
+
+
+        // Update contents of the panel
+        if (values) {
+            panel.querySelector(".calc-name").textContent = values.calcName;
+        } else {
+            panel.querySelector(".calc-name").textContent += calc;
+        }
+
+        // Add the panel to DOM
+        document.getElementById("calc-table").appendChild(panel);
+
+        // Duplicate the calculator itself
+        const masterCalc = document.getElementById("calculator-master-container").children[0];
+        const clone = masterCalc.cloneNode(true);
+
+        clone.id = `calculator-${calcCount}`;
+
+        // Update all IDs
+        clone.querySelectorAll("[id]").forEach((el) => {
+            el.id = el.id + calc; // Append calcCount to IDs
+        });
+
+        // Attach event listeners to the new calculator
+        const uniSearch = clone.querySelector(".uni-search");
+        const deptDropdown = clone.querySelector(".dept-dropdown");
+        uniSearch.addEventListener("input", () => updateUniversityResults(calc));
+        deptDropdown.addEventListener("change", () => updateMajorResults(calc));
+
+
+        // Add new calculator to DOM
+        document.getElementById("calculators").appendChild(clone);
+
+        // Add new entry to calcInput array
+
+        if (values) {
+            calcInput.push(values);
+        } else {
+            calcInput.push({
+                'calcName': `Calculator ${calcCount}`,
+                'uni': "",
+                'outstate': false,
+                'dept': "",
+                'major': "",
+                'aid': ""
+            });
+        }
+
+
     }
 
-
-    // Duplicate the calculator's panel
-    const masterPanel = document.getElementById("calculator-master-panel-container").children[0];
-    const panel = masterPanel.cloneNode(true);
-
-    panel.id += calc;
-
-    // Update the IDs
-    panel.querySelectorAll("[id]").forEach((el) => {
-        el.id = el.id + calc;
-    });
-    
-    // Attach event listeners to the panel
-    panel.querySelector(".save").addEventListener('click', () => saveCalc(calc));
-    panel.querySelector(".clear").addEventListener('click', () => clearCalc(calc));
-    panel.querySelector(".delete").addEventListener('click', () => removeCalc(calc));
-
-
-    // Update contents of the panel
-    panel.querySelector(".calc-name").textContent += calc;
-
-    // Add the panel to DOM
-    document.getElementById("calc-table").appendChild(panel);
-
-
-
-
-    // Duplicate the calculator itself
-    const masterCalc = document.getElementById("calculator-master-container").children[0];
-    const clone = masterCalc.cloneNode(true);
-
-    clone.id = `calculator-${calcCount}`;
-
-    // Update all IDs
-    clone.querySelectorAll("[id]").forEach((el) => {
-        el.id = el.id + calc; // Append calcCount to IDs
-    });
-
-    // Attach event listeners to the new calculator
-    const uniSearch = clone.querySelector(".uni-search");
-    const deptDropdown = clone.querySelector(".dept-dropdown");
-    uniSearch.addEventListener("input", () => updateUniversityResults(calc));
-    deptDropdown.addEventListener("change", () => updateMajorResults(calc));
-
-
-    // Add new calculator to DOM
-    document.getElementById("calculators").appendChild(clone);
-
-    // Add new entry to calcInput array
-    calcInput.push({
-        'calcName': `Calculator ${calcCount}`,
-        'uni': "",
-        'outstate': false,
-        'dept': "",
-        'major': "",
-        'aid': ""
-    });
+    // Update calcCount
+    let found = false;
 
     // point calcCount to the next availiable calculator
-    for (var i = 0; i < calcInput.length; i++) {
+    for (var i = 0; !found && i < calcInput.length; i++) {
+        // "if the index at i is an empty JSON object"
         if (Object.keys(calcInput[i]).length === 0) {
             calcCount = i;
-            return;
+            found = true;
         }
     }
+    
+    if (!found)
+        calcCount = calcInput.length;
 
-    calcCount++;
+    // If the calculator isn't using default values, show them on the calculator's input fields
+    if (values)
+        updateCalc(calc);
+
+    // If the Calculator is one thats being loaded in, add the "Delete Save"
+    // button to the panel.
+    if (load) {
+        const panel = document.getElementById(`entry-${calc}`);
+        const deleteBtn = panel.querySelector(".delete-save");
+        if (deleteBtn) {
+            deleteBtn.style.display = "inline";
+            deleteBtn.onclick = () => deleteSave(values.calcName);
+        }
+    }
 }
 
 async function saveCalc(calc) {
@@ -280,6 +311,32 @@ function showNotification(message, isError = false) {
     setTimeout(() => {
         notification.style.display = "none";
     }, 3000);
+}
+
+// updateCalc takes an index in calcInput and updates its inputs to match the JSON
+async function updateCalc(calc) {
+
+    // Get the input values from the JSON
+    const input = calcInput[calc];
+    
+    // Select the university
+    await selectUniversity(calc, input.uni);
+
+    // Select the department
+    const deptDropdown = document.getElementById(`dept-dropdown-${calc}`);
+    deptDropdown.value = input.dept;
+    await updateMajorResults(calc);
+
+    // Select the major
+    await selectMajor(calc, input.major);
+
+    console.log("None" ? "true" : "false");
+
+    // If there is aid, select the aid
+    if (input.aid) {
+        await new Promise((r) => setTimeout(r, 100));
+        selectaid(calc, input.aid);
+    }
 }
 
 function clearCalc(calc) {
@@ -808,9 +865,19 @@ async function fetchSavedCalculators(query) {
     }
 }
 
-function loadSavedCalculator(calc) {
-    // TODO modify newCalc to take an optional json parameter and apply it to the new calculator
-    //      instead of default values.
+function loadSavedCalculator(calcJSON) {
+
+    // clear the loaded results
+    document.getElementById("loadResults").innerHTML = "";
+
+    // clear the search bar
+    document.getElementById("loadCalc").value = "";
+
+    // call newCalc
+    newCalc(calcJSON, true);
+
+    // Send a notification to the user that the calculator has loaded successfully
+    showNotification("Calculator loaded successfully!");
 }
 
 document.addEventListener("DOMContentLoaded", () => {
