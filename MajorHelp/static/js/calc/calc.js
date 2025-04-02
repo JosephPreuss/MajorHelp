@@ -276,8 +276,8 @@ async function saveCalc(calc) {
         // Get the current calc name (key for saving)
         const calcKey = calcInput[calc].calcName.toLowerCase();
     
-        // Re-bind the removeSave functionality
-        deleteBtn.onclick = () => removeSave(calcKey);
+        // Re-bind the deleteSave functionality
+        deleteBtn.onclick = () => deleteSave(calcKey);
     }
 }
 
