@@ -680,7 +680,7 @@ def save_calc(request):
             if key in user.savedCalcs:
                 del user.savedCalcs[key]
                 user.save()
-                return HttpResponse("Deleted", status=200)
+                return HttpResponse("Deleted", status=204) # No Content, preferred for deletions
             else:
                 return HttpResponse("Key not found", status=404)
 
@@ -696,7 +696,7 @@ def save_calc(request):
             # Save or update the calculator
             user.savedCalcs[key] = value
             user.save()
-            return HttpResponse("Saved", status=200)
+            return HttpResponse("Saved", status=201) # Created, preferred for new resources
 
         except Exception as e:
             return HttpResponseBadRequest("Error saving calculator: " + str(e))
