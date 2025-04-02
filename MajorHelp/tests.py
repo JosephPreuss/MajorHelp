@@ -44,6 +44,7 @@ class RequestTests(TestCase):
 class CalcTests(TestCase):
     @classmethod
     def setUpTestData(cls):
+        cls.user = get_user_model().objects.create_user(username='testuser', password='password', email="email@example.com")
         exampleAid = FinancialAid.objects.create(name="exampleAid") 
         exampleUni = University.objects.create(name="exampleUni")
 
@@ -57,11 +58,42 @@ class CalcTests(TestCase):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
+        self.client = Client()
+
         self.url = reverse("MajorHelp:calc")
         self.uni = reverse("MajorHelp:university_search")
         self.maj = reverse("MajorHelp:major_list")
         self.aid = reverse("MajorHelp:aid_list")
         self.cal = reverse("MajorHelp:calculate")
+
+    def test_authenticated_user_sees_calc_panel(self):
+        self.client.login(username='testuser', password='password')
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Create, save, and load calculations here.')
+
+    def test_unauthenticated_user_sees_login_prompt(self):
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Log In')
+        self.assertContains(response, 'Sign Up')
+
+    def test_panel_expand_and_collapse(self):
+        self.client.login(username='testuser', password='password')
+        response = self.client.get(self.url)
+        self.assertContains(response, 'Expand.')
+        self.assertContains(response, 'Hide.')
+
+    def test_new_calculator_creation(self):
+        self.client.login(username='testuser', password='password')
+        response = self.client.get(self.url)
+        self.assertContains(response, 'New Calculator')
+
+    def test_notification_hidden_by_default(self):
+        self.client.login(username='testuser', password='password')
+        response = self.client.get(self.url)
+        self.assertContains(response, 'id="notification"')
+        self.assertContains(response, 'style="display: none;"')
 
 
     # A simple test to make sure that the server returns the proper html page
