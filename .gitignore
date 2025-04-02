@@ -29,7 +29,7 @@ __pycache__/
 *.tmp
 *.old
 *.sync-conflict*
-
+tmp/
 
 # IDEs
 .vscode/

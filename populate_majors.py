@@ -9,8 +9,13 @@ from MajorHelp.models import University, Major, Course
 
 # List of universities
 UNIVERSITIES = [
-    "UofSC", "Clemson", "Princeton", "MIT", "Harvard",
-    "Stanford", "Furman", "The Citadel"
+    "UofSC", "Clemson", "Princeton", "MIT", "Harvard", "Stanford", "Furman",
+    "The Citadel", "Yale", "Duke", "University of Pennsylvania", "Notre Dame",
+    "Vanderbilt", "University of North Carolina", "New York University",
+    "Coastal Carolina", "Ohio State", "Auburn", "University of Florida",
+    "University of Georgia", "Virginia Tech", "College of Charleston",
+    "University of Southern California", "University of Texas - Austin",
+    "Gonzaga University" 
 ]
 
 # Departments
@@ -23,17 +28,50 @@ DEPARTMENTS = [
     "Agriculture and Environmental Studies",
     "Communication and Media",
     "Law and Criminal Justice",
-    "Humanities and Social Sciences"
+    "Humanities and Social Sciences",
+    "Engineering and Technology"
 ]
 
 # Major names (for only 5)
 MAJOR_NAMES = [
-    "Physics", "Environmental Science", "Kinesiology & Sports Science", "Hospitality & Tourism Management", 
-    "Urban Planning & Development", "Game Design & Interactive Media", "Forensic Science", "Marine Biology", 
-    "Astronomy & Astrophysics", "Public Administration & Policy", "Music Business & Industry",
-    "Fashion Merchandising & Design", "Supply Chain Management", "Rehabilitation Sciences",
-    "Agriculture", "Cognitive Science", "Biomedical Informatics", "Acting & Performance Studies", 
-    "Nutritional Science & Dietetics"
+    # Natural Sciences and Mathematics
+    "Climate Science & Atmospheric Studies", "Computational Biology & Bioinformatics",
+    "Mathematical Physics",
+
+    # Business and Economics
+    "Accounting Analytics & Audit Systems", "Nonprofit Management & Philanthropy", 
+    "Global Markets & Investment Strategy",
+
+    # Education
+    "Adult & Continuing Education", "Instructional Design & Learning Sciences", 
+    "Education Policy & Leadership",
+
+    # Health Sciences
+    "Occupational Therapy & Rehabilitation", "Clinical Laboratory Science", 
+    "Health Communication & Promotion",
+
+    # Arts and Design
+    "Animation & Visual Effects", "Digital Art & Experimental Media", 
+
+    # Agriculture and Environmental Studies
+    "Wildlife & Fisheries Management", "Agricultural Business & Economics", 
+    "Climate-Resilient Agriculture",
+
+    # Communication and Media
+    "Media Production & Editing", "Advertising & Integrated Marketing", 
+    "Political Communication & Campaign Strategy",
+
+    # Law and Criminal Justice
+    "Cybercrime & Digital Forensics", "Corrections Administration & Policy", 
+    "International Criminal Law",
+
+    # Humanities and Social Sciences
+    "Religious Studies & Theology", "Cultural Anthropology & Global Studies", 
+    "Ethics & Moral Philosophy",
+
+    # Engineering and Technology
+    "Embedded Systems & IoT Engineering", "Civil Infrastructure & Construction Management", 
+    "Aerospace Propulsion Systems"
 ]
 
 # Standard college course naming format
@@ -41,6 +79,14 @@ COURSE_CODES = [
     "CS101", "CS201", "MATH150", "ENG101", "BIO110", "PHY210",
     "ECON101", "BUS200", "CHEM130", "PSY250", "HIST220", "ART105",
     "STAT300", "PHIL200", "SOC101", "POLS150", "MKTG230", "FIN310"
+    "CS102", "CS301", "MATH250", "MATH320", "ENG201", "ENG260",
+    "BIO210", "BIO315", "PHY120", "PHY340", "CHEM220", "CHEM310",
+    "ECON201", "ECON305", "BUS210", "BUS330", "PSY101", "PSY310",
+    "HIST101", "HIST330", "ART210", "ART330", "STAT200", "STAT420",
+    "PHIL101", "PHIL310", "SOC201", "SOC330", "POLS220", "POLS310",
+    "MKTG120", "MKTG350", "FIN101", "FIN420", "COMM101", "COMM250",
+    "LING101", "LING215", "EDUC101", "EDUC310", "ENV110", "ENV305",
+    "ASTR101", "ASTR220", "MUSC101"
 ]
 
 # Retrieve existing universities
