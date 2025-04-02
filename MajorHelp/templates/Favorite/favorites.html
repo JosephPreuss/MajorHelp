@@ -1,0 +1,159 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/settings/favorites.css' %}">
+
+<div class="favorites-page-container">
+    <div class="favorites-content">
+        <div class="favorites-container">
+            <h1>Your Favorites</h1>
+
+            <div id="universities-section">
+                <h2>Universities</h2>
+                <ul class="favorites-list">
+                    {% for favorite in university_favorites %}
+                    <li class="favorite-item university-item">
+                        <a href="{% url 'MajorHelp:university-detail' slug=favorite.university.slug %}">
+                            <strong>{{ favorite.university.name }}</strong>  
+                        </a>
+                        <p>📍 <strong>Located at</strong> {{ favorite.university.location }}</p>
+                        <p>⭐ <strong>Added</strong> {{ favorite.created_at|timesince }} ago</p>
+                    </li>
+                    {% empty %}
+                    <li class="no-favorites">You haven't favorited any universities yet.</li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+            <div id="majors-section">
+                <h2>Majors</h2>
+                <ul class="favorites-list">
+                    {% for favorite in major_favorites %}
+                    <li class="favorite-item major-item">
+                        <a href="{% url 'MajorHelp:major-detail' slug=favorite.major.slug %}">
+                            <strong>{{ favorite.major.major_name }}</strong> at {{ favorite.major.university.name }}
+                        </a>
+                        <p>🏫 <strong>Department</strong> {{ favorite.major.department }}</p>
+                        <p>⭐ <strong>Added</strong> {{ favorite.created_at|timesince }} ago</p>
+                    </li>
+                    {% empty %}
+                    <li class="no-favorites">You haven't favorited any majors yet.</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="filters-column">
+        <div class="filter-card">
+            <span class="filter-header">Show <span class="highlight-the">Me</span></span>
+            <div class="filter-options-group">
+                <div class="filter-option both-option">
+                    <input type="checkbox" id="show-both" checked>
+                    <label for="show-both">Both</label>
+                </div>
+                <div class="filter-option">
+                    <input type="checkbox" id="show-universities" checked>
+                    <label for="show-universities">Universities</label>
+                </div>
+                <div class="filter-option">
+                    <input type="checkbox" id="show-majors" checked>
+                    <label for="show-majors">Majors</label>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const bothCheckbox = document.getElementById('show-both');
+        const universitiesCheckbox = document.getElementById('show-universities');
+        const majorsCheckbox = document.getElementById('show-majors');
+        const universityItems = document.querySelectorAll('.university-item');
+        const majorItems = document.querySelectorAll('.major-item');
+        const universitySection = document.getElementById('universities-section');
+        const majorSection = document.getElementById('majors-section');
+        const noUniversityMessage = universitySection.querySelector('.no-favorites');
+        const noMajorMessage = majorSection.querySelector('.no-favorites');
+
+        function updateVisibility() {
+            // Handle "Both" checkbox
+            if (bothCheckbox.checked) {
+                universitiesCheckbox.checked = true;
+                majorsCheckbox.checked = true;
+            }
+
+            // Show/hide university items
+            const showUniversities = universitiesCheckbox.checked;
+            universitySection.style.display = showUniversities ? 'block' : 'none';
+            
+            // Show/hide major items
+            const showMajors = majorsCheckbox.checked;
+            majorSection.style.display = showMajors ? 'block' : 'none';
+
+            // Update "Both" checkbox state
+            bothCheckbox.checked = universitiesCheckbox.checked && majorsCheckbox.checked;
+
+            // Handle empty state messages
+            if (noUniversityMessage) {
+                noUniversityMessage.style.display = showUniversities ? 'block' : 'none';
+            }
+            if (noMajorMessage) {
+                noMajorMessage.style.display = showMajors ? 'block' : 'none';
+            }
+        }
+
+        // Initialize visibility
+        updateVisibility();
+
+        // Event listeners
+        bothCheckbox.addEventListener('change', function() {
+            universitiesCheckbox.checked = this.checked;
+            majorsCheckbox.checked = this.checked;
+            updateVisibility();
+        });
+
+        universitiesCheckbox.addEventListener('change', function() {
+            if (!this.checked) {
+                bothCheckbox.checked = false;
+            } else if (majorsCheckbox.checked) {
+                bothCheckbox.checked = true;
+            }
+            updateVisibility();
+        });
+
+        majorsCheckbox.addEventListener('change', function() {
+            if (!this.checked) {
+                bothCheckbox.checked = false;
+            } else if (universitiesCheckbox.checked) {
+                bothCheckbox.checked = true;
+            }
+            updateVisibility();
+        });
+    });
+
+    // Polling for updates
+    function checkForUpdates() {
+        fetch(window.location.href)
+            .then(response => response.text())
+            .then(html => {
+                const parser = new DOMParser();
+                const newDoc = parser.parseFromString(html, 'text/html');
+                const oldCount = document.querySelectorAll('.favorite-item').length;
+                const newCount = newDoc.querySelectorAll('.favorite-item').length;
+                
+                if (oldCount !== newCount) {
+                    location.reload();
+                }
+            });
+    }
+    setInterval(checkForUpdates, 3000); // runs checkForUpdates ever 3 seconds
+</script>
+<!-- adds space at the bottom of the page-->
+<br>  <br>
+<br>  <br>
+
+{% endblock %}
