@@ -1,0 +1,162 @@
+/* favorites.css */
+.favorites-page-container {
+    display: flex;
+    gap: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+    align-items: flex-start;
+}
+
+.filters-column {
+    width: 280px;
+    position: sticky;
+    top: 175px;
+    height: fit-content;
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    padding: 1.5rem;
+}
+
+.favorites-content {
+    flex: 1;
+    background-color: #fff;
+    border-radius: 10px;
+    padding: 2rem;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
+
+.filter-card {
+    padding: 0;
+}
+
+.filter-header {
+    color: #2c3e50;
+    font-weight: 700;
+    margin-bottom: 1.2rem;
+    font-size: 1.1rem;
+    display: block;
+}
+
+.filter-options-group {
+    margin-top: 0.5rem;
+}
+
+.filter-option {
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    padding: 0.5rem 0;
+
+}
+
+.filter-option:hover {
+    background-color: #f0f4f8;
+    border-radius: 5px;
+}
+
+.filter-option input {
+    margin-right: 0.8rem;
+    cursor: pointer;
+    width: 16px;
+    height: 16px;
+}
+
+.filter-option label {
+    color: #4a5568;
+    font-size: 1rem;
+    cursor: pointer;
+    flex: 1;
+}
+
+.filter-option.both-option {
+    margin-bottom: 1.2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.favorites-container {
+    max-width: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+.favorites-list {
+    list-style: none;
+    padding: 0;
+    margin: 1rem 0 2rem;
+}
+
+.favorite-item {
+    margin-bottom: 1.5rem;
+    padding: 1.5rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    background-color: #fff;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+    transition: all 0.2s ease;  /* smooth animation when you hover over the favorite items */
+}
+
+.favorite-item:hover {
+    transform: translateY(-3px); /* moves favorite items up by 3 pixel */
+    box-shadow: 0 6px 12px rgba(0,0,0,0.08); /* created and enhances the shadow effect */
+    border-color: #cbd5e0;
+}
+
+.favorite-item a {
+    text-decoration: none;
+    color: #3182ce;
+    font-size: 1.25rem;
+    font-weight: 600;
+    display: block;
+    margin-bottom: 0.75rem;
+}
+
+.favorite-item a:hover {
+    text-decoration: underline;
+    color: #2c5282;
+}
+
+.favorite-item p {
+    margin: 0.5rem 0;
+    color: #4a5568;
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+.favorite-item p strong {
+    color: #2d3748;
+    font-weight: 600;
+}
+
+h1 {
+    color: #2d3748;
+    margin-bottom: 1.5rem;
+    font-size: 2rem;
+    font-weight: 700;
+}
+
+h2 {
+    color: #2d3748;
+    margin: 2rem 0 1.25rem;
+    font-size: 1.5rem;
+    font-weight: 600;
+    border-bottom: 2px solid #edf2f7;
+    padding-bottom: 0.75rem;
+}
+
+.no-favorites {
+    color: #718096;
+    font-style: italic;
+    margin: 2rem 0;
+    font-size: 1.1rem;
+}
+
+.spacer {
+    height: 60px;
+}
+
+/* used to change the color of a word to #4fc7cf */
+.highlight-the {  
+    color: #2a9fa8;
+}

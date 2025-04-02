@@ -65,4 +65,8 @@ urlpatterns = [
     path("api/aid/", aid_list, name="aid_list"),
     path("api/majors/", major_list, name="major_list"),
     path("api/calculate/", calculate, name="calculate"),
+
+    #URLS for favorite page
+    path('toggle-favorite/<str:object_type>/<int:object_id>/', views.toggle_favorite, name='toggle-favorite'),
+    path('favorites/', favorites_list, name='favorites-list'),
 ]
