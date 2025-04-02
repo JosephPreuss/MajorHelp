@@ -560,15 +560,19 @@ async function selectMajor(calc, major) {
 
         aidContainer.innerHTML = `<div class=\"result-item\" onclick=\"selectaid(${calc}, \'None\')\"><strong>None</strong></div>`
 
-        aidData.aids.forEach(aid => {
-            let option = document.createElement("div");
-            option.classList.add("result-item");
-            option.innerHTML = `<strong>${aid.name}</strong>`;
-            option.onclick = function() {
-                selectaid(calc, aid.name);
-            };
-            aidContainer.appendChild(option);
-        });
+        // Keep None option
+        aidContainer.innerHTML = `<div class="result-item" onclick="selectaid(${calc}, 'None')"><strong>None</strong></div>`;
+
+        // Add a custom aid input box
+        const customAidContainer = document.createElement("div");
+        customAidContainer.classList.add("result-item");
+        customAidContainer.innerHTML = `
+            <label for="custom-aid-${calc}"><strong>Enter custom aid amount ($):</strong></label><br>
+            <input type="number" id="custom-aid-${calc}" min="0" style="margin-top: 5px; margin-bottom: 5px;" />
+            <button type="button" onclick="applyCustomAid(${calc})">Apply</button>
+        `;
+        aidContainer.appendChild(customAidContainer);
+
     } else {
         // It doesn't, so run the calculation now.
 
@@ -580,6 +584,17 @@ async function selectMajor(calc, major) {
         displayOutput(calc, university, outstate, major)
     }
 }
+
+function applyCustomAid(calc) {
+    const val = document.getElementById(`custom-aid-${calc}`).value;
+    const amount = parseInt(val);
+    if (isNaN(amount) || amount < 0) {
+        showNotification("Please enter a valid custom aid amount.", true);
+        return;
+    }
+    selectaid(calc, amount);  // use number instead of aid name
+}
+
 
 async function fetchFinancialAid(query) {
     try {

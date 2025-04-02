@@ -792,12 +792,16 @@ def calculate(request):
     aid = 0
     aidObj = None
 
-    if aid_name and (not (aid_name == "" or aid_name == "None" or aid_name == "null")):
-        aidObj = FinancialAid.objects.filter(name=aid_name).first()
-        if not aidObj:
-            return HttpResponse("Error - Financial Aid not found.", status=404)
-        
-        aid = aidObj.amount
+    if aid_name and aid_name not in ["", "None", "null"]:
+        # Try to convert to int (custom aid), else treat as aid name
+        try:
+            aid = int(aid_name)
+        except ValueError:
+            aidObj = FinancialAid.objects.filter(name=aid_name).first()
+            if not aidObj:
+                return HttpResponse("Error - Financial Aid not found.", status=404)
+            aid = aidObj.amount
+
     
 
 
@@ -828,10 +832,12 @@ def calculate(request):
             "baseMaxTui": major.in_state_max_tuition if not outstate else major.out_of_state_max_tuition,
             "fees": major.fees
         },
-        "aid" : {} if aid_name is None or aid_name == "null" or aid_name == "None" else {
-            "name" : aidObj.name,
-            "amount" : aidObj.amount,
-        },
+        "aid": (
+            {} if aid_name in ["", "None", "null", None]
+            else {"name": aidObj.name, "amount": aidObj.amount} if aidObj
+            else {"name": f"Custom Aid (${aid})", "amount": aid}
+        ),
+
     }
 
     return JsonResponse(data)
