@@ -57,9 +57,6 @@ class CalcTests(TestCase):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-
-        self.client = Client()
-
         self.url = reverse("MajorHelp:calc")
         self.uni = reverse("MajorHelp:university_search")
         self.maj = reverse("MajorHelp:major_list")
