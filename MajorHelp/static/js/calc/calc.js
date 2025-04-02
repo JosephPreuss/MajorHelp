@@ -571,6 +571,18 @@ async function selectMajor(calc, major) {
             <input type="number" id="custom-aid-${calc}" min="0" style="margin-top: 5px; margin-bottom: 5px;" />
             <button type="button" onclick="applyCustomAid(${calc})">Apply</button>
         `;
+
+        // Add any applicable aid
+        aidData.aids.forEach(aid => {
+            let option = document.createElement("div");
+            option.classList.add("result-item");
+            option.innerHTML = `<strong>${aid.name}</strong>`;
+            option.onclick = function() {
+                selectaid(calc, aid.name);
+            };
+            aidContainer.appendChild(option);
+        });
+
         aidContainer.appendChild(customAidContainer);
 
     } else {
