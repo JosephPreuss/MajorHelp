@@ -666,7 +666,6 @@ def calc_list(request):
 
     return JsonResponse(data)
 
-@csrf_exempt
 def save_calc(request):
     if not request.user.is_authenticated:
         return HttpResponse("Error - You must be logged in", status=401)
