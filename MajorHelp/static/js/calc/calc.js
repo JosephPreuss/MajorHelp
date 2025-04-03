@@ -227,7 +227,7 @@ function newCalc(values=null, load=false) {
         const deleteBtn = panel.querySelector(".delete-save");
         if (deleteBtn) {
             deleteBtn.style.display = "inline";
-            deleteBtn.onclick = () => deleteSave(values.calcName);
+            deleteBtn.onclick = () => deleteSave(values.calcName.toLowerCase());
         }
     }
 }
