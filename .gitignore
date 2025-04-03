@@ -31,6 +31,7 @@ __pycache__/
 *.sync-conflict*
 temp/
 tmp/
+test_behavioral_db.sqlite3
 
 
 # IDEs

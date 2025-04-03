@@ -20,10 +20,11 @@ class TestTestcalcLoginPanel():
   
   def test_testcalcLoginPanel(self):
     self.driver.get("http://127.0.0.1:8000/")
+    self.driver.set_window_size(1920, 1080)
     self.driver.find_element(By.LINK_TEXT, "Sign In").click()
     self.driver.find_element(By.ID, "id_username").click()
-    self.driver.find_element(By.ID, "id_username").send_keys("admin")
-    self.driver.find_element(By.ID, "id_password").send_keys("admin")
+    self.driver.find_element(By.ID, "id_username").send_keys("testuser_behavioral")
+    self.driver.find_element(By.ID, "id_password").send_keys("password")
     self.driver.find_element(By.CSS_SELECTOR, ".btn").click()
     self.driver.find_element(By.LINK_TEXT, "Tuition Calculator").click()
     self.driver.find_element(By.ID, "uni-search-0").click()
