@@ -331,3 +331,19 @@ class UniversityRequest(models.Model):
 
     def __str__(self):
         return f"Request by {self.user.username if self.user else 'Anonymous'} on {self.submitted_at.strftime('%Y-%m-%d %H:%M:%S')}"
+
+# Model for the favorite feature
+class Favorite(models.Model):
+    user = models.ForeignKey(CustomUser,on_delete=models.CASCADE)
+    university = models.ForeignKey(University,on_delete=models.CASCADE, null=True, blank = True)
+    major = models.ForeignKey(Major, on_delete=models.CASCADE, null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+class Meta:
+    unique_together = [('user', 'university'), ('user', 'major')]  # Prevent duplicates
+
+def __str__(self):
+        if self.university:
+            return f"{self.user.username} favorited {self.university.name}"
+        else:
+            return f"{self.user.username} favorited {self.major.major_name} at {self.major.university.name}"

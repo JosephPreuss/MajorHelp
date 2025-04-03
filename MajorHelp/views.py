@@ -42,7 +42,7 @@ from django.urls import reverse
 from django.core.signing import TimestampSigner, BadSignature, SignatureExpired
 from .forms import CustomUserCreationForm
 from django.contrib.auth import get_user_model
-from django.http import JsonResponse
+from django.views.decorators.http import require_POST # used for favorite featurefrom django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from .models import University
 import json
@@ -75,14 +75,26 @@ class UniversityOverviewView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['latest_post_list'] = UniversityReview.objects.filter(university=self.object)
-        university = self.object
+        if self.request.user.is_authenticated:
+            context['is_favorite'] = Favorite.objects.filter(
+                user=self.request.user,
+                university=self.object
+            ).exists()
+        else:
+            context['is_favorite'] = False
+        return context
         
         #JUMP
         if self.request.user.is_authenticated:
             self.request.user.refresh_from_db()
             user_review = UniversityReview.objects.filter(username=self.request.user.username, university=university).exists()
             context['user_review'] = user_review  # If review exists, pass it to the template
+            
+            #Adds favorite status to context
+            context['is_favorite'] = Favorite.objects.filter (
+                user=self.request.user, 
+                university=university
+            ).exists()
 
         
         return context
@@ -487,27 +499,38 @@ class MajorOverviewView(DetailView):
     model = Major
     template_name = "major/MajorOverviewPage.html"
     context_object_name = "major"
+    slug_field = 'slug'
+    slug_url_kwarg = 'slug'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         major = self.object
 
-        # Calculate the average rating for all reviews for this major
+        # Calculate average rating
         reviews = major.major_reviews.all()
         if reviews.exists():
             average_rating = reviews.aggregate(Avg('rating'))['rating__avg']
-            context['average_rating'] = round(average_rating, 1)  # Round to 1 decimal place
+            context['average_rating'] = round(float(average_rating), 1)
         else:
-            context['average_rating'] = 0  # Default to 0 if no reviews exist
+            context['average_rating'] = 0.0
 
         context['reviews'] = reviews
         context['star_range'] = [1, 2, 3, 4, 5]
 
-        #JUMP
-        # Check if the user has already left a review for this major
+        # Check if user has already left a review
         if self.request.user.is_authenticated:
-            user_review = MajorReview.objects.filter(user=self.request.user, major=major).first()
-            context['user_review'] = user_review  # If review exists, pass it to the template
+            context['user_review'] = MajorReview.objects.filter(
+                user=self.request.user, 
+                major=major
+            ).first()
+
+            # Check if major is favorited - use consistent naming ('is_favorite')
+            context['is_favorite'] = Favorite.objects.filter(
+                user=self.request.user,
+                major=major
+            ).exists()
+        else:
+            context['is_favorite'] = False
 
         return context
 
@@ -888,3 +911,84 @@ def calculate(request):
     }
 
     return JsonResponse(data)
+# favorite feature views for universities and majors 
+@require_POST
+@login_required
+def toggle_favorite(request, object_type, object_id):
+    if object_type == 'university':
+        obj = get_object_or_404(University, pk=object_id)
+        favorite, created = Favorite.objects.get_or_create(
+            user=request.user,
+            university=obj
+        )
+    elif object_type == 'major':
+        obj = get_object_or_404(Major, pk=object_id)
+        favorite, created = Favorite.objects.get_or_create(
+            user=request.user,
+            major=obj
+        )
+    else:
+        return JsonResponse({'status': 'error', 'message': 'Invalid object type'}, status=400)
+    
+    if not created:
+        favorite.delete()
+        return JsonResponse({'status': 'removed'})
+    
+    return JsonResponse({'status': 'added'})
+
+# for favorites page
+@login_required
+def favorites_list(request):
+    university_favorites = Favorite.objects.filter(
+        user=request.user, 
+        university__isnull=False
+    ).select_related('university').order_by('-created_at') # order_by sorts the list by most recent add to the list for universities in this case.
+    
+    major_favorites = Favorite.objects.filter(
+        user=request.user, 
+        major__isnull=False
+    ).select_related('major', 'major__university').order_by('-created_at') # order_by sorts the list by most recent add to the list for majors in this case.
+    
+    return render(request, 'Favorite/favorites.html', {
+        'university_favorites': university_favorites,
+        'major_favorites': major_favorites
+    })
+
+
+# Major overview class created to handle favorites 
+class MajorOverviewView(DetailView):
+    model = Major
+    template_name = "major/MajorOverviewPage.html"
+    context_object_name = "major"
+    slug_field = 'slug'
+    slug_url_kwarg = 'slug'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        major = self.object
+
+        # Calculate average rating
+        reviews = major.major_reviews.all()
+        if reviews.exists():
+            average_rating = reviews.aggregate(Avg('rating'))['rating__avg']
+            context['average_rating'] = round(float(average_rating), 1)
+        else:
+            context['average_rating'] = 0.0
+
+        context['reviews'] = reviews
+        context['star_range'] = [1, 2, 3, 4, 5]
+
+        # Check if user has already left a review
+        if self.request.user.is_authenticated:
+            context['user_review'] = MajorReview.objects.filter(
+                user=self.request.user, 
+                major=major
+            ).first()
+
+            # Check if major is favorited
+            context['is_favorite'] = Favorite.objects.filter(
+                user=self.request.user,
+                major=major
+            ).exists()
+
+        return context
