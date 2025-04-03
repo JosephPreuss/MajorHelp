@@ -127,8 +127,6 @@ class CalcTests(TestCase):
         # so they don't need to be included in the post request.
         response = self.client.post(self.sav, json.dumps(self.calcJson), content_type='application/json')
 
-        print(response.content)
-
         # Assert that the server responded with a successful creation
         self.assertEqual(response.status_code, 201)
 
@@ -153,8 +151,6 @@ class CalcTests(TestCase):
         # so they don't need to be included in the post request.
         response = self.client.post(self.sav, json.dumps({}), content_type='application/json')
 
-        print(response.content)
-
         # Assert that the server responded with a bad request
         self.assertEqual(response.status_code, 400)
 
@@ -164,8 +160,6 @@ class CalcTests(TestCase):
         # CSRF cookies are automatically disabled in test cases,
         # so they don't need to be included in the post request.
         response = self.client.post(self.sav, json.dumps({"calcname": 1}), content_type='application/json')
-
-        print(response.content)
 
         # Assert that the server responded with a bad request
         self.assertEqual(response.status_code, 400)
@@ -177,8 +171,6 @@ class CalcTests(TestCase):
         # so they don't need to be included in the post request.
         response = self.client.post(self.sav, json.dumps(
             {"calcname": {}}), content_type='application/json')
-
-        print(response.content)
 
         # Assert that the server responded with a bad request
         self.assertEqual(response.status_code, 400)
@@ -193,8 +185,6 @@ class CalcTests(TestCase):
                 "calcName": 1
             }}), content_type='application/json')
 
-        print(response.content)
-
         # Assert that the server responded with a bad request
         self.assertEqual(response.status_code, 400)
     
@@ -204,8 +194,6 @@ class CalcTests(TestCase):
         # CSRF cookies are automatically disabled in test cases,
         # so they don't need to be included in the post request.
         response = self.client.post(self.sav, json.dumps({"calcname": {"calcName": "testCalc"}}), content_type='application/json')
-
-        print(response.content)
 
         # Assert that the server responded with a bad request
         self.assertEqual(response.status_code, 400)
@@ -220,8 +208,6 @@ class CalcTests(TestCase):
                 "calcName": "testCalc",
                 "uni": 1
             }}), content_type='application/json')
-
-        print(response.content)
 
         # Assert that the server responded with a bad request
         self.assertEqual(response.status_code, 400)
@@ -238,8 +224,6 @@ class CalcTests(TestCase):
                 "outstate": 1
             }}), content_type='application/json')
 
-        print(response.content)
-
         # Assert that the server responded with a bad request
         self.assertEqual(response.status_code, 400)
 
@@ -255,8 +239,6 @@ class CalcTests(TestCase):
                 "outstate": False, 
                 "dept": 1
             }}), content_type='application/json')
-
-        print(response.content)
 
         # Assert that the server responded with a bad request
         self.assertEqual(response.status_code, 400)
@@ -275,8 +257,6 @@ class CalcTests(TestCase):
                 "major": 1
             }}), content_type='application/json')
 
-        print(response.content)
-
         # Assert that the server responded with a bad request
         self.assertEqual(response.status_code, 400)
     
@@ -294,8 +274,6 @@ class CalcTests(TestCase):
                 "major": "exampleMajor",
                 "aid": 1
             }}), content_type='application/json')
-
-        print(response.content)
 
         # Assert that the server responded with a bad request
         self.assertEqual(response.status_code, 400)
@@ -354,8 +332,6 @@ class CalcTests(TestCase):
 
         # then delete it
         response2 = self.client.delete(self.sav, json.dumps({}), content_type='application/json')
-
-        print(response2.content)
 
         # Assert that the server responded with a bad request
         self.assertEqual(response2.status_code, 400)
