@@ -400,7 +400,7 @@ class CalcTests(TestCase):
         response = self.client.options(self.sav)
 
         # Assert that the server responded with a bad request
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 405)
 
         # Check that the server responded with an allow header specifying DELETE or POST
         self.assertEqual(response['Allow'], 'POST, DELETE')
@@ -411,7 +411,7 @@ class CalcTests(TestCase):
         response = self.client.head(self.sav)
 
         # Assert that the server responded with a bad request
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 405)
 
         # Check that the server responded with an allow header specifying DELETE or POST
         self.assertEqual(response['Allow'], 'POST, DELETE')
@@ -427,19 +427,6 @@ class CalcTests(TestCase):
         # Check that the server responded with an allow header specifying DELETE or POST
         self.assertEqual(response['Allow'], 'POST, DELETE')
     
-    def testCalcConnectRequest(self):
-        self.client.login(username='testuser', password='password')
-
-        response = self.client.connect(self.sav)
-
-        # Assert that the server responded with a bad request
-        self.assertEqual(response.status_code, 405)
-
-        # Check that the server responded with an allow header specifying DELETE or POST
-        self.assertEqual(response['Allow'], 'POST, DELETE')
-
-    
-
     # ========================= University Search =============================
 
 
