@@ -10,6 +10,8 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 from django.contrib.auth.models import User
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from pestopanini import settings
+from .discussion_models import DiscussionCategory, DiscussionThread, ThreadReply
+
 
 
 class FinancialAid(models.Model):
@@ -19,8 +21,6 @@ class FinancialAid(models.Model):
     
     def __str__(self):
         return self.name
-
-
 
 # Model for university
 class University(models.Model):

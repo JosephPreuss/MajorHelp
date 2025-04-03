@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block title %}Discussion Categories{% endblock %}
+
+{% block content %}
+<div class="discussion-categories-container">
+    <h2>Discussion Categories</h2>
+    <p>Choose a category to explore or start a discussion.</p>
+
+    <div class="category-list">
+        {% for category in categories %}
+            <div class="category-card">
+                <h3><a href="{% url 'discussion_threads' category.slug %}">{{ category.name }}</a></h3>
+                <p>{{ category.description }}</p>
+            </div>
+        {% empty %}
+            <p>No categories available.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

@@ -1,5 +1,13 @@
 from django.contrib import admin
 from .models import *
+from .models import DiscussionCategory, DiscussionThread, ThreadReply
+
+#
+admin.site.register(DiscussionCategory)
+admin.site.register(DiscussionThread)
+admin.site.register(ThreadReply)
+
+
 
 # Inline for displaying University Ratings in University admin
 class UniversityRatingInline(admin.TabularInline):

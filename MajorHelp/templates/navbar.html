@@ -13,6 +13,12 @@
         <li><a href="{% url 'MajorHelp:about' %}">About</a></li>
         <li><a href="{% url 'MajorHelp:contact' %}">Contact</a></li>
         <li><a href="{% url 'MajorHelp:calc' %}">Tuition Calculator</a></li>
+        {% if user.is_authenticated %}
+            <li><a href="{% url 'MajorHelp:discussion_board' %}">Discussion</a></li>
+        {% endif %}
+        {% if user.is_authenticated %}
+            <li><a href="{% url 'MajorHelp:major_chat' %}">MajorChat</a></li>
+        {% endif %}
     </ul>
 
     <div class="auth-buttons">

@@ -7,9 +7,23 @@ from django.contrib.auth.models import User
 from django import forms
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
+from .discussion_models import ThreadReply
+from .models import DiscussionThread
+
+
 
 User = get_user_model()
 
+
+class NewThreadForm(forms.ModelForm):
+    class Meta:
+        model = DiscussionThread
+        fields = ['category', 'title', 'content']
+        widgets = {
+            'title': forms.TextInput(attrs={'placeholder': 'Enter a title'}),
+            'content': forms.Textarea(attrs={'placeholder': 'Start your discussion...'}),
+        }
+        
 class CustomUserCreationForm(UserCreationForm):
     # Add any fields you want to customize here
     username = forms.CharField(max_length=150, required=True)
@@ -29,6 +43,17 @@ class CustomUserCreationForm(UserCreationForm):
 class CustomLoginForm(AuthenticationForm):
     remember_me = forms.BooleanField(required=False, widget=forms.CheckboxInput())
 
+class ThreadReplyForm(forms.ModelForm):
+    class Meta:
+        model = ThreadReply
+        fields = ['content']
+        widgets = {
+            'content': forms.Textarea(attrs={
+                'placeholder': 'Write your reply here...',
+                'rows': 3,
+            }),
+        }
+
 class CustomAuthenticationForm(AuthenticationForm):
     username = forms.CharField(label='Username or Email')
 
@@ -46,3 +71,5 @@ class CustomAuthenticationForm(AuthenticationForm):
         
         # If it's not an email, treat it as a username
         return username_or_email
+    
+    

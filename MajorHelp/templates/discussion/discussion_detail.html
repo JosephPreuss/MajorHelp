@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}{{ thread.title }}{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/reply_modal.css' %}">
+
+<!-- 🌀 Blur Wrapper Start -->
+<div id="thread-blur-wrapper" class="thread-blur-wrapper">
+    <div class="thread-wrapper">
+        <div class="main-thread">
+            <h1>{{ thread.title }}</h1>
+            <p class="meta">Started by <strong>{{ thread.author }}</strong> on {{ thread.created_at|date:"M d, Y" }} in <strong>{{ thread.category.name }}</strong></p>
+            <div class="thread-box">
+                <p>{{ thread.content }}</p>
+            </div>
+
+            {% if thread.author == user %}
+                <form method="post" action="{% url 'MajorHelp:delete_thread' thread.pk %}" style="margin-top: 0.5rem;">
+                    {% csrf_token %}
+                    <button type="submit" class="delete-button" onclick="return confirmDelete('this thread')">🗑️ Delete Thread</button>
+                </form>
+            {% endif %}
+        </div>
+
+        <hr class="divider" />
+
+        <div class="reply-section">
+            <h3>{{ replies.count }} Comments</h3>
+            {% for reply in replies %}
+                <div class="reply-box">
+                    <p class="reply-meta"><strong>{{ reply.author }}</strong> replied on {{ reply.created_at|date:"M d, Y H:i" }}</p>
+                    <div class="reply-content">{{ reply.content }}</div>
+
+                    {% if reply.author == user %}
+                        <form method="post" action="{% url 'MajorHelp:delete_reply' reply.pk %}" style="margin-top: 0.3rem;">
+                            {% csrf_token %}
+                            <button type="submit" class="delete-button" onclick="return confirmDelete('this reply')">🗑️ Delete</button>
+                        </form>
+                    {% endif %}
+                </div>
+            {% empty %}
+                <p>No replies yet.</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+<!-- 🌀 Blur Wrapper End -->
+
+{% if user.is_authenticated %}
+<!-- ➕ Floating Reply Button -->
+<button id="fab-reply" class="fab-button">+</button>
+
+<!-- 🌫 Overlay -->
+<div id="modal-overlay" class="modal-overlay"></div>
+
+<!-- 📝 Reply Modal -->
+<div id="reply-modal" class="reply-modal">
+    <button class="close-modal" id="close-modal">&times;</button>
+    <form method="post">
+        {% csrf_token %}
+        <textarea name="content" rows="4" placeholder="Add your comment here..." required></textarea>
+        <button type="submit" class="submit-reply">Post Reply</button>
+    </form>
+</div>
+{% else %}
+    <p><a href="{% url 'MajorHelp:login' %}">Login</a> to post a reply.</p>
+{% endif %}
+
+<script src="{% static 'js/thread.js' %}"></script>
+
+<script>
+    function confirmDelete(item) {
+      return confirm(`Are you sure you want to delete ${item}? This action cannot be undone.`);
+    }
+  </script>
+{% endblock %}
