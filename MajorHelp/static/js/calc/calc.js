@@ -586,14 +586,36 @@ async function selectMajor(calc, major) {
         aidContainer.appendChild(customAidContainer);
 
     } else {
-        // It doesn't, so run the calculation now.
-
-        // (Just in case) Clear financial aid from the output if
-        // it was already applied.
+       // No predefined aid, but still show custom aid input and "None" option
         document.getElementById(`aid-output-${calc}`).style.display = "none";
         document.getElementById(`aid-name-${calc}`).innerText = "None";
 
-        displayOutput(calc, university, outstate, major)
+        const aidContainer = document.getElementById(`aid-results-${calc}`);
+        aidContainer.replaceChildren();
+
+        // Always show the aid input section
+        document.getElementById(`input-aid-${calc}`).style.display = "block";
+
+        // Add "None" option
+        const noneOption = document.createElement("div");
+        noneOption.classList.add("result-item");
+        noneOption.innerHTML = `<strong>None</strong>`;
+        noneOption.onclick = () => selectaid(calc, "None");
+        aidContainer.appendChild(noneOption);
+
+        // Add a custom aid input box
+        const customAidContainer = document.createElement("div");
+        customAidContainer.classList.add("result-item");
+        customAidContainer.innerHTML = `
+            <label for="custom-aid-${calc}"><strong>Enter custom aid amount ($):</strong></label><br>
+            <input type="number" id="custom-aid-${calc}" min="0" style="margin-top: 5px; margin-bottom: 5px;" />
+            <button type="button" onclick="applyCustomAid(${calc})">Apply</button>
+        `;
+        aidContainer.appendChild(customAidContainer);
+
+        // Proceed to display output
+        displayOutput(calc, university, outstate, major);
+
     }
 }
 
@@ -627,6 +649,7 @@ async function fetchFinancialAid(query) {
 function selectaid(calc, aid) {
     console.log("Aid Clicked:", aid)
     document.getElementById(`aid-name-${calc}`).innerText = aid;
+    document.getElementById(`aid-box-${calc}`).style.visibility = "visible";
 
     const university = document.getElementById(`uni-name-${calc}`).textContent;
     const outstate = document.getElementById(`outstate-${calc}`).checked;

@@ -749,6 +749,9 @@ def save_calc(request):
                 if field == 'outstate':
                     if not isinstance(value[field], bool):
                         return HttpResponseBadRequest(f"Field '{field}' must be a boolean.")
+                elif field == 'aid':
+                    if not isinstance(value[field], (str, int)):
+                        return HttpResponseBadRequest(f"Field '{field}' must be a string or an integer.")
                 else:
                     if not isinstance(value[field], str):
                         return HttpResponseBadRequest(f"Field '{field}' must be a string.")
