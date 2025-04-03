@@ -106,6 +106,10 @@ function newCalc(values=null, load=false) {
         // simply reshow the calculator
         document.getElementById(`entry-${calc}`).style.display = "flex";
         document.getElementById(`calculator-${calc}`).style.display = "flex";
+        const entryElem = document.getElementById(`entry-${calc}`);
+        const calcElem = document.getElementById(`calculator-${calc}`);
+        document.getElementById("calc-table").appendChild(entryElem);
+        document.getElementById("calculators").appendChild(calcElem);
 
         // restore the json
         if (values) {
@@ -220,6 +224,17 @@ function newCalc(values=null, load=false) {
     if (values)
         updateCalc(calc);
 
+    if (values && values.uni && values.major) {
+        // Make sure to set the checkbox state BEFORE rendering output
+        const outstateCheckbox = document.getElementById(`outstate-${calc}`);
+        if (outstateCheckbox) {
+            outstateCheckbox.checked = values.outstate === true;
+        }
+    
+        displayOutput(calc, values.uni, values.outstate, values.major, values.aid || null);
+    }
+    
+
     // If the Calculator is one thats being loaded in, add the "Delete Save"
     // button to the panel.
     if (load) {
@@ -233,6 +248,8 @@ function newCalc(values=null, load=false) {
 }
 
 async function saveCalc(calc) {
+
+    calcInput[calc].outstate = document.getElementById(`outstate-${calc}`).checked;
     // make the JSON of the calculator
     const json = calcInput[calc];
     const calcID = json['calcName'].toLowerCase();
@@ -432,6 +449,16 @@ function removeCalc(calc) {
     // point calcCount to the deleted calculator
     if (calc < calcCount)
         calcCount = calc;
+
+    // Hide and unbind the Delete Save button
+    const panel = document.getElementById(`entry-${calc}`);
+    if (panel) {
+        const deleteBtn = panel.querySelector(".delete-save");
+        if (deleteBtn) {
+            deleteBtn.style.display = "none";
+            deleteBtn.onclick = null;
+        }
+    }
 }
 
 async function updateUniversityResults(calc) {
@@ -672,7 +699,7 @@ async function displayOutput(calc, university, outstate, major, aid=null) {
     if (loggedIn) {
 
         // local variables
-        const panel = document.getElementById("calc-table").children[calc];
+        const panel = document.getElementById(`entry-${calc}`);
         const calcName = panel.querySelector(".calc-name");
 
 
