@@ -62,7 +62,31 @@ class CalcTests(TestCase):
         self.maj = reverse("MajorHelp:major_list")
         self.aid = reverse("MajorHelp:aid_list")
         self.cal = reverse("MajorHelp:calculate")
+        self.sav = reverse("MajorHelp:save_calc")
 
+        self.calcJson = {
+            'calcname'      : {
+                'calcName'      :   'testCalc',
+                'uni'           :   'exampleUni',
+                'outstate'       :   False,
+                'dept'          :   'Humanities and Social Sciences',
+                'major'         :   'exampleMajor',
+                'aid'           :   'exampleAid',
+            }
+        }
+
+    # ========================= Calc Page ====================================
+
+    # A simple test to make sure that the server returns the proper html page
+    # whenever /calc/ is accessed.
+    def testCalcNoDataEntry(self):
+        response = self.client.get(self.url)
+
+        # check status code
+        self.assertEqual(response.status_code, 200)
+
+        self.assertEqual(response['content-type'], 'text/html; charset=utf-8')
+    
     def test_authenticated_user_sees_calc_panel(self):
         self.client.login(username='testuser', password='password')
         response = self.client.get(self.url)
@@ -92,17 +116,329 @@ class CalcTests(TestCase):
         self.assertContains(response, 'id="notification"')
         self.assertContains(response, 'style="display: none;"')
 
+    # ========================== Saving and Deleting ==========================
 
-    # A simple test to make sure that the server returns the proper html page
-    # whenever /calc/ is accessed.
-    def testCalcNoDataEntry(self):
-        response = self.client.get(self.url)
+    # Saves
 
-        # check status code
+    def testSaveCalc(self):
+        self.client.login(username='testuser', password='password')
+
+        # CSRF cookies are automatically disabled in test cases,
+        # so they don't need to be included in the post request.
+        response = self.client.post(self.sav, json.dumps(self.calcJson), content_type='application/json')
+
+        print(response.content)
+
+        # Assert that the server responded with a successful creation
+        self.assertEqual(response.status_code, 201)
+
+    def testSaveCalcNoData(self):
+        self.client.login(username='testuser', password='password')
+
+        response = self.client.post(self.sav)
+
+        # Assert that the server responded with a bad request
+        self.assertEqual(response.status_code, 400)
+
+    def testSaveCalcNotLoggedIn(self):
+        response = self.client.post(self.sav)
+
+        # Assert that the server responded with a bad request
+        self.assertEqual(response.status_code, 403)
+
+    def testSaveCalcInvalidData(self):
+        self.client.login(username='testuser', password='password')
+
+        # CSRF cookies are automatically disabled in test cases,
+        # so they don't need to be included in the post request.
+        response = self.client.post(self.sav, json.dumps({}), content_type='application/json')
+
+        print(response.content)
+
+        # Assert that the server responded with a bad request
+        self.assertEqual(response.status_code, 400)
+
+    def testSaveCalcInvalidData2(self):
+        self.client.login(username='testuser', password='password')
+
+        # CSRF cookies are automatically disabled in test cases,
+        # so they don't need to be included in the post request.
+        response = self.client.post(self.sav, json.dumps({"calcname": 1}), content_type='application/json')
+
+        print(response.content)
+
+        # Assert that the server responded with a bad request
+        self.assertEqual(response.status_code, 400)
+    
+    def testSaveCalcInvalidData3(self):
+        self.client.login(username='testuser', password='password')
+
+        # CSRF cookies are automatically disabled in test cases,
+        # so they don't need to be included in the post request.
+        response = self.client.post(self.sav, json.dumps(
+            {"calcname": {}}), content_type='application/json')
+
+        print(response.content)
+
+        # Assert that the server responded with a bad request
+        self.assertEqual(response.status_code, 400)
+
+    def testSaveCalcInvalidData4(self):
+        self.client.login(username='testuser', password='password')
+
+        # CSRF cookies are automatically disabled in test cases,
+        # so they don't need to be included in the post request.
+        response = self.client.post(self.sav, json.dumps(
+            {"calcname": {
+                "calcName": 1
+            }}), content_type='application/json')
+
+        print(response.content)
+
+        # Assert that the server responded with a bad request
+        self.assertEqual(response.status_code, 400)
+    
+    def testSaveCalcInvalidData5(self):
+        self.client.login(username='testuser', password='password')
+
+        # CSRF cookies are automatically disabled in test cases,
+        # so they don't need to be included in the post request.
+        response = self.client.post(self.sav, json.dumps({"calcname": {"calcName": "testCalc"}}), content_type='application/json')
+
+        print(response.content)
+
+        # Assert that the server responded with a bad request
+        self.assertEqual(response.status_code, 400)
+
+    def testSaveCalcInvalidData6(self):
+        self.client.login(username='testuser', password='password')
+
+        # CSRF cookies are automatically disabled in test cases,
+        # so they don't need to be included in the post request.
+        response = self.client.post(self.sav, json.dumps(
+            {"calcname": {
+                "calcName": "testCalc",
+                "uni": 1
+            }}), content_type='application/json')
+
+        print(response.content)
+
+        # Assert that the server responded with a bad request
+        self.assertEqual(response.status_code, 400)
+
+    def testSaveCalcInvalidData7(self):
+        self.client.login(username='testuser', password='password')
+
+        # CSRF cookies are automatically disabled in test cases,
+        # so they don't need to be included in the post request.
+        response = self.client.post(self.sav, json.dumps(
+            {"calcname": {
+                "calcName": "testCalc",
+                "uni": "exampleUni",
+                "outstate": 1
+            }}), content_type='application/json')
+
+        print(response.content)
+
+        # Assert that the server responded with a bad request
+        self.assertEqual(response.status_code, 400)
+
+    def testSaveCalcInvalidData8(self):
+        self.client.login(username='testuser', password='password')
+
+        # CSRF cookies are automatically disabled in test cases,
+        # so they don't need to be included in the post request.
+        response = self.client.post(self.sav, json.dumps(
+            {"calcname": {
+                "calcName": "testCalc",
+                "uni": "exampleUni",
+                "outstate": False, 
+                "dept": 1
+            }}), content_type='application/json')
+
+        print(response.content)
+
+        # Assert that the server responded with a bad request
+        self.assertEqual(response.status_code, 400)
+    
+    def testSaveCalcInvalidData9(self):
+        self.client.login(username='testuser', password='password')
+
+        # CSRF cookies are automatically disabled in test cases,
+        # so they don't need to be included in the post request.
+        response = self.client.post(self.sav, json.dumps(
+            {"calcname": {
+                "calcName": "testCalc",
+                "uni": "exampleUni",
+                "outstate": False,
+                "dept": "Humanities and Social Sciences",
+                "major": 1
+            }}), content_type='application/json')
+
+        print(response.content)
+
+        # Assert that the server responded with a bad request
+        self.assertEqual(response.status_code, 400)
+    
+    def testSaveCalcInvalidData10(self):
+        self.client.login(username='testuser', password='password')
+
+        # CSRF cookies are automatically disabled in test cases,
+        # so they don't need to be included in the post request.
+        response = self.client.post(self.sav, json.dumps(
+            {"calcname": {
+                "calcName": "testCalc",
+                "uni": "exampleUni",
+                "outstate": False,
+                "dept": "Humanities and Social Sciences",
+                "major": "exampleMajor",
+                "aid": 1
+            }}), content_type='application/json')
+
+        print(response.content)
+
+        # Assert that the server responded with a bad request
+        self.assertEqual(response.status_code, 400)
+
+    # Deletions
+
+    def testDeleteCalc(self):
+        self.client.login(username='testuser', password='password')
+
+        # first save the calc to the database
+        response1 = self.client.post(self.sav, json.dumps(self.calcJson), content_type='application/json')
+
+        self.assertEqual(response1.status_code, 201)
+
+        # then delete it
+        response2 = self.client.delete(self.sav, json.dumps({'calcname' : True }), content_type='application/json')
+
+        self.assertEqual(response2.status_code, 204)
+
+    def testDeleteCalcNoData(self):
+        self.client.login(username='testuser', password='password')
+
+        # first save the calc to the database
+        response1 = self.client.post(self.sav, json.dumps(self.calcJson), content_type='application/json')
+
+        self.assertEqual(response1.status_code, 201)
+
+        # then delete it
+        response2 = self.client.delete(self.sav)
+
+        self.assertEqual(response2.status_code, 400)
+
+    def testDeleteCalcNotLoggedIn(self):
+        self.client.login(username='testuser', password='password')
+
+        # first save the calc to the database
+        response1 = self.client.post(self.sav, json.dumps(self.calcJson), content_type='application/json')
+
+        self.assertEqual(response1.status_code, 201)
+
+        # Log out the user
+        self.client.logout()
+
+        # then delete it
+        response2 = self.client.delete(self.sav)
+
+        self.assertEqual(response2.status_code, 403)
+
+    def testDeleteCalcInvalidData(self):
+        self.client.login(username='testuser', password='password')
+
+        # first save the calc to the database
+        response1 = self.client.post(self.sav, json.dumps(self.calcJson), content_type='application/json')
+
+        self.assertEqual(response1.status_code, 201)
+
+        # then delete it
+        response2 = self.client.delete(self.sav, json.dumps({}), content_type='application/json')
+
+        print(response2.content)
+
+        # Assert that the server responded with a bad request
+        self.assertEqual(response2.status_code, 400)
+
+    # Other request methods
+    def testCalcGetRequest(self):
+        self.client.login(username='testuser', password='password')
+
+        response = self.client.get(self.sav)
+
+        # Assert that the server responded with a bad request
+        self.assertEqual(response.status_code, 405)
+
+        # Check that the server responded with an allow header specifying DELETE or POST
+        self.assertEqual(response['Allow'], 'POST, DELETE')
+
+    def testCalcPutRequest(self):
+        self.client.login(username='testuser', password='password')
+
+        response = self.client.put(self.sav)
+
+        # Assert that the server responded with a bad request
+        self.assertEqual(response.status_code, 405)
+
+        # Check that the server responded with an allow header specifying DELETE or POST
+        self.assertEqual(response['Allow'], 'POST, DELETE')
+    
+    def testCalcPatchRequest(self):
+        self.client.login(username='testuser', password='password')
+
+        response = self.client.patch(self.sav)
+
+        # Assert that the server responded with a bad request
+        self.assertEqual(response.status_code, 405)
+
+        # Check that the server responded with an allow header specifying DELETE or POST
+        self.assertEqual(response['Allow'], 'POST, DELETE')
+    
+    def testCalcOptionsRequest(self):
+        self.client.login(username='testuser', password='password')
+
+        response = self.client.options(self.sav)
+
+        # Assert that the server responded with a bad request
         self.assertEqual(response.status_code, 200)
 
-        self.assertEqual(response['content-type'], 'text/html; charset=utf-8')
+        # Check that the server responded with an allow header specifying DELETE or POST
+        self.assertEqual(response['Allow'], 'POST, DELETE')
+    
+    def testCalcHeadRequest(self):
+        self.client.login(username='testuser', password='password')
 
+        response = self.client.head(self.sav)
+
+        # Assert that the server responded with a bad request
+        self.assertEqual(response.status_code, 200)
+
+        # Check that the server responded with an allow header specifying DELETE or POST
+        self.assertEqual(response['Allow'], 'POST, DELETE')
+    
+    def testCalcTraceRequest(self):
+        self.client.login(username='testuser', password='password')
+
+        response = self.client.trace(self.sav)
+
+        # Assert that the server responded with a bad request
+        self.assertEqual(response.status_code, 405)
+
+        # Check that the server responded with an allow header specifying DELETE or POST
+        self.assertEqual(response['Allow'], 'POST, DELETE')
+    
+    def testCalcConnectRequest(self):
+        self.client.login(username='testuser', password='password')
+
+        response = self.client.connect(self.sav)
+
+        # Assert that the server responded with a bad request
+        self.assertEqual(response.status_code, 405)
+
+        # Check that the server responded with an allow header specifying DELETE or POST
+        self.assertEqual(response['Allow'], 'POST, DELETE')
+
+    
 
     # ========================= University Search =============================
 
@@ -380,7 +716,7 @@ class UniRatingsTests(TestCase):
             self.assertTrue(alumni_user.check_password('alumnipassword123'))
             self.assertTrue(current_student_user.check_password('current_studentpassword123'))
         
-class MajorModelTest(TestCase):
+class MajorMoDELETEst(TestCase):
     def setUp(self):
         # Create a University object
         university = University.objects.create(
