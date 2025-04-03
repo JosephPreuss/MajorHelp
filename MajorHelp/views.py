@@ -668,11 +668,17 @@ def calc_list(request):
 
 def save_calc(request):
     if not request.user.is_authenticated:
-        return HttpResponse("Error - You must be logged in", status=401)
+        return HttpResponse("Error - You must be logged in", status=403) # 403 Forbidden
 
     user = request.user
 
     if request.method == 'DELETE':
+        # Expected Data
+        #
+        # { 'calcname' : { True } } // key is the name of the calculator but in lowercase
+        # 
+        # // The value in the json is not important, just the key is used to delete the calculator
+        
         try:
             data = json.loads(request.body.decode())
             key = list(data.keys())[0].lower()
@@ -681,17 +687,48 @@ def save_calc(request):
                 del user.savedCalcs[key]
                 user.save()
                 return HttpResponse("Deleted", status=204) # No Content, preferred for deletions
-            else:
+            else: 
                 return HttpResponse("Key not found", status=404)
 
         except Exception as e:
             return HttpResponseBadRequest("Invalid delete request: " + str(e))
 
     if request.method == 'POST':
+        # Expected Data
+        # { 'calcname'      : {      // key is the name of the calculator but in lowercase
+        #        'calcName'      :   'testCalc',
+        #        'uni'           :   'exampleUni',
+        #        'oustate'       :    False,
+        #        'dept'          :   'Humanities and Social Sciences',
+        #        'major'         :   'exampleMajor',
+        #        'aid'           :   'exampleAid',
+        #    }
+        # }
+
+
         try:
             data = json.loads(request.body.decode())
-            key = list(data.keys())[0].lower()
+            key = list(data.keys())[0].lower() # The view "politely" corrects the key to be lowercase
             value = data[key]
+
+            # Validate value
+            if not isinstance(value, dict):
+                return HttpResponseBadRequest("Invalid value format. Expected a dictionary.")
+            
+            # Validate required fields in the value dictionary
+            required_fields = ['calcName', 'uni', 'outstate', 'dept', 'major', 'aid']
+            for field in required_fields:
+                if field not in value:
+                    return HttpResponseBadRequest(f"Missing required field: {field}")
+
+            # Validate that all fields are strings or booleans as appropriate
+            for field in required_fields:
+                if field == 'outstate':
+                    if not isinstance(value[field], bool):
+                        return HttpResponseBadRequest(f"Field '{field}' must be a boolean.")
+                else:
+                    if not isinstance(value[field], str):
+                        return HttpResponseBadRequest(f"Field '{field}' must be a string.")
 
             # Save or update the calculator
             user.savedCalcs[key] = value
@@ -701,7 +738,23 @@ def save_calc(request):
         except Exception as e:
             return HttpResponseBadRequest("Error saving calculator: " + str(e))
 
-    return HttpResponseBadRequest("This url only accepts POST or DELETE.")
+
+    # The method was neither delete nor post, respond with 405 and an allow header with the list
+    # of the supported methods
+
+    # (mozilla wants us to do this apparently)
+    # https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Allow
+
+    allowed_methods = "POST, DELETE"
+
+    # return an http response with a 405 status code and the allowed methods in the header
+    response = HttpResponse("Method Not Allowed", status=405)
+
+    # Add the values in the allowed methods to the header
+    response['Allow'] = allowed_methods
+   
+    return response
+
 
 
 def aid_list(request):
