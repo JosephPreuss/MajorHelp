@@ -812,11 +812,6 @@ def calculate(request):
     outstate = request.GET.get('outstate')
     aid_name = request.GET.get('aid')
 
-    print(aid_name)
-    print(aid_name == "None")
-    print( aid_name is None )
-    print( aid_name is None or aid_name == "None" or aid_name == "null")
-
     if not university_name:
         return HttpResponse("Error - No university provided.", status=400)
 
