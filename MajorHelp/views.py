@@ -64,6 +64,7 @@ class UniversityOverviewView(DetailView):
     # Use slug as the lookup field
     slug_field = 'slug'
     slug_url_kwarg = 'slug'
+    
 
     def get_object(self):
         slug = self.kwargs['slug']
@@ -92,6 +93,9 @@ class UniversityOverviewView(DetailView):
             university=university
         ).order_by('-pub_date')
 
+        context['primary_color'] = university.primary_color if university.primary_color else '#ffffff'
+        context['secondary_color'] = university.secondary_color if university.secondary_color else '#ffffff'
+        
         return context
         
         #JUMP

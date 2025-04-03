@@ -31,6 +31,8 @@ class University(models.Model):
     TotalUndergradStudents = models.IntegerField(default = 0)
     TotalGradStudents = models.IntegerField(default = 0)
     GraduationRate = models.DecimalField(default=0.0, max_digits=4, decimal_places=1)
+    primary_color = models.CharField(default="#268f95", max_length=7)
+    secondary_color = models.CharField(default="#FFFFFF", max_length=7)
 
     # Added for tuition calc
     in_state_base_min_tuition = models.IntegerField(
