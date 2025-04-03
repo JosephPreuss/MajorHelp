@@ -54,8 +54,8 @@ const DEPARTMENT_CHOICES = [
 // Both for the calculator to handle two or more input fields at once and also
 // to enable preset saving in the future.
 const calcInput = [
-/*     {
-        'presetName'    :   "Preset 0",     // For later implimentation
+/*  {
+        'calcName'      :   "Calc 0",     // For later implimentation
         'uni'           :   "",
         'outstate'      :   false,
         'dept'          :   "",
@@ -64,7 +64,7 @@ const calcInput = [
     },
 
     {
-        'presetName'    :   "Preset 1",     // For later implimentation
+        'calcName'      :   "Calc 1",     // For later implimentation
         'uni'           :   "",
         'outstate'      :   false,
         'dept'          :   "",

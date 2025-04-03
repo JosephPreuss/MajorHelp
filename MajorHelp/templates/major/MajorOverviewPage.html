@@ -2,6 +2,7 @@
 {% include "navbar.html" %}
 <html lang="en">
 <head>
+
     {% load static %}
     <meta charset="UTF-8">
     <title>{{ major.major_name }}</title>
@@ -9,6 +10,25 @@
 </head>
 <body>
     <a href="javascript:history.back()" class="back-button">Go Back</a>
+
+    <!-- Favorite button -->
+    <button id="favorite-btn" class="favorite-btn" data-object-type="major" data-object-id="{{ major.id }}">
+        {% if is_favorite %}
+            ★ Remove from Favorites
+        {% else %}
+            ☆ Add to Favorites
+        {% endif %}
+    </button>
+
+<!-- show up a litte text under favorite button telling users to login or signup if they are not -->
+    {% if not user.is_authenticated %}
+        <p class="login-link">
+            Want to save favorites? <a href="{% url 'MajorHelp:login' %}">Log in</a> 
+            or <a href="{% url 'MajorHelp:signup' %}">Sign up</a>.
+        </p>
+    {% endif %}
+
+
     <div class="about-container">
         <h1>{{ major.major_name }}</h1>
         <h2>
@@ -78,5 +98,52 @@
             visibility: hidden !important;
         }
     </style>
+
+    <!-- javascript that makes sure that the favorites are 
+        marked until they are changed. So favorite pages are marked and
+        will show as the current status (added to favorites or not in favorites)
+        and be accurate
+     
+        TLDR: the below javascript shows errors it is just in how it is styled
+        that the red squiggly lines are showing for it. It still works with no issues
+    -->
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const favoriteBtn = document.getElementById('favorite-btn');
+            if (favoriteBtn) {
+                // Initialize button state based on server-side value
+                {% if is_favorite %}
+                    favoriteBtn.classList.add('favorited');
+                {% endif %}
+                
+                favoriteBtn.addEventListener('click', function() {
+                    const objectType = this.getAttribute('data-object-type');
+                    const objectId = this.getAttribute('data-object-id');
+                    
+                    fetch(`/toggle-favorite/${objectType}/${objectId}/`, {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRFToken': '{{ csrf_token }}',
+                            'Content-Type': 'application/json',
+                        },
+                        credentials: 'same-origin'
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.status === 'added') {
+                            this.innerHTML = '★ Remove from Favorites';
+                            this.classList.add('favorited');
+                        } else if (data.status === 'removed') {
+                            this.innerHTML = '☆ Add to Favorites';
+                            this.classList.remove('favorited');
+                        }
+                    })
+                    .catch(error => console.error('Error:', error));
+                });
+            }
+        });
+    </script>
+
 </body>
 </html>

@@ -1,4 +1,6 @@
 from django.contrib import admin
+from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
+from django.contrib.auth import get_user_model
 from .models import *
 from .models import DiscussionCategory, DiscussionThread, ThreadReply
 
@@ -8,6 +10,9 @@ admin.site.register(DiscussionThread)
 admin.site.register(ThreadReply)
 
 
+
+# Get the custom user model
+CustomUser = get_user_model()
 
 # Inline for displaying University Ratings in University admin
 class UniversityRatingInline(admin.TabularInline):
@@ -81,6 +86,25 @@ class UniversityRequestAdmin(admin.ModelAdmin):
     list_filter = ('submitted_at',)
     search_fields = ('request_text', 'user__username')
 
+# styled to display the user, what they favorited and when it was made
+class FavoriteAdmin(admin.ModelAdmin):
+    list_display = ('user', 'display_favorite', 'created_at')
+    list_filter = ('user', 'created_at')
+    search_fields = (
+        'user__username',
+        'university__name',
+        'major__major_name',
+        'major__university__name'
+    )
+    date_hierarchy = 'created_at'
+    raw_id_fields = ('user', 'university', 'major')
+
+    def display_favorite(self, obj):
+        if obj.university:
+            return f"University: {obj.university.name}"
+        return f"Major: {obj.major.major_name} ({obj.major.university.name})"
+    display_favorite.short_description = 'Favorite Item'
+
 # Registering models
 admin.site.register(University, UniversityAdmin)
 admin.site.register(UniversityRating, UniversityRatingAdmin)
@@ -90,3 +114,5 @@ admin.site.register(MajorReview, MajorReviewAdmin)
 admin.site.register(CustomUser, UserAdmin)
 admin.site.register(FinancialAid)
 admin.site.register(UniversityRequest, UniversityRequestAdmin)
+admin.site.register(Course)
+admin.site.register(Favorite, FavoriteAdmin)  # New Favorite admin

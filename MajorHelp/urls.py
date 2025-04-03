@@ -85,4 +85,7 @@ urlpatterns = [
     # major chat urls
     path('majorchat/', views.major_chat, name='major_chat'),
 
+    #URLS for favorite page
+    path('toggle-favorite/<str:object_type>/<int:object_id>/', views.toggle_favorite, name='toggle-favorite'),
+    path('favorites/', favorites_list, name='favorites-list'),
 ]
