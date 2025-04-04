@@ -1,126 +1,125 @@
-<!DOCTYPE html>
-<html lang="en">
-{% include "navbar.html" %}
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Search Page</title>
+{% extends 'base.html' %}
 
-    <style>
-            /* changes text color */
-        .filter-label {
-            color: white;
-            margin-right: 10px;
+{% block title %}Search Page{% endblock %}
+
+{% block stylesheet %}
+<style>
+    /* changes text color */
+    .filter-label {
+        color: white;
+        margin-right: 10px;
+    }
+
+    /* Centering the search container */
+    .search-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 30vh;
+        padding: 20px;
+    }
+
+    /* Styling the search bar */
+    #search-query {
+        width: 500px; /* Larger width for the search bar */
+        height: 40px; /* Increase height for bigger input */
+        padding: 10px;
+        font-size: 16px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        margin-right: 10px; /* Space between search bar and filter dropdown */
+    }
+
+    /* Making filter dropdown and search bar in a horizontal row */
+    .search-bar-container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 20px;
+    }
+
+    /* Styling the filter dropdown */
+    .filter-dropdown select {
+        width: 200px; 
+        height: 40px; /* same as search bar */
+        padding: 10px;
+        font-size: 16px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    /* Adjust the button appearance */
+    button {
+        padding: 10px 20px;
+        font-size: 16px;
+        border: none;
+        background-color: #4CAF50;
+        color: white;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    button:hover {
+        background-color: #45a049;
+    }
+</style>
+{% endblock %}
+
+{% block script %}
+<script>
+    const departmentOptions = [
+        'Humanities and Social Sciences',
+        'Natural Sciences and Mathematics',
+        'Business and Economics',
+        'Education',
+        'Engineering and Technology',
+        'Health Sciences',
+        'Arts and Design',
+        'Agriculture and Environmental Studies',
+        'Communication and Media',
+        'Law and Criminal Justice'
+    ];
+
+    function setActiveFilter(filter) {
+        document.getElementById("filter").value = filter;
+
+        const searchFieldContainer = document.getElementById("search-field-container");
+
+        if (filter === 'department') {
+            const select = document.createElement("select");
+            select.name = "query";
+            select.id = "search-query";
+
+            // Add "Pick a Department" as the default greyed-out option
+            select.innerHTML = `<option value="" disabled selected>Pick a Department</option>` +
+                departmentOptions.map(option => `<option value="${option}">${option}</option>`).join('');
+
+            searchFieldContainer.innerHTML = ''; 
+            searchFieldContainer.appendChild(select);
+        } else {
+            const input = document.createElement("input");
+            input.type = "text";
+            input.id = "search-query";
+            input.name = "query";
+            input.placeholder = `Enter ${filter} name...`;
+            searchFieldContainer.innerHTML = ''; 
+            searchFieldContainer.appendChild(input);
         }
+    }
 
-        /* Centering the search container */
-        .search-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 30vh;
-            padding: 20px;
-        }
+    window.onload = function () {
+        const filter = "{{ filter_type }}"; // Django variable for the current filter type
+        setActiveFilter(filter);
 
-        /* Styling the search bar */
-        #search-query {
-            width: 500px; /* Larger width for the search bar */
-            height: 40px; /* Increase height for bigger input */
-            padding: 10px;
-            font-size: 16px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            margin-right: 10px; /* Space between search bar and filter dropdown */
-        }
+        // Set the dropdown to the correct filter on page load
+        document.getElementById("filter-dropdown").value = filter;
+    };
+</script>
+{% endblock %}
 
-        /* Making filter dropdown and search bar in a horizontal row */
-        .search-bar-container {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 20px;
-        }
-
-        /* Styling the filter dropdown */
-        .filter-dropdown select {
-            width: 200px; 
-            height: 40px; /* same as search bar */
-            padding: 10px;
-            font-size: 16px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        /* Adjust the button appearance */
-        button {
-            padding: 10px 20px;
-            font-size: 16px;
-            border: none;
-            background-color: #4CAF50;
-            color: white;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        button:hover {
-            background-color: #45a049;
-        }
-    </style>
-    
-    <script>
-        const departmentOptions = [
-            'Humanities and Social Sciences',
-            'Natural Sciences and Mathematics',
-            'Business and Economics',
-            'Education',
-            'Engineering and Technology',
-            'Health Sciences',
-            'Arts and Design',
-            'Agriculture and Environmental Studies',
-            'Communication and Media',
-            'Law and Criminal Justice'
-        ];
-
-        function setActiveFilter(filter) {
-            document.getElementById("filter").value = filter;
-
-            const searchFieldContainer = document.getElementById("search-field-container");
-
-            if (filter === 'department') {
-                const select = document.createElement("select");
-                select.name = "query";
-                select.id = "search-query";
-
-                // Add "Pick a Department" as the default greyed-out option
-                select.innerHTML = `<option value="" disabled selected>Pick a Department</option>` +
-                    departmentOptions.map(option => `<option value="${option}">${option}</option>`).join('');
-
-                searchFieldContainer.innerHTML = ''; 
-                searchFieldContainer.appendChild(select);
-            } else {
-                const input = document.createElement("input");
-                input.type = "text";
-                input.id = "search-query";
-                input.name = "query";
-                input.placeholder = `Enter ${filter} name...`;
-                searchFieldContainer.innerHTML = ''; 
-                searchFieldContainer.appendChild(input);
-            }
-        }
-
-        window.onload = function () {
-            const filter = "{{ filter_type }}"; // Django variable for the current filter type
-            setActiveFilter(filter);
-
-            // Set the dropdown to the correct filter on page load
-            document.getElementById("filter-dropdown").value = filter;
-        };
-    </script>
-</head>
-<body>
-
+{% block content %}
 <div class="search-container">
     <h2 class="filter-label">Search</h2>
     <form action="/search/" method="get">
@@ -146,6 +145,4 @@
         <button type="submit">Search</button>
     </form>
 </div>
-
-</body>
-</html>
+{% endblock %} 

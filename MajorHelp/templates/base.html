@@ -18,6 +18,7 @@
     <link rel="stylesheet" href="{% static 'css/discussion/create_thread.css' %}">
     <link rel="stylesheet" href="{% static 'css/discussion/discussion_detail.css' %}">
 
+
     {% block stylesheet %}
     <link rel="stylesheet" href="{% static 'css/common/styles.css' %}">
     {% endblock %}
@@ -33,6 +34,9 @@
     <div class="content">
         {% block content %}{% endblock content %}
     </div>
+
+    <!--  Prevents the footer from covering content.  -->
+    <div style="height: 50px;padding: 20px 0;"></div>
     
     <footer class="footer">
         <p>&copy; 2024 MajorHelp. All rights reserved.</p>

@@ -69,6 +69,8 @@ urlpatterns = [
     path("api/aid/", aid_list, name="aid_list"),
     path("api/majors/", major_list, name="major_list"),
     path("api/calculate/", calculate, name="calculate"),
+    path("api/calcs/", calc_list, name="calc_list"),
+    path("api/save_calc/", save_calc, name="save_calc"),
 
     # dicussions URLs
     path('discussion/', views.discussion_board, name='discussion_board'),

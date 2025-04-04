@@ -42,6 +42,7 @@ from django.urls import reverse
 from django.core.signing import TimestampSigner, BadSignature, SignatureExpired
 from .forms import CustomUserCreationForm
 from django.contrib.auth import get_user_model
+<<<<<<< HEAD
 from .discussion_models import DiscussionCategory, DiscussionThread, ThreadReply
 from django.shortcuts import render, get_object_or_404, redirect
 from .forms import NewThreadForm
@@ -49,6 +50,13 @@ from .forms import ThreadReplyForm
 from django.shortcuts import get_object_or_404, redirect
 
 from django.views.decorators.http import require_POST # used for favorite feature
+=======
+from django.views.decorators.http import require_POST # used for favorite featurefrom django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from .models import University
+import json
+
+>>>>>>> 34dcc1552e074d7853c28955f2da22c8a5e41ec5
 # Used to catch an exception if GET tries to get a value that isn't defined.
 from django.utils.datastructures import MultiValueDictKeyError
 
@@ -206,6 +214,7 @@ class UniversityOverviewView(DetailView):
     # Use slug as the lookup field
     slug_field = 'slug'
     slug_url_kwarg = 'slug'
+    
 
     def get_object(self):
         slug = self.kwargs['slug']
@@ -213,13 +222,30 @@ class UniversityOverviewView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        university = self.get_object()
+
         if self.request.user.is_authenticated:
             context['is_favorite'] = Favorite.objects.filter(
                 user=self.request.user,
-                university=self.object
+                university=university
+            ).exists()
+
+            # Whether this user already submitted a review
+            context['user_review'] = UniversityReview.objects.filter(
+                username=self.request.user.username,
+                university=university
             ).exists()
         else:
             context['is_favorite'] = False
+
+        # ✅ Add this line to include latest posts
+        context['latest_post_list'] = UniversityReview.objects.filter(
+            university=university
+        ).order_by('-pub_date')
+
+        context['primary_color'] = university.primary_color if university.primary_color else '#ffffff'
+        context['secondary_color'] = university.secondary_color if university.secondary_color else '#ffffff'
+        
         return context
         
         #JUMP
@@ -675,9 +701,14 @@ class MajorOverviewView(DetailView):
 
 class CalcView(View):
     def get(self, request):
-        # TODO(jpreuss) Pass the json back to the frontend to prepopulate
-        #               the already filled data.
-        return render(request, 'calc/calc_page.html') 
+        saved_calcs = {}
+        if request.user.is_authenticated:
+            request.user.refresh_from_db()  # Make sure we get the latest data
+            saved_calcs = request.user.savedCalcs
+
+        return render(request, 'calc/calc_page.html', {
+            'saved_calcs': saved_calcs
+        })
 
 
 # LeaveMajorReview View - Exclusive for leaving reviews for a major at a specific school
@@ -728,9 +759,6 @@ class UniversityRequestView(View):
             messages.error(request, 'Please enter your request.')
             return render(request, 'search/universityRequest.html')
     
-from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
-from .models import University
 
 @csrf_exempt
 def university_search(request):
@@ -753,6 +781,171 @@ def university_search(request):
         })
 
     return JsonResponse(data)
+
+def calc_list(request):
+    if not request.user.is_authenticated:
+        # 401 - Unauthorized
+        # https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/401
+        return HttpResponse("Error - You must be logged in", status=401)
+    
+    user = request.user
+
+
+    query = request.GET.get('query')
+
+    if not query:
+        return HttpResponse("Error - No query provided", status=400)
+
+    # lower the query so that the filtering can be case insensitive
+    query = query.lower()
+
+    # dict_you_want = {key: old_dict[key] for key in your_keys}
+
+    # # Returns the values of the calculators matching the filtered_keys
+    # filtered_keys = ["Calculator 1", "Calculator 2"]
+    # calculators = {key: user.savedCalcs[key] for key in filtered_keys}
+    # 
+    # # Might be useful later
+
+    # >>> lst = ['a', 'ab', 'abc', 'bac']
+    # >>> [k for k in lst if 'ab' in k]
+    # ['ab', 'abc']
+
+
+    # Grab the saved calculators from the user:
+    savedCalcs = list(user.savedCalcs.keys())
+    # This converts a dict_keys to a list of strings
+
+
+    # Filter by the given query:
+    applicableKeys = [key for key in savedCalcs if query in key]
+
+    data = {"calculators" : []}
+
+    # Create a dictionary of the mix-case names to their corresponding keys
+    for key in applicableKeys:
+        data['calculators'].append(
+            user.savedCalcs[key]
+        )
+
+    print(data)
+
+    # Return the data
+
+    # Example return data:
+    #
+    #   {'calculators'  :   [
+    #       {
+    #           'calcName'  :   'UofSC',
+    #           'uni'       :   'UofSC',
+    #           'outstate'  :    False,
+    #           'dept'      :   'Engineering and Technology',
+    #           'major'     :   'CIS',
+    #           'aid'       :   'Palmetto Fellows'
+    #       },
+    #       {
+    #           'calcName'  :   'Custom Name',
+    #            ...
+    #       },
+    #       ...
+    #   ]}
+    #
+
+    return JsonResponse(data)
+
+def save_calc(request):
+    if not request.user.is_authenticated:
+        return HttpResponse("Error - You must be logged in", status=403) # 403 Forbidden
+
+    user = request.user
+
+    if request.method == 'DELETE':
+        # Expected Data
+        #
+        # { 'calcname' : { True } } // key is the name of the calculator but in lowercase
+        # 
+        # // The value in the json is not important, just the key is used to delete the calculator
+        
+        try:
+            data = json.loads(request.body.decode())
+            key = list(data.keys())[0].lower()
+
+            if key in user.savedCalcs:
+                del user.savedCalcs[key]
+                user.save()
+                return HttpResponse("Deleted", status=204) # No Content, preferred for deletions
+            else: 
+                return HttpResponse("Key not found", status=404)
+
+        except Exception as e:
+            return HttpResponseBadRequest("Invalid delete request: " + str(e))
+
+    if request.method == 'POST':
+        # Expected Data
+        # { 'calcname'      : {      // key is the name of the calculator but in lowercase
+        #        'calcName'      :   'testCalc',
+        #        'uni'           :   'exampleUni',
+        #        'oustate'       :    False,
+        #        'dept'          :   'Humanities and Social Sciences',
+        #        'major'         :   'exampleMajor',
+        #        'aid'           :   'exampleAid',
+        #    }
+        # }
+
+
+        try:
+            data = json.loads(request.body.decode())
+            key = list(data.keys())[0].lower() # The view "politely" corrects the key to be lowercase
+            value = data[key]
+
+            # Validate value
+            if not isinstance(value, dict):
+                return HttpResponseBadRequest("Invalid value format. Expected a dictionary.")
+            
+            # Validate required fields in the value dictionary
+            required_fields = ['calcName', 'uni', 'outstate', 'dept', 'major', 'aid']
+            for field in required_fields:
+                if field not in value:
+                    return HttpResponseBadRequest(f"Missing required field: {field}")
+
+            # Validate that all fields are strings or booleans as appropriate
+            for field in required_fields:
+                if field == 'outstate':
+                    if not isinstance(value[field], bool):
+                        return HttpResponseBadRequest(f"Field '{field}' must be a boolean.")
+                elif field == 'aid':
+                    if not isinstance(value[field], (str, int)):
+                        return HttpResponseBadRequest(f"Field '{field}' must be a string or an integer.")
+                else:
+                    if not isinstance(value[field], str):
+                        return HttpResponseBadRequest(f"Field '{field}' must be a string.")
+
+            # Save or update the calculator
+            user.savedCalcs[key] = value
+            user.save()
+            return HttpResponse("Saved", status=201) # Created, preferred for new resources
+
+        except Exception as e:
+            return HttpResponseBadRequest("Error saving calculator: " + str(e))
+
+
+    # The method was neither delete nor post, respond with 405 and an allow header with the list
+    # of the supported methods
+
+    # (mozilla wants us to do this apparently)
+    # https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Allow
+
+    allowed_methods = "POST, DELETE"
+
+    # return an http response with a 405 status code and the allowed methods in the header
+    response = HttpResponse("Method Not Allowed", status=405)
+
+    # Add the values in the allowed methods to the header
+    response['Allow'] = allowed_methods
+   
+    return response
+
+
 
 def aid_list(request):
     uniQuery = request.GET.get('university')
@@ -809,11 +1002,6 @@ def calculate(request):
     outstate = request.GET.get('outstate')
     aid_name = request.GET.get('aid')
 
-    print(aid_name)
-    print(aid_name == "None")
-    print( aid_name is None )
-    print( aid_name is None or aid_name == "None" or aid_name == "null")
-
     if not university_name:
         return HttpResponse("Error - No university provided.", status=400)
 
@@ -841,12 +1029,16 @@ def calculate(request):
     aid = 0
     aidObj = None
 
-    if aid_name and (not (aid_name == "" or aid_name == "None" or aid_name == "null")):
-        aidObj = FinancialAid.objects.filter(name=aid_name).first()
-        if not aidObj:
-            return HttpResponse("Error - Financial Aid not found.", status=404)
-        
-        aid = aidObj.amount
+    if aid_name and aid_name not in ["", "None", "null"]:
+        # Try to convert to int (custom aid), else treat as aid name
+        try:
+            aid = int(aid_name)
+        except ValueError:
+            aidObj = FinancialAid.objects.filter(name=aid_name).first()
+            if not aidObj:
+                return HttpResponse("Error - Financial Aid not found.", status=404)
+            aid = aidObj.amount
+
     
 
 
@@ -877,10 +1069,12 @@ def calculate(request):
             "baseMaxTui": major.in_state_max_tuition if not outstate else major.out_of_state_max_tuition,
             "fees": major.fees
         },
-        "aid" : {} if aid_name is None or aid_name == "null" or aid_name == "None" else {
-            "name" : aidObj.name,
-            "amount" : aidObj.amount,
-        },
+        "aid": (
+            {} if aid_name in ["", "None", "null", None]
+            else {"name": aidObj.name, "amount": aidObj.amount} if aidObj
+            else {"name": f"Custom Aid (${aid})", "amount": aid}
+        ),
+
     }
 
     return JsonResponse(data)

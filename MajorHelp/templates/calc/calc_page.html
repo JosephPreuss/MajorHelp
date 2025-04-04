@@ -1,4 +1,4 @@
-{% extends 'MajorHelp/HomePage.html' %}
+{% extends 'base.html' %}
 {% load static %}
 
 {% block title %}Tuition Calculator{% endblock %}
@@ -6,6 +6,7 @@
 {% block stylesheet %}
 <link rel="stylesheet" href="{% static 'css/calc/calc.css' %}">
 {% endblock stylesheet %}
+
 
 {% block script %}
 <script src="{% static 'js/calc/calc.js' %}"></script>
@@ -25,6 +26,9 @@
         </div>
         <br>
         <span class="fake-link" onclick="newCalc()">New Calculator</span>
+        &nbsp;&nbsp;
+        <input type="text" id="loadCalc" class="loadCalc" placeholder="Load Calculator">
+        <div id="loadResults" class="loadResults"></div>
     </div>
 
     {% else %}
@@ -36,7 +40,9 @@
     </div>
     {% endif %}
 </div>
-
+{% if user.is_authenticated %}
+{{ saved_calcs|json_script:"saved-calcs-data" }}
+{% endif %}
 <div id="calculators">
     {% comment %}
         Write 
@@ -50,6 +56,9 @@
     {% include 'calc/calc_template.html' with num="0" %}
 
 </div>
+
+<!-- Calculator status notification -->
+<div id="notification" class="notification" style="display: none;"></div>
 
 <!-- Master copies are hidden -->
 <div id="calculator-master-panel-container" class="master-template" style="display: none;">

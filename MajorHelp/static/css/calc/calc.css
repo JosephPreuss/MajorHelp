@@ -6,6 +6,34 @@
 	color: white;
 }
 
+.notification {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #4caf50; /* Green for success */
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    font-size: 16px;
+    text-align: center;
+    animation: fadeOut 0.5s ease-in-out 3s forwards; /* Auto-hide after 3 seconds */
+}
+
+.notification.error {
+    background-color: #f44336; /* Red for error */
+    color: white;
+}
+
+@keyframes fadeOut {
+    to {
+        opacity: 0;
+        visibility: hidden;
+    }
+}
+
 #calc-panel {
     padding : 10px;
 }
