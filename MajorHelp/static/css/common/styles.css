@@ -1,4 +1,10 @@
 /* Navbar styling */
+
+body, html {
+    height: auto;
+    overflow-y: auto;
+}
+
 nav {
     background-color: #ffffff;
     padding: 10px;

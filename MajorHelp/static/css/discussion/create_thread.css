@@ -1,0 +1,52 @@
+.create-thread-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 60px 20px;
+    min-height: 70vh;
+    background-color: #f4f4f4;
+}
+
+.create-thread-box {
+    background-color: white;
+    padding: 30px 40px;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 600px;
+}
+
+.create-thread-box h2 {
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.create-thread-box form p {
+    margin-bottom: 15px;
+}
+
+.create-thread-box input,
+.create-thread-box textarea,
+.create-thread-box select {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    box-sizing: border-box;
+}
+
+.submit-thread-button {
+    margin-top: 10px;
+    padding: 10px 20px;
+    background-color: #3bc2c4;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.submit-thread-button:hover {
+    background-color: #2da2a3;
+}

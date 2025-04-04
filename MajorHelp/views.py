@@ -23,6 +23,7 @@ from django.shortcuts import render
 from django.utils.decorators import method_decorator
 from django.contrib.auth import get_user_model
 import re
+from django.views.decorators.csrf import csrf_exempt
 from django.db.models import F, Value
 from django.db.models.functions import Cast
 from django.db.models import Min
@@ -42,15 +43,153 @@ from django.urls import reverse
 from django.core.signing import TimestampSigner, BadSignature, SignatureExpired
 from .forms import CustomUserCreationForm
 from django.contrib.auth import get_user_model
-from django.views.decorators.http import require_POST # used for favorite featurefrom django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
-from .models import University
-import json
+from .discussion_models import DiscussionCategory, DiscussionThread, ThreadReply
+from django.shortcuts import render, get_object_or_404, redirect
+from .forms import NewThreadForm
+from .forms import ThreadReplyForm  
+from django.shortcuts import get_object_or_404, redirect
 
+from django.views.decorators.http import require_POST # used for favorite feature
 # Used to catch an exception if GET tries to get a value that isn't defined.
 from django.utils.datastructures import MultiValueDictKeyError
 
+# views.py
+@login_required
+def major_chat(request):
+    return render(request, 'majorchat/chat.html')
 
+class MyThreadsView(LoginRequiredMixin, View):
+    def get(self, request):
+        threads = DiscussionThread.objects.filter(author=request.user).order_by('-created_at')
+        categories = DiscussionCategory.objects.all()
+        return render(request, 'discussion/discussion_board.html', {
+            'threads': threads,
+            'all_categories': categories,
+            'my_threads': True
+        })
+
+@login_required
+def my_discussions(request):
+    threads = DiscussionThread.objects.filter(author=request.user).order_by('-created_at')
+    categories = DiscussionCategory.objects.all()
+    return render(request, 'discussion/discussion_board.html', {
+        'threads': threads,
+        'categories': categories
+    })
+
+@login_required
+def delete_thread(request, pk):
+    thread = get_object_or_404(DiscussionThread, pk=pk)
+    if thread.author == request.user:
+        thread.delete()
+        messages.success(request, "Thread deleted.")
+    else:
+        messages.error(request, "You are not allowed to delete this thread.")
+    return redirect('MajorHelp:discussion_board')
+
+@login_required
+def delete_reply(request, pk):
+    reply = get_object_or_404(ThreadReply, pk=pk)
+    if reply.author == request.user:
+        thread_pk = reply.thread.pk
+        reply.delete()
+        messages.success(request, "Reply deleted.")
+        return redirect('MajorHelp:discussion_detail', pk=thread_pk)
+    else:
+        messages.error(request, "You are not allowed to delete this reply.")
+        return redirect('MajorHelp:discussion_board')
+
+@login_required
+def create_thread(request):
+    if request.method == 'POST':
+        form = NewThreadForm(request.POST)
+        if form.is_valid():
+            thread = form.save(commit=False)
+            thread.author = request.user
+            thread.save()
+            return redirect('MajorHelp:discussion_board')
+    else:
+        form = NewThreadForm()
+    
+    return render(request, 'discussion/create_thread.html', {'form': form})
+
+@login_required
+def discussion_detail(request, pk):
+    thread = get_object_or_404(DiscussionThread, pk=pk)
+    replies = thread.replies.all().order_by('created_at')
+
+    if request.method == "POST":
+        content = request.POST.get('content')
+        if content:
+            ThreadReply.objects.create(
+                thread=thread,
+                content=content,
+                author=request.user,
+                created_at=timezone.now()
+            )
+            return redirect('MajorHelp:discussion_detail', pk=thread.pk)
+
+    return render(request, 'discussion/discussion_detail.html', {
+        'thread': thread,
+        'replies': replies
+    })
+
+@method_decorator(login_required, name='dispatch')
+class DiscussionCategoryListView(View):
+    def get(self, request):
+        categories = DiscussionCategory.objects.all()
+        return render(request, 'discussion/category_list.html', {'categories': categories})
+
+
+@method_decorator(login_required, name='dispatch')
+class DiscussionThreadListView(View):
+    def get(self, request, category_id):
+        category = get_object_or_404(DiscussionCategory, id=category_id)
+        threads = DiscussionThread.objects.filter(category=category).order_by('-created_at')
+        return render(request, 'discussion/thread_list.html', {
+            'category': category,
+            'threads': threads
+        })
+
+
+@method_decorator(login_required, name='dispatch')
+class DiscussionThreadDetailView(View):
+    def get(self, request, pk):
+        thread = get_object_or_404(DiscussionThread, pk=pk)
+        replies = thread.replies.all().order_by('created_at')
+        form = ThreadReplyForm()
+        return render(request, 'discussion/thread_detail.html', {
+            'thread': thread,
+            'replies': replies,
+            'form': form
+        })
+
+    def post(self, request, pk):
+        thread = get_object_or_404(DiscussionThread, pk=pk)
+        form = ThreadReplyForm(request.POST)
+        if form.is_valid():
+            reply = form.save(commit=False)
+            reply.thread = thread
+            reply.author = request.user
+            reply.save()
+            return redirect('MajorHelp:discussion_detail', pk=thread.pk)
+
+        replies = thread.replies.all().order_by('created_at')
+        return render(request, 'discussion/thread_detail.html', {
+            'thread': thread,
+            'replies': replies,
+            'form': form
+        })
+
+@login_required
+def discussion_board(request):
+    category_id = request.GET.get('category')
+    threads = DiscussionThread.objects.select_related('author', 'category').order_by('-created_at')
+
+    if category_id:
+        threads = threads.filter(category_id=category_id)
+
+    return render(request, 'discussion/discussion_board.html', {'threads': threads})
 
 def settings_view(request):
     return render(request, 'settings.html')  # Make sure you have a 'settings.html' template, or adjust accordingly
@@ -932,6 +1071,7 @@ def calculate(request):
     }
 
     return JsonResponse(data)
+
 # favorite feature views for universities and majors 
 @require_POST
 @login_required

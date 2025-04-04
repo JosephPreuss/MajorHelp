@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block title %}Start a New Discussion{% endblock %}
+
+{% block content %}
+<div class="create-thread-container">
+    <div class="create-thread-box">
+        <h2>Start a New Thread</h2>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="submit-thread-button">Post</button>
+        </form>
+    </div>
+</div>
+{% endblock %}
