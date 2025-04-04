@@ -1,0 +1,61 @@
+<!-- Calculator {{num|default:''}}-->
+<div id="calculator-{{num|default:''}}" class="calculator">
+    <div id="input-{{num|default:''}}" class="input content-box">
+        <h2>Start by choosing your <span class="color-text">school</span>.</h2>
+        <input type="text" id="uni-search-{{num|default:''}}" class="uni-search" placeholder="Enter your university">
+        <div id="uni-results-{{num|default:''}}" class="uni-results search-results"></div>
+        <h3 id="uni-box-{{num|default:''}}" class="uni-box">You have selected <span id="uni-name-{{num|default:''}}" class="uni-name color-text">Nothing</span>.</h3>
+        <input type="checkbox" id="outstate-{{num|default:''}}" class="outstate"> Out-of-State (Select aid again to update)
+
+        <h2>Select your <span class="color-text">department</span>.</h2>
+        <select id="dept-dropdown-{{num|default:''}}" class="dept-dropdown">
+            <option value="" disabled selected>Select a Department</option>
+        </select>
+        
+        <h2>Now choose your <span class="color-text">major</span>.</h2>
+        <div id="major-results-{{num|default:''}}" class="major-results search-results"></div>
+        <h3 id="major-box-{{num|default:''}}" class="major-box">You have selected <span id="major-name-{{num|default:''}}" class="major-name color-text">Nothing</span>.</h3>
+
+        <div id="input-aid-{{num|default:''}}" class="input-aid">
+            <h2>Do any of these apply to <span class="color-text">you</span>?</h2>
+            <div id="aid-results-{{num|default:''}}" class="aid-results search-results">
+                <!-- To be filled by JS -->
+            </div>
+            <h3 id="aid-box-{{num|default:''}}" class="aid-box aid-results">You have selected <span id="aid-name-{{num|default:''}}" class="aid-name color-text">Nothing</span>.</h3>
+        </div>
+    </div>
+
+    <div id="output-{{num|default:''}}" class="output content-box">
+        <h3 id="summary-{{num|default:''}}" class="summary">XXXX • XXX • XXXXXXX</h3>
+        <h2>Estimated <span class="color-text">Total</span></h2>
+        <h1 id="total-{{num|default:''}}" class="total">$XX,XXX - $XX,XXX</h1>
+
+
+        <h3>University Related Costs</h3>
+        <b><span id="uni-name-output-{{num|default:''}}" class="uni-name-output color-text">XXXXXXXXX</span></b>
+        <ul class="outputList">
+            <li>Base Tuition <span id="uni-tuition-{{num|default:''}}" class="uni-tuition">$X,XXX - $X,XXX</span></li>
+            <li>Fees <span id="uni-fees-{{num|default:''}}" class="uni-fees">$X,XXX</span></li>
+        </ul>
+
+        <h3>Major Related Costs</h3>
+        <b><span id="major-name-output-{{num|default:''}}" class="major-name-output color-text">XXXXXXXXXXXX</span></b>
+        <ul class="outputList">
+            <li>Base Tuition <span id="major-tuition-{{num|default:''}}" class="major-tuition">$X,XXX - $X,XXX</span></li>
+            <li>Fees <span id="major-fees-{{num|default:''}}" class="major-fees">$X,XXX</span></li>
+        </ul>
+
+        <div id="aid-output-{{num|default:''}}" class="aid-output">
+            <h3>Financial Aid</h3>
+            <b><span id="aid-name-output-{{num|default:''}}" class="aid-name-output color-text">XXXXXXXXX</span></b>
+            <ul class="outputList">
+                <li>Scholarship Reward <span id="aid-amount-{{num|default:''}}" class="aid-amount">- $X,XXX</span></li>
+            </ul>
+        </div>
+
+        <h3>Estimated <span class="color-text">Total</span></h3>
+        <h2 id="total-bottom-{{num|default:''}}" class="total-bottom">$XX,XXX - $XX,XXX</h2>
+
+        <h4 id="summary-bottom-{{num|default:''}}" class="summary-bottom">XXXX • XXX • XXXXXXX</h4>
+    </div>
+</div>

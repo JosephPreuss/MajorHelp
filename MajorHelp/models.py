@@ -11,6 +11,17 @@ from django.contrib.auth.models import User
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from pestopanini import settings
 
+
+class FinancialAid(models.Model):
+    name = models.CharField(max_length=256)
+    location = models.CharField(max_length=256)
+    amount = models.IntegerField(default=0)
+    
+    def __str__(self):
+        return self.name
+
+
+
 # Model for university
 class University(models.Model):
     name = models.TextField()
@@ -20,6 +31,8 @@ class University(models.Model):
     TotalUndergradStudents = models.IntegerField(default = 0)
     TotalGradStudents = models.IntegerField(default = 0)
     GraduationRate = models.DecimalField(default=0.0, max_digits=4, decimal_places=1)
+    primary_color = models.CharField(default="#268f95", max_length=7)
+    secondary_color = models.CharField(default="#FFFFFF", max_length=7)
 
     # Added for tuition calc
     in_state_base_min_tuition = models.IntegerField(
@@ -49,6 +62,8 @@ class University(models.Model):
 
     # Automatically populated slug
     slug = models.SlugField(default="", editable=False, null=False, unique=True)
+
+    applicableAids = models.ManyToManyField(FinancialAid, related_name="university", blank=True)
 
     def save(self, *args, **kwargs):
         if not self.slug:  # Only generate slug if it's not already set
@@ -253,16 +268,6 @@ class MajorReview(models.Model):
     def __str__(self):
         return f"{self.user.username}: {self.review_text}"
 
-
-class FinancialAid(models.Model):
-    name = models.CharField(max_length=256)
-    location = models.CharField(max_length=256)
-    amount = models.IntegerField(default=0)
-    
-    def __str__(self):
-        return self.name
-
-
 # Custom User Manager
 class CustomUserManager(BaseUserManager):
     def create_user(self, username, password=None, **extra_fields):
@@ -300,7 +305,23 @@ class CustomUser(AbstractUser):
     REQUIRED_FIELDS = ['email']  # Require email during user creation
     
     objects = CustomUserManager()
-    
+
+
+    savedCalcs = models.JSONField(default=dict) # passing a callable nstead of {} to make sure everyone gets a independent json
+
+    # Format
+
+    # {
+    #     "calculator 0" : { # the identifier should have no caps
+    #         "calcName": "Calculator 0",
+    #         "uni": "",
+    #         "outstate": false,
+    #         "dept": "",
+    #         "major": "",
+    #         "aid": ""
+    #     },
+    # }
+
     def __str__(self):
         return self.username
     
@@ -312,3 +333,19 @@ class UniversityRequest(models.Model):
 
     def __str__(self):
         return f"Request by {self.user.username if self.user else 'Anonymous'} on {self.submitted_at.strftime('%Y-%m-%d %H:%M:%S')}"
+
+# Model for the favorite feature
+class Favorite(models.Model):
+    user = models.ForeignKey(CustomUser,on_delete=models.CASCADE)
+    university = models.ForeignKey(University,on_delete=models.CASCADE, null=True, blank = True)
+    major = models.ForeignKey(Major, on_delete=models.CASCADE, null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+class Meta:
+    unique_together = [('user', 'university'), ('user', 'major')]  # Prevent duplicates
+
+def __str__(self):
+        if self.university:
+            return f"{self.user.username} favorited {self.university.name}"
+        else:
+            return f"{self.user.username} favorited {self.major.major_name} at {self.major.university.name}"

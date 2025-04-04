@@ -3,25 +3,27 @@
 /* General Styles */
 body {
     padding-bottom: 50px; 
-    background-color: #4ec7cf;
     min-height: 100vh; 
     height: auto;
     display: flex;
     flex-direction: column;
+    background-color: var(--pc) !important;
 }
 
 h1 {
     text-align: center;
     font-size: 3.5rem;
-    color: #004080; /* Navy blue */
-    margin-top: 25px;
+    color: var(--sc) !important; 
+    margin-top: 25px; 
     margin-bottom: 5px;
-}
+    padding: 0 150px;
+}  
+
 
 h2 {
     text-align: center;
     font-size: 2rem;
-    color: #666;
+    color: var(--sc) !important;
     margin-top: 0;
     margin-bottom: 10px;
 }
@@ -382,4 +384,53 @@ a:hover {
 
 .back-button:hover {
     background-color: #f0f0f0;
+}
+
+/* favorite-button styling */
+.favorite-btn {
+    background-color: #fff;
+    border: 1px solid #ccc;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    color: #000;
+    border-radius: 5px;
+    position: absolute;
+    top: 120px;
+    right: 40px;
+}
+
+.favorite-btn:hover {
+    background-color: #f0f0f0;
+    border-color:#f0f0f0;
+}
+
+.favorite-btn.favorited {
+    background-color: #ffd700;
+    color: #000;
+    border-color: #ffd700;
+}
+
+/* Login link styling */
+.login-link {
+    position: absolute;
+    top: 170px; /* Positioned below the favorite button */
+    right: 40px;
+    margin: 0;
+    font-size: 14px;
+    color: #333;
+    text-align: right;
+}
+
+.login-link a {
+    color: #004080;
+    text-decoration: none;
+}
+
+.login-link a:hover {
+    text-decoration: underline;
+}
+
+.filter-header .highlight-the {
+    color: #4fc7cf;
 }

@@ -15,6 +15,7 @@
     <link rel="stylesheet" href="{% static 'css/settings/settings.css' %}">
     <link rel="stylesheet" href="{% static 'css/email/email.css' %}">
 
+
     {% block stylesheet %}
     <link rel="stylesheet" href="{% static 'css/common/styles.css' %}">
     {% endblock %}
@@ -30,6 +31,9 @@
     <div class="content">
         {% block content %}{% endblock content %}
     </div>
+
+    <!--  Prevents the footer from covering content.  -->
+    <div style="height: 50px;padding: 20px 0;"></div>
     
     <footer class="footer">
         <p>&copy; 2024 MajorHelp. All rights reserved.</p>

@@ -10,7 +10,7 @@ from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 
-class TestSearchwithnothing():
+class TestSubmitUniversityRequest():
   def setup_method(self, method):
     self.driver = webdriver.Firefox()
     self.vars = {}
@@ -18,13 +18,17 @@ class TestSearchwithnothing():
   def teardown_method(self, method):
     self.driver.quit()
   
-  def test_searchwithnothing(self):
+  def test_submitUniversityRequest(self):
     self.driver.get("http://127.0.0.1:8000/")
-    time.sleep(2)
     self.driver.find_element(By.LINK_TEXT, "Search").click()
-    time.sleep(2)
+    self.driver.find_element(By.ID, "filter-dropdown").click()
+    dropdown = self.driver.find_element(By.ID, "filter-dropdown")
+    dropdown.find_element(By.XPATH, "//option[. = 'School']").click()
+    self.driver.find_element(By.ID, "school-option").click()
+    self.driver.find_element(By.ID, "search-query").click()
+    self.driver.find_element(By.ID, "search-query").send_keys("DoesNotExistU")
     self.driver.find_element(By.CSS_SELECTOR, "button").click()
-    time.sleep(2)
-    elements = self.driver.find_elements(By.CSS_SELECTOR, ".search-container > .filter-label")
-    assert len(elements) > 0
+    self.driver.find_element(By.LINK_TEXT, "Request University").click()
+    self.driver.find_element(By.ID, "request_text").click()
+    self.driver.find_element(By.ID, "request_text").send_keys("DoesNotExistU")
   

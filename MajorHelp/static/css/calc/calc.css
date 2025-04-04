@@ -1,0 +1,224 @@
+/* Extend css changes from the main stylesheet */
+@import url("/static/css/common/styles.css");
+
+#title {
+	margin-left: 5vh;
+	color: white;
+}
+
+.notification {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #4caf50; /* Green for success */
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    font-size: 16px;
+    text-align: center;
+    animation: fadeOut 0.5s ease-in-out 3s forwards; /* Auto-hide after 3 seconds */
+}
+
+.notification.error {
+    background-color: #f44336; /* Red for error */
+    color: white;
+}
+
+@keyframes fadeOut {
+    to {
+        opacity: 0;
+        visibility: hidden;
+    }
+}
+
+#calc-panel {
+    padding : 10px;
+}
+
+.calc-actions span,
+.fake-link {
+    /* rules for a tags */
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    text-decoration: none;
+    list-style: none;
+
+    text-decoration: underline;
+}
+
+.calc-actions span:hover,
+.fake-link:hover {
+    cursor: pointer;
+}
+
+
+/* Style the container as a table-like structure */
+#calc-table {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    border: 1px solid #ccc; /* Optional: table-like border */
+}
+  
+  /* Each entry is a row */
+.calc-entry {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #ccc; /* Row separator */
+}
+  
+  /* Columns within each row */
+.calc-entry span {
+    flex: 1; /* Equal width for all columns */
+    text-align: left;
+    padding: 0 5px;
+}
+  
+  /* Specific styling for each column */
+.calc-name {
+    font-weight: bold;
+}
+  
+.calc-details {
+    color: #555;
+}
+
+.calc-details span {
+    padding: 0px;
+}
+
+/* Makes sure that these elements are separated by a dot
+   the ":not(:first-child)" prevents a leading dot */
+.calc-details span:not(:first-child):before{
+    content:" • ";
+}
+  
+.calc-actions {
+    text-align: right;
+}
+  
+  /* Right-align the "Hide" link */
+.right-align {
+    float: right;
+    cursor: pointer;
+}
+
+.content-box {
+    max-width: 900px; 
+    background-color: #fff; /* White background for the content box */
+    padding: 20px; 
+    margin: 0 auto; 
+    margin-top: 20px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1); 
+    border-radius: 10px;  
+}
+
+.color-text {
+    color : #4fc7cf;
+}
+
+.calculator {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.input {
+    flex: 1;
+    max-width: 55%;
+}
+
+.uni-box {
+    visibility : hidden;
+}
+
+.major-box {
+    visibility : hidden;
+}
+
+.error {
+    display : none;  /* to be overriden by js*/
+    color : #ff0047;
+}
+
+.output {
+    flex: 1;
+    max-width: 40%;
+    display: none;
+}
+
+
+/*  Will likely be used later
+.outputList {
+
+}
+*/
+
+/* commented out but kept in case we want to css the text to the left
+.itemizedResults {
+    
+}
+*/
+
+
+.input-aid {
+    display : none; /* to be overriden by js*/
+}
+
+
+/* 
+    This targets the spans contained in the list elements of every
+    unordered list of the class outputList. A bit of a mouthful but
+    this prevents each li/span from needing to be assigned a class.
+
+    This won't be as an issue if the li's are made via a template for
+    loop.
+
+    If need be, if you need to change this to be a class, I suggest the
+    name "itemizedNumber" and apply it to the span, as it controls the 
+    "$X,XXX" and places it to the right.
+*/
+.right-align,
+.outputList > li span {
+    float:right;
+    text-align: right;
+}
+
+.outputNote {
+    list-style: none;
+}
+
+.outputNote:before {
+    content: "(!)"
+}
+
+.aid-output {
+    display : none;
+}
+
+
+.result-item {
+    padding: 10px;
+    margin: 5px 0;
+    background-color: #f0f8ff;
+    border: 1px solid #008080;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    display: inline-block;
+}
+.result-item:hover {
+    background-color: #008080;
+    color: white;
+}
+
+.master-template {
+    display: none !important; /* Ensure it’s never visible */
+  }

@@ -61,8 +61,14 @@ urlpatterns = [
     
     # URLS for the Tuition Calculator
     path('calc/', CalcView.as_view(), name='calc'),
-    path('calc/info/', CalcInfo.as_view(), name='calcInfo'),
     path("api/university_search/", university_search, name="university_search"),
+    path("api/aid/", aid_list, name="aid_list"),
     path("api/majors/", major_list, name="major_list"),
-    path("api/major_info/", major_info, name="major_info"),
+    path("api/calculate/", calculate, name="calculate"),
+    path("api/calcs/", calc_list, name="calc_list"),
+    path("api/save_calc/", save_calc, name="save_calc"),
+
+    #URLS for favorite page
+    path('toggle-favorite/<str:object_type>/<int:object_id>/', views.toggle_favorite, name='toggle-favorite'),
+    path('favorites/', favorites_list, name='favorites-list'),
 ]

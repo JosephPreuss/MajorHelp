@@ -80,3 +80,21 @@
     background-color: #e63939;
 }
 
+
+ /* view favorite button styling didn't work so am using change-password-button class
+.view-favorites-button {
+    padding: 20px 40px; 
+    width: 200px; 
+    background-color: #4FC7CF;
+    color: #ffffff;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    font-weight: bold;
+    text-align: center; 
+    transition: background-color 0.3s ease;
+}
+.view-favorites-button:hover {
+    background-color: #3aa6b8;
+} 
+    */

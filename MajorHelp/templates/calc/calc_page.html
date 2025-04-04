@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Tuition Calculator{% endblock %}
+
+{% block stylesheet %}
+<link rel="stylesheet" href="{% static 'css/calc/calc.css' %}">
+{% endblock stylesheet %}
+
+
+{% block script %}
+<script src="{% static 'js/calc/calc.js' %}"></script>
+{% endblock script %}
+
+{% block content %}
+<div id="calc-panel" class="content-box">
+    {% if user.is_authenticated %}
+    <div id="panel-closed">
+        <p>Create, save, and load calculations here.   <span onclick="expandPanel()" class="right-align fake-link">Expand.</span></p>
+    </div>
+    <div id="panel-open" style="display: none;">
+        <p>Create, save, and load calculations here.   <span onclick="hidePanel()" class="right-align fake-link">Hide.</span></p>
+        <br>
+        <div id="calc-table">
+            {% include 'calc/calc_panel.html' with num="0" %}
+        </div>
+        <br>
+        <span class="fake-link" onclick="newCalc()">New Calculator</span>
+        &nbsp;&nbsp;
+        <input type="text" id="loadCalc" class="loadCalc" placeholder="Load Calculator">
+        <div id="loadResults" class="loadResults"></div>
+    </div>
+
+    {% else %}
+    <div style="text-align: center;">
+        <a href="{% url 'MajorHelp:login' %}">Log In</a> or <a href="{% url 'MajorHelp:signup' %}">Sign Up</a>
+        to compare and save your calculations.
+        <br>
+        <span class="fake-link" onclick="dismiss()">Dismiss.</span>
+    </div>
+    {% endif %}
+</div>
+{% if user.is_authenticated %}
+{{ saved_calcs|json_script:"saved-calcs-data" }}
+{% endif %}
+<div id="calculators">
+    {% comment %}
+        Write 
+
+        {% include 'calc/calc_template.html' with num="INT" %}
+
+        The quotes are mandatory, as if you don't include them, 0 will be treated
+        as a falsey value and will not be substituted.
+    {% endcomment %}
+
+    {% include 'calc/calc_template.html' with num="0" %}
+
+</div>
+
+<!-- Calculator status notification -->
+<div id="notification" class="notification" style="display: none;"></div>
+
+<!-- Master copies are hidden -->
+<div id="calculator-master-panel-container" class="master-template" style="display: none;">
+{% include 'calc/calc_panel.html' %}
+</div>
+<div id="calculator-master-container" class="master-template" style="display: none;">
+    {% include 'calc/calc_template.html' %}
+</div>
+
+
+
+{% endblock content %}

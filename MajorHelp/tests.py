@@ -13,19 +13,69 @@ from .models import *
 
 # Create your tests here.
 
-class CalcTests(TestCase):
-    @classmethod
-    def setUpTestData(cls):
-        exampleUni = University.objects.create(name="exampleUni")
-        Major.objects.create(major_name="exampleMajor", slug="exampleMajor", university=exampleUni)
-
+class RequestTests(TestCase):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        self.url = reverse("MajorHelp:calc")
-        self.infoUrl = reverse("MajorHelp:calcInfo")
-        self.DNE = "DOESNOTEXIST"
+        self.url = reverse("MajorHelp:university-request")
 
+    def testUniversityRequestViewGET(self):
+        response = self.client.get(self.url)
+
+        # check status code
+        self.assertEqual(response.status_code, 200)
+
+        self.assertEqual(response['content-type'], 'text/html; charset=utf-8')
+
+    def testUniversityRequestViewPOST(self):
+        name = "testUni"
+
+        post = self.client.post(self.url, {'request_text': name})
+
+        self.assertEqual(post.status_code, 302)
+
+        # Assert that a request was put into the database
+        
+        self.assertTrue(UniversityRequest.objects.filter(request_text=name).exists())
+        
+
+
+
+class CalcTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = get_user_model().objects.create_user(username='testuser', password='password', email="email@example.com")
+        exampleAid = FinancialAid.objects.create(name="exampleAid") 
+        exampleUni = University.objects.create(name="exampleUni")
+
+        exampleUni.applicableAids.add(exampleAid)
+
+        Major.objects.create(
+            major_name="exampleMajor", slug="exampleMajor", university=exampleUni,
+            department='Humanities and Social Sciences'
+        )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.url = reverse("MajorHelp:calc")
+        self.uni = reverse("MajorHelp:university_search")
+        self.maj = reverse("MajorHelp:major_list")
+        self.aid = reverse("MajorHelp:aid_list")
+        self.cal = reverse("MajorHelp:calculate")
+        self.sav = reverse("MajorHelp:save_calc")
+
+        self.calcJson = {
+            'calcname'      : {
+                'calcName'      :   'testCalc',
+                'uni'           :   'exampleUni',
+                'outstate'       :   False,
+                'dept'          :   'Humanities and Social Sciences',
+                'major'         :   'exampleMajor',
+                'aid'           :   'exampleAid',
+            }
+        }
+
+    # ========================= Calc Page ====================================
 
     # A simple test to make sure that the server returns the proper html page
     # whenever /calc/ is accessed.
@@ -36,109 +86,508 @@ class CalcTests(TestCase):
         self.assertEqual(response.status_code, 200)
 
         self.assertEqual(response['content-type'], 'text/html; charset=utf-8')
-
-
-    # While /calc/info is meant for the frontend of the calculator to interface
-    # via a GET request, it is possible to do a GET request without submitting
-    # any data.. like accessing the url directly on your browser!
-    #
-    # To save the user some confusion, in the case where no GET data is
-    # provided, the backend should just redirect to /calc/
-    def testCalcInfoNoDataEntry(self):
-        # follow = True makes it so that the request will follow any change,
-        # ie a redirect
-        response = self.client.get(self.infoUrl, follow=True)
-
-        # This method also implicitly checks to see 
-        # if the final response is 200
-        self.assertRedirects(response, self.url)
-
-    def testCalcInfoFull(self):
-        getData = "?uni=exampleUni&outstate=true&dept=exampleDept&major=exampleMajor&aid="
-
-        response = self.client.get(self.infoUrl+getData)
-
-        # check status code
+    
+    def test_authenticated_user_sees_calc_panel(self):
+        self.client.login(username='testuser', password='password')
+        response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Create, save, and load calculations here.')
+
+    def test_unauthenticated_user_sees_login_prompt(self):
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Log In')
+        self.assertContains(response, 'Sign Up')
+
+    def test_panel_expand_and_collapse(self):
+        self.client.login(username='testuser', password='password')
+        response = self.client.get(self.url)
+        self.assertContains(response, 'Expand.')
+        self.assertContains(response, 'Hide.')
+
+    def test_new_calculator_creation(self):
+        self.client.login(username='testuser', password='password')
+        response = self.client.get(self.url)
+        self.assertContains(response, 'New Calculator')
+
+    def test_notification_hidden_by_default(self):
+        self.client.login(username='testuser', password='password')
+        response = self.client.get(self.url)
+        self.assertContains(response, 'id="notification"')
+        self.assertContains(response, 'style="display: none;"')
+
+    # ========================== Saving and Deleting ==========================
+
+    # Saves
+
+    def testSaveCalc(self):
+        self.client.login(username='testuser', password='password')
+
+        # CSRF cookies are automatically disabled in test cases,
+        # so they don't need to be included in the post request.
+        response = self.client.post(self.sav, json.dumps(self.calcJson), content_type='application/json')
+
+        # Assert that the server responded with a successful creation
+        self.assertEqual(response.status_code, 201)
+
+    def testSaveCalcNoData(self):
+        self.client.login(username='testuser', password='password')
+
+        response = self.client.post(self.sav)
+
+        # Assert that the server responded with a bad request
+        self.assertEqual(response.status_code, 400)
+
+    def testSaveCalcNotLoggedIn(self):
+        response = self.client.post(self.sav)
+
+        # Assert that the server responded with a bad request
+        self.assertEqual(response.status_code, 403)
+
+    def testSaveCalcInvalidData(self):
+        self.client.login(username='testuser', password='password')
+
+        # CSRF cookies are automatically disabled in test cases,
+        # so they don't need to be included in the post request.
+        response = self.client.post(self.sav, json.dumps({}), content_type='application/json')
+
+        # Assert that the server responded with a bad request
+        self.assertEqual(response.status_code, 400)
+
+    def testSaveCalcInvalidData2(self):
+        self.client.login(username='testuser', password='password')
+
+        # CSRF cookies are automatically disabled in test cases,
+        # so they don't need to be included in the post request.
+        response = self.client.post(self.sav, json.dumps({"calcname": 1}), content_type='application/json')
+
+        # Assert that the server responded with a bad request
+        self.assertEqual(response.status_code, 400)
+    
+    def testSaveCalcInvalidData3(self):
+        self.client.login(username='testuser', password='password')
+
+        # CSRF cookies are automatically disabled in test cases,
+        # so they don't need to be included in the post request.
+        response = self.client.post(self.sav, json.dumps(
+            {"calcname": {}}), content_type='application/json')
+
+        # Assert that the server responded with a bad request
+        self.assertEqual(response.status_code, 400)
+
+    def testSaveCalcInvalidData4(self):
+        self.client.login(username='testuser', password='password')
+
+        # CSRF cookies are automatically disabled in test cases,
+        # so they don't need to be included in the post request.
+        response = self.client.post(self.sav, json.dumps(
+            {"calcname": {
+                "calcName": 1
+            }}), content_type='application/json')
+
+        # Assert that the server responded with a bad request
+        self.assertEqual(response.status_code, 400)
+    
+    def testSaveCalcInvalidData5(self):
+        self.client.login(username='testuser', password='password')
+
+        # CSRF cookies are automatically disabled in test cases,
+        # so they don't need to be included in the post request.
+        response = self.client.post(self.sav, json.dumps({"calcname": {"calcName": "testCalc"}}), content_type='application/json')
+
+        # Assert that the server responded with a bad request
+        self.assertEqual(response.status_code, 400)
+
+    def testSaveCalcInvalidData6(self):
+        self.client.login(username='testuser', password='password')
+
+        # CSRF cookies are automatically disabled in test cases,
+        # so they don't need to be included in the post request.
+        response = self.client.post(self.sav, json.dumps(
+            {"calcname": {
+                "calcName": "testCalc",
+                "uni": 1
+            }}), content_type='application/json')
+
+        # Assert that the server responded with a bad request
+        self.assertEqual(response.status_code, 400)
+
+    def testSaveCalcInvalidData7(self):
+        self.client.login(username='testuser', password='password')
+
+        # CSRF cookies are automatically disabled in test cases,
+        # so they don't need to be included in the post request.
+        response = self.client.post(self.sav, json.dumps(
+            {"calcname": {
+                "calcName": "testCalc",
+                "uni": "exampleUni",
+                "outstate": 1
+            }}), content_type='application/json')
+
+        # Assert that the server responded with a bad request
+        self.assertEqual(response.status_code, 400)
+
+    def testSaveCalcInvalidData8(self):
+        self.client.login(username='testuser', password='password')
+
+        # CSRF cookies are automatically disabled in test cases,
+        # so they don't need to be included in the post request.
+        response = self.client.post(self.sav, json.dumps(
+            {"calcname": {
+                "calcName": "testCalc",
+                "uni": "exampleUni",
+                "outstate": False, 
+                "dept": 1
+            }}), content_type='application/json')
+
+        # Assert that the server responded with a bad request
+        self.assertEqual(response.status_code, 400)
+    
+    def testSaveCalcInvalidData9(self):
+        self.client.login(username='testuser', password='password')
+
+        # CSRF cookies are automatically disabled in test cases,
+        # so they don't need to be included in the post request.
+        response = self.client.post(self.sav, json.dumps(
+            {"calcname": {
+                "calcName": "testCalc",
+                "uni": "exampleUni",
+                "outstate": False,
+                "dept": "Humanities and Social Sciences",
+                "major": 1
+            }}), content_type='application/json')
+
+        # Assert that the server responded with a bad request
+        self.assertEqual(response.status_code, 400)
+    
+    def testSaveCalcInvalidData10(self):
+        self.client.login(username='testuser', password='password')
+
+        # CSRF cookies are automatically disabled in test cases,
+        # so they don't need to be included in the post request.
+        response = self.client.post(self.sav, json.dumps(
+            {"calcname": {
+                "calcName": "testCalc",
+                "uni": "exampleUni",
+                "outstate": False,
+                "dept": "Humanities and Social Sciences",
+                "major": "exampleMajor",
+                "aid": {}
+            }}), content_type='application/json')
+
+        # Assert that the server responded with a bad request
+        self.assertEqual(response.status_code, 400)
+
+    # Deletions
+
+    def testDeleteCalc(self):
+        self.client.login(username='testuser', password='password')
+
+        # first save the calc to the database
+        response1 = self.client.post(self.sav, json.dumps(self.calcJson), content_type='application/json')
+
+        self.assertEqual(response1.status_code, 201)
+
+        # then delete it
+        response2 = self.client.delete(self.sav, json.dumps({'calcname' : True }), content_type='application/json')
+
+        self.assertEqual(response2.status_code, 204)
+
+    def testDeleteCalcNoData(self):
+        self.client.login(username='testuser', password='password')
+
+        # first save the calc to the database
+        response1 = self.client.post(self.sav, json.dumps(self.calcJson), content_type='application/json')
+
+        self.assertEqual(response1.status_code, 201)
+
+        # then delete it
+        response2 = self.client.delete(self.sav)
+
+        self.assertEqual(response2.status_code, 400)
+
+    def testDeleteCalcNotLoggedIn(self):
+        self.client.login(username='testuser', password='password')
+
+        # first save the calc to the database
+        response1 = self.client.post(self.sav, json.dumps(self.calcJson), content_type='application/json')
+
+        self.assertEqual(response1.status_code, 201)
+
+        # Log out the user
+        self.client.logout()
+
+        # then delete it
+        response2 = self.client.delete(self.sav)
+
+        self.assertEqual(response2.status_code, 403)
+
+    def testDeleteCalcInvalidData(self):
+        self.client.login(username='testuser', password='password')
+
+        # first save the calc to the database
+        response1 = self.client.post(self.sav, json.dumps(self.calcJson), content_type='application/json')
+
+        self.assertEqual(response1.status_code, 201)
+
+        # then delete it
+        response2 = self.client.delete(self.sav, json.dumps({}), content_type='application/json')
+
+        # Assert that the server responded with a bad request
+        self.assertEqual(response2.status_code, 400)
+
+    # Other request methods
+    def testCalcGetRequest(self):
+        self.client.login(username='testuser', password='password')
+
+        response = self.client.get(self.sav)
+
+        # Assert that the server responded with a bad request
+        self.assertEqual(response.status_code, 405)
+
+        # Check that the server responded with an allow header specifying DELETE or POST
+        self.assertEqual(response['Allow'], 'POST, DELETE')
+
+    def testCalcPutRequest(self):
+        self.client.login(username='testuser', password='password')
+
+        response = self.client.put(self.sav)
+
+        # Assert that the server responded with a bad request
+        self.assertEqual(response.status_code, 405)
+
+        # Check that the server responded with an allow header specifying DELETE or POST
+        self.assertEqual(response['Allow'], 'POST, DELETE')
+    
+    def testCalcPatchRequest(self):
+        self.client.login(username='testuser', password='password')
+
+        response = self.client.patch(self.sav)
+
+        # Assert that the server responded with a bad request
+        self.assertEqual(response.status_code, 405)
+
+        # Check that the server responded with an allow header specifying DELETE or POST
+        self.assertEqual(response['Allow'], 'POST, DELETE')
+    
+    def testCalcOptionsRequest(self):
+        self.client.login(username='testuser', password='password')
+
+        response = self.client.options(self.sav)
+
+        # Assert that the server responded with a bad request
+        self.assertEqual(response.status_code, 405)
+
+        # Check that the server responded with an allow header specifying DELETE or POST
+        self.assertEqual(response['Allow'], 'POST, DELETE')
+    
+    def testCalcHeadRequest(self):
+        self.client.login(username='testuser', password='password')
+
+        response = self.client.head(self.sav)
+
+        # Assert that the server responded with a bad request
+        self.assertEqual(response.status_code, 405)
+
+        # Check that the server responded with an allow header specifying DELETE or POST
+        self.assertEqual(response['Allow'], 'POST, DELETE')
+    
+    def testCalcTraceRequest(self):
+        self.client.login(username='testuser', password='password')
+
+        response = self.client.trace(self.sav)
+
+        # Assert that the server responded with a bad request
+        self.assertEqual(response.status_code, 405)
+
+        # Check that the server responded with an allow header specifying DELETE or POST
+        self.assertEqual(response['Allow'], 'POST, DELETE')
+    
+    # ========================= University Search =============================
+
+
+    # The typical use case for the university search
+    def testUniversitySearch(self):
+        getData = "?query=exampleUni"
+
+        response = self.client.get(self.uni+getData)
+
+        self.assertEqual(response.status_code, 200)
+        
+        self.assertEqual(response['content-type'], 'application/json')
+
+        data = json.loads(response.content)
+
+        self.assertEqual(data["universities"][0]["name"], "exampleUni")
+
+    # The api should return a 400 error if no query was provided
+    def testUniversitySearchNoQuery(self):
+
+        response = self.client.get(self.uni)
+
+        self.assertEqual(response.status_code, 400)
+
+    # Likewise, it should return 400 if the query is empty
+    def testUniversitySearchEmptyQuery(self):
+        getData = "?query="
+
+        response = self.client.get(self.uni+getData)
+
+        self.assertEqual(response.status_code, 400)
+
+    # The api should return a 404 error if a non existient university was provided
+    def testUniversitySearchNoUniversity(self):
+        getData = "?query=DoesntExistU"
+
+        response = self.client.get(self.uni+getData)
+
+        self.assertEqual(response.status_code, 404)
+
+
+    # ========================= Major List ====================================
+
+
+    # The typical use case for the major List
+    def testMajorList(self):
+        getData = "?university=exampleUni&department=Humanities+and+Social+Sciences"
+
+        response = self.client.get(self.maj+getData)
+
+        self.assertEqual(response.status_code, 200)
+        
+        self.assertEqual(response['content-type'], 'application/json')
+
+        data = json.loads(response.content)
+
+        self.assertEqual(data["majors"][0]["name"], "exampleMajor")
+
+    # The api should return a 400 error if nothing was provided
+    def testMajorListNoUniversityOrDept(self):
+
+        response = self.client.get(self.maj)
+
+        self.assertEqual(response.status_code, 400)
+
+    def testMajorListNoUniversity(self):
+        getData = "?department=Humanities+and+Social+Sciences"
+
+        response = self.client.get(self.maj+getData)
+
+        self.assertEqual(response.status_code, 400)
+
+    # Likewise, it should return 400 if the query is empty
+    def testMajorListEmptyUniversity(self):
+        getData = "?University=&department=Humanities+and+Social+Sciences"
+
+        response = self.client.get(self.maj+getData)
+
+        self.assertEqual(response.status_code, 400)
+
+    def testMajorListNoDepartment(self):
+        getData = "?university=exampleUni"
+
+        response = self.client.get(self.maj+getData)
+
+        self.assertEqual(response.status_code, 400)
+
+    # Likewise, it should return 400 if the query is empty
+    def testMajorListEmptyDepartment(self):
+        getData = "?university=exampleUni&department="
+
+        response = self.client.get(self.maj+getData)
+
+        self.assertEqual(response.status_code, 400)
+
+    # The api should return a 404 error if a non existient University was provided
+    def testMajorListNonExistUniversity(self):
+        getData = "?university=DoesntExistU&department=Humanities+and+Social+Sciences"
+
+        response = self.client.get(self.maj+getData)
+
+        self.assertEqual(response.status_code, 404)
+
+
+    # ========================== Aid List =====================================
+
+
+    # The typical use case for the aid list
+    def testAidList(self):
+        getData = "?university=exampleUni"
+
+        response = self.client.get(self.aid+getData)
+
+        self.assertEqual(response.status_code, 200)
+        
+        self.assertEqual(response['content-type'], 'application/json')
+
+        data = json.loads(response.content)
+
+        self.assertEqual(data["aids"][0]["name"], "exampleAid")
+
+    # The api should return a 400 error if no university was provided
+    def testAidListNoQuery(self):
+
+        response = self.client.get(self.aid)
+
+        self.assertEqual(response.status_code, 400)
+
+    # Likewise, it should return 400 if the query is empty
+    def testAidListEmptyQuery(self):
+        getData = "?university="
+
+        response = self.client.get(self.aid+getData)
+
+        self.assertEqual(response.status_code, 400)
+
+    # The api should return a 404 error if a non existient university was provided
+    def testAidListNoUniversity(self):
+        getData = "?university=DoesntExistU"
+
+        response = self.client.get(self.aid+getData)
+
+        self.assertEqual(response.status_code, 404)
+
+
+    # ========================== calculator =====================================
+
+
+    # The typical use case for the calculator
+    def testCalc(self):
+
+        getData = "?university=exampleUni&major=exampleMajor&outstate=false"
+
+        response = self.client.get(self.cal+getData)
+
+        self.assertEqual(response.status_code, 200)
+    
+        # data = json.loads(response.content)
+
+        # print(data)
 
         self.assertEqual(response['content-type'], 'application/json')
+
+    def testCalcWithAid(self):
+
+        getData = "?university=exampleUni&major=exampleMajor&outstate=false&aid=exampleAid"
+
+        response = self.client.get(self.cal+getData)
+
+        self.assertEqual(response.status_code, 200)
     
 
-
-    def testCalcInfoReturns400whenUniIsnull(self):
-        
-        getData = "?outstate=false&dept=A&major=exampleMajor&aid="
-
-        response = self.client.get(self.infoUrl+getData)
-
-        self.assertEqual(response.status_code,400)
-
-
-    def testCalcInfoReturns400whenUniIsBlank(self):
-                
-        getData = "?uni=&outstate=false&dept=A&major=exampleMajor&aid="
-
-        response = self.client.get(self.infoUrl+getData)
-
-        self.assertEqual(response.status_code,400)
-
-
-    # In the case where the frontend submits an entry that doesn't exist,
-    # the backend should return "DOESNOTEXIST" for the entry, but otherwise not
-    # error.
-    def testCalcInfoNonExistientUni(self):
-        # The university in this doesn't exist in the test database!
-        getData = "?uni=nonExistientUni&outstate=true&dept=exampleDept&major=exampleMajor&aid="
-
-        response = self.client.get(self.infoUrl+getData)
-
-        # The status code should still be 200
-        self.assertEqual(response.status_code, 200)
-
         self.assertEqual(response['content-type'], 'application/json')
 
         data = json.loads(response.content)
 
-        self.assertEqual(data["uni"]["name"], self.DNE)
+        # print(data)
 
+        self.assertEqual(data['aid']['name'], "exampleAid")
+    
+    def testCalcNoQuery(self):
+        response = self.client.get(self.cal)
 
+        self.assertEqual(response.status_code, 400)
 
-
-    def testCalcInfoReturns400whenMajorIsnull(self):
-        
-        getData = "?uni=exampleUnioutstate=false&dept=A&aid="
-
-        response = self.client.get(self.infoUrl+getData)
-
-        self.assertEqual(response.status_code,400)
-
-
-    def testCalcInfoReturns400whenMajorIsBlank(self):
-                
-        getData = "?uni=exampleUnioutstate=false&major=&dept=A&aid="
-
-        response = self.client.get(self.infoUrl+getData)
-
-        self.assertEqual(response.status_code,400)
-
-
-    # In the case where the frontend submits an entry that doesn't exist,
-    # the backend should return "DOESNOTEXIST" for the entry, but otherwise not
-    # error.
-    def testCalcInfoNonExistientMajor(self):
-        # The major in this doesn't exist in the test database!
-        getData = "?uni=exampleUni&outstate=true&dept=exampleDept&major=nonExistientMajor&aid="
-
-        response = self.client.get(self.infoUrl+getData)
-
-        # The status code should still be 200
-        self.assertEqual(response.status_code, 200)
-
-        self.assertEqual(response['content-type'], 'application/json')
-
-        data = json.loads(response.content)
-
-        self.assertEqual(data["major"]["name"], self.DNE)
 
 
 #  unit test for University Ratings Model
@@ -230,7 +679,7 @@ class UniRatingsTests(TestCase):
             self.assertTrue(alumni_user.check_password('alumnipassword123'))
             self.assertTrue(current_student_user.check_password('current_studentpassword123'))
         
-class MajorModelTest(TestCase):
+class MajorMoDELETEst(TestCase):
     def setUp(self):
         # Create a University object
         university = University.objects.create(

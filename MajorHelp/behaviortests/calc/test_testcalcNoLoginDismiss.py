@@ -10,7 +10,7 @@ from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 
-class TestSearchwithnothing():
+class TestTestcalcNoLoginDismiss():
   def setup_method(self, method):
     self.driver = webdriver.Firefox()
     self.vars = {}
@@ -18,13 +18,8 @@ class TestSearchwithnothing():
   def teardown_method(self, method):
     self.driver.quit()
   
-  def test_searchwithnothing(self):
+  def test_testcalcNoLoginDismiss(self):
     self.driver.get("http://127.0.0.1:8000/")
-    time.sleep(2)
-    self.driver.find_element(By.LINK_TEXT, "Search").click()
-    time.sleep(2)
-    self.driver.find_element(By.CSS_SELECTOR, "button").click()
-    time.sleep(2)
-    elements = self.driver.find_elements(By.CSS_SELECTOR, ".search-container > .filter-label")
-    assert len(elements) > 0
+    self.driver.find_element(By.LINK_TEXT, "Tuition Calculator").click()
+    self.driver.find_element(By.CSS_SELECTOR, ".fake-link").click()
   
