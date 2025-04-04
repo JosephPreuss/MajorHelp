@@ -23,6 +23,7 @@ from django.shortcuts import render
 from django.utils.decorators import method_decorator
 from django.contrib.auth import get_user_model
 import re
+from django.views.decorators.csrf import csrf_exempt
 from django.db.models import F, Value
 from django.db.models.functions import Cast
 from django.db.models import Min
@@ -42,7 +43,6 @@ from django.urls import reverse
 from django.core.signing import TimestampSigner, BadSignature, SignatureExpired
 from .forms import CustomUserCreationForm
 from django.contrib.auth import get_user_model
-<<<<<<< HEAD
 from .discussion_models import DiscussionCategory, DiscussionThread, ThreadReply
 from django.shortcuts import render, get_object_or_404, redirect
 from .forms import NewThreadForm
@@ -50,13 +50,6 @@ from .forms import ThreadReplyForm
 from django.shortcuts import get_object_or_404, redirect
 
 from django.views.decorators.http import require_POST # used for favorite feature
-=======
-from django.views.decorators.http import require_POST # used for favorite featurefrom django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
-from .models import University
-import json
-
->>>>>>> 34dcc1552e074d7853c28955f2da22c8a5e41ec5
 # Used to catch an exception if GET tries to get a value that isn't defined.
 from django.utils.datastructures import MultiValueDictKeyError
 
