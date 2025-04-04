@@ -48,6 +48,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from .forms import NewThreadForm
 from .forms import ThreadReplyForm  
 from django.shortcuts import get_object_or_404, redirect
+import json
 
 from django.views.decorators.http import require_POST # used for favorite feature
 # Used to catch an exception if GET tries to get a value that isn't defined.
