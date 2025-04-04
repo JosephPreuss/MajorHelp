@@ -1,4 +1,6 @@
+{% load static %}
 {% block navbar %}
+<link rel="stylesheet" href="{% static 'css/navbar/navbar.css' %}">
 <nav class="navbar">
     <div class="logo">
         <a href="{% url 'MajorHelp:home' %}" class="brand">

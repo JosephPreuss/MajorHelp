@@ -68,6 +68,7 @@ class UniversityOverviewView(DetailView):
     # Use slug as the lookup field
     slug_field = 'slug'
     slug_url_kwarg = 'slug'
+    
 
     def get_object(self):
         slug = self.kwargs['slug']
@@ -75,13 +76,30 @@ class UniversityOverviewView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        university = self.get_object()
+
         if self.request.user.is_authenticated:
             context['is_favorite'] = Favorite.objects.filter(
                 user=self.request.user,
-                university=self.object
+                university=university
+            ).exists()
+
+            # Whether this user already submitted a review
+            context['user_review'] = UniversityReview.objects.filter(
+                username=self.request.user.username,
+                university=university
             ).exists()
         else:
             context['is_favorite'] = False
+
+        # ✅ Add this line to include latest posts
+        context['latest_post_list'] = UniversityReview.objects.filter(
+            university=university
+        ).order_by('-pub_date')
+
+        context['primary_color'] = university.primary_color if university.primary_color else '#ffffff'
+        context['secondary_color'] = university.secondary_color if university.secondary_color else '#ffffff'
+        
         return context
         
         #JUMP
