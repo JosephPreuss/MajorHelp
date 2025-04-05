@@ -7,10 +7,21 @@ from django.contrib import admin
 from django.db.models import Avg
 from django.utils.text import slugify
 from django.core.validators import MinValueValidator, MaxValueValidator
-from django.contrib.auth.models import User
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from pestopanini import settings
+from .discussion_models import DiscussionCategory, DiscussionThread, ThreadReply
+from django.conf import settings 
+from django.contrib.auth.models import AbstractUser
 
+
+class ChatMessage(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    channel = models.CharField(max_length=50)
+    content = models.TextField()
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.user.username} in #{self.channel}: {self.content}"
 
 class FinancialAid(models.Model):
     name = models.CharField(max_length=256)
@@ -19,8 +30,6 @@ class FinancialAid(models.Model):
     
     def __str__(self):
         return self.name
-
-
 
 # Model for university
 class University(models.Model):
@@ -31,6 +40,8 @@ class University(models.Model):
     TotalUndergradStudents = models.IntegerField(default = 0)
     TotalGradStudents = models.IntegerField(default = 0)
     GraduationRate = models.DecimalField(default=0.0, max_digits=4, decimal_places=1)
+    primary_color = models.CharField(default="#268f95", max_length=7)
+    secondary_color = models.CharField(default="#FFFFFF", max_length=7)
 
     # Added for tuition calc
     in_state_base_min_tuition = models.IntegerField(

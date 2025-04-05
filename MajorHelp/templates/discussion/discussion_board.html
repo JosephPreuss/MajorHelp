@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% block title %}Discussion Board{% endblock %}
+
+{% block content %}
+<div class="discussion-white-wrapper">
+    <div class="discussion-page">
+        <div class="discussion-header">
+            <h2>Welcome to MajorHelp Discussions!</h2>
+            <p>Use this space to ask questions, share ideas, or post announcements.</p>
+        </div>
+
+        <div class="discussion-body">
+            <!-- Left sidebar for categories -->
+            <div class="discussion-sidebar">
+                <h3>Categories</h3>
+                <ul>
+                    <li><a href="{% url 'MajorHelp:discussion_board' %}">🔍 View All Discussions</a></li>
+                    <li><a href="{% url 'MajorHelp:my_threads' %}"><strong>🧑</strong> My Posts</a></li>
+                    <li><a href="{% url 'MajorHelp:discussion_board' %}?category=1">📢 Announcements</a></li>
+                    <li><a href="{% url 'MajorHelp:discussion_board' %}?category=2">🧠 Majors & Career Paths</a></li>
+                    <li><a href="{% url 'MajorHelp:discussion_board' %}?category=3">💡 College Recommendations</a></li>
+                    <li><a href="{% url 'MajorHelp:discussion_board' %}?category=4">💸 Scholarships & Aid</a></li>
+                    <li><a href="{% url 'MajorHelp:discussion_board' %}?category=5">❓ Q&A</a></li>            
+                </ul>
+            </div>
+
+            <!-- Right side for discussions list -->
+            <div class="discussion-main">
+                <div class="discussion-actions">
+                    <input type="text" placeholder="Search discussions..." class="search-input">
+                    <a href="{% url 'MajorHelp:create_thread' %}">
+                        <button class="new-discussion-button">+ New Discussion</button>
+                    </a>
+                </div>
+
+                <div class="discussion-list">
+                    {% for thread in threads %}
+                        <a href="{% url 'MajorHelp:discussion_detail' pk=thread.pk %}" class="discussion-link">
+                            <div class="discussion-post">
+                                <div>
+                                    <h4>{{ thread.title }}</h4>
+                                    <p>Started by {{ thread.author.username }} on {{ thread.created_at|date:"M d" }} in {{ thread.category.name }}</p>
+                                </div>
+                                <div class="comment-count">💬 {{ thread.replies.count }}</div>
+                            </div>
+                        </a>
+                    {% empty %}
+                        <p>No discussions yet.</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

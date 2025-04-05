@@ -5,15 +5,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}My Site{% endblock %}</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
 
     <link rel="stylesheet" href="{% static 'css/common/styles.css' %}">
     <link rel="stylesheet" href="{% static 'css/navbar/navbar.css' %}">
     <link rel="stylesheet" href="{% static 'css/footer/footer.css' %}">
     <link rel="stylesheet" href="{% static 'css/home/home.css' %}">
-    <link rel="stylesheet" href="{% static 'css/login/login.css' %}">
     <link rel="stylesheet" href="{% static 'css/signup/signup.css' %}">
     <link rel="stylesheet" href="{% static 'css/settings/settings.css' %}">
     <link rel="stylesheet" href="{% static 'css/email/email.css' %}">
+    <link rel="stylesheet" href="{% static 'css/discussion/discussion.css' %}">
+    <link rel="stylesheet" href="{% static 'css/discussion/create_thread.css' %}">
+    <link rel="stylesheet" href="{% static 'css/discussion/discussion_detail.css' %}">
+    <link rel="stylesheet" href="{% static 'css/majorchat/majorchat.css' %}">
+
 
     {% block stylesheet %}
     <link rel="stylesheet" href="{% static 'css/common/styles.css' %}">

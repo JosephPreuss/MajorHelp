@@ -8,6 +8,12 @@ from . import views
 from django.contrib.auth.views import LogoutView
 from MajorHelp.views import * # about,contact, SearchView, SchoolResultsView, DepartmentResultsView, LeaveReview
 from .forms import CustomAuthenticationForm
+from MajorHelp.views import (
+    DiscussionCategoryListView,
+    DiscussionThreadListView,
+    DiscussionThreadDetailView,
+)
+from MajorHelp.views import DiscussionThreadListView
 
 app_name = "MajorHelp"
 
@@ -41,7 +47,6 @@ urlpatterns = [
     path('accounts/settings/', views.settings_view, name='settings'),
     path('accounts/check-email/', views.check_email_view, name='check_email'),
 
-    
     # URLS for the Contact and About page
     path('about/', about, name='about'),
     path('contact/', contact, name='contact'),
@@ -58,7 +63,6 @@ urlpatterns = [
     # Leave review for Major
     path('MajorOverview/<slashslug:slug>/review/', views.LeaveMajorReview, name='leave-major-review'),
 
-    
     # URLS for the Tuition Calculator
     path('calc/', CalcView.as_view(), name='calc'),
     path("api/university_search/", university_search, name="university_search"),
@@ -68,7 +72,25 @@ urlpatterns = [
     path("api/calcs/", calc_list, name="calc_list"),
     path("api/save_calc/", save_calc, name="save_calc"),
 
+    # dicussions URLs
+    path('discussion/', views.discussion_board, name='discussion_board'),
+    path('discussion/categories/', DiscussionCategoryListView.as_view(), name='discussion_categories'),
+    path('discussion/thread/<int:pk>/', views.discussion_detail, name='discussion_detail'),
+    path('discussion/thread/<int:pk>/', DiscussionThreadDetailView.as_view(), name='discussion_detail'),
+    path('discussion/new/', views.create_thread, name='create_thread'),
+    path('discussion/thread/<int:pk>/delete/', views.delete_thread, name='delete_thread'),
+    path('discussion/reply/<int:pk>/delete/', views.delete_reply, name='delete_reply'),
+    path('discussion/my-posts/', views.my_discussions, name='my_discussions'),
+    path('discussion/mine/', views.MyThreadsView.as_view(), name='my_threads'),
+    path('discussion/category/<int:category_id>/', DiscussionThreadListView.as_view(), name='category_threads'),
+
+    # major chat urls
+    path('majorchat/', views.major_chat, name='major_chat'),
+
     #URLS for favorite page
     path('toggle-favorite/<str:object_type>/<int:object_id>/', views.toggle_favorite, name='toggle-favorite'),
     path('favorites/', favorites_list, name='favorites-list'),
+
+    # majorhelp map url
+    path('map/', views.college_map, name='college_map'),
 ]

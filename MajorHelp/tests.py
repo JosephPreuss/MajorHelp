@@ -272,7 +272,7 @@ class CalcTests(TestCase):
                 "outstate": False,
                 "dept": "Humanities and Social Sciences",
                 "major": "exampleMajor",
-                "aid": 1
+                "aid": {}
             }}), content_type='application/json')
 
         # Assert that the server responded with a bad request

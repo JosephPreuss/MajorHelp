@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block title %}{{ category.name }} Threads{% endblock %}
+
+{% block content %}
+<div class="thread-list-container">
+    <h2>{{ category.name }}</h2>
+    <p>{{ category.description }}</p>
+
+    <div class="thread-actions">
+        <a href="#" class="new-thread-button">+ New Thread</a>
+    </div>
+
+    {% if threads %}
+        <ul class="thread-list">
+            {% for thread in threads %}
+                <li class="thread-item">
+                    <a href="{% url 'discussion_detail' thread.pk %}">
+                        <h3>{{ thread.title }}</h3>
+                        <p>Started by {{ thread.created_by }} on {{ thread.created_at|date:"F j, Y" }}</p>
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No threads in this category yet.</p>
+    {% endif %}
+</div>
+{% endblock %}

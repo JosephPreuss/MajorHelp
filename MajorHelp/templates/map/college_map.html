@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}College Map{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/map/college_map.css' %}">
+<h1 style="text-align: center;">
+    <span style="color: #4FC7CF;">Explore</span> Colleges
+  </h1>  
+<p style="text-align: center; font-size: 1.2rem; color: #555; margin-top: 10px;">
+    A map showcasing all the universities currently in our database.
+</p>
+
+<div id="map" style="height: 600px; width: 100%; margin-top: 20px;"></div>
+
+<!-- Leaflet CSS -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<!-- Awesome Markers + Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.awesome-markers/2.0.4/leaflet.awesome-markers.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+
+<!-- Leaflet JS -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.awesome-markers/2.0.4/leaflet.awesome-markers.js"></script>
+
+<!-- Your Custom JS -->
+<script src="{% static 'js/map.js' %}"></script>
+{% endblock %}

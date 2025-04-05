@@ -1,4 +1,6 @@
+{% load static %}
 {% block navbar %}
+<link rel="stylesheet" href="{% static 'css/navbar/navbar.css' %}">
 <nav class="navbar">
     <div class="logo">
         <a href="{% url 'MajorHelp:home' %}" class="brand">
@@ -8,9 +10,13 @@
     
     <ul class="nav-links">
         <li><a href="{% url 'MajorHelp:search' %}">Search</a></li>
+        <li><a href="{% url 'MajorHelp:calc' %}">Tuition Calculator</a></li>
+        <li><a href="{% url 'MajorHelp:college_map' %}">College Map</a></li>
+        {% if user.is_authenticated %}
+            <li><a href="{% url 'MajorHelp:discussion_board' %}">Discussion</a></li>
+        {% endif %}
         <li><a href="{% url 'MajorHelp:about' %}">About</a></li>
         <li><a href="{% url 'MajorHelp:contact' %}">Contact</a></li>
-        <li><a href="{% url 'MajorHelp:calc' %}">Tuition Calculator</a></li>
     </ul>
 
     <div class="auth-buttons">

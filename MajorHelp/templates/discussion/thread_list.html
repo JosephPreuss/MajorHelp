@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block title %}{{ category.name }} Threads{% endblock %}
+
+{% block content %}
+<div class="discussion-white-wrapper">
+    <div class="discussion-page">
+        <h2>{{ category.name }}</h2>
+        <p>Threads related to this category.</p>
+
+        <div class="discussion-list">
+            {% for thread in threads %}
+                <a href="{% url 'MajorHelp:discussion_detail' pk=thread.pk %}" class="discussion-link">
+                    <div class="discussion-post">
+                        <div>
+                            <h4>{{ thread.title }}</h4>
+                            <p>Started by {{ thread.author.username }} on {{ thread.created_at|date:"M d" }}</p>
+                        </div>
+                        <div class="comment-count">💬 {{ thread.replies.count }}</div>
+                    </div>
+                </a>
+            {% empty %}
+                <p>No threads in this category yet.</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

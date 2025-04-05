@@ -2,6 +2,14 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth import get_user_model
 from .models import *
+from .models import DiscussionCategory, DiscussionThread, ThreadReply
+from django.contrib.auth.admin import UserAdmin
+from .models import CustomUser
+
+#
+admin.site.register(DiscussionCategory)
+admin.site.register(DiscussionThread)
+admin.site.register(ThreadReply)
 
 # Get the custom user model
 CustomUser = get_user_model()

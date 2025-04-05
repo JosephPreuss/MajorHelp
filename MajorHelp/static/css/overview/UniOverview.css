@@ -3,17 +3,17 @@
 /* General Styles */
 body {
     padding-bottom: 50px; 
-    background-color: #4ec7cf;
     min-height: 100vh; 
     height: auto;
     display: flex;
     flex-direction: column;
+    background-color: var(--pc) !important;
 }
 
-  h1 {
+h1 {
     text-align: center;
     font-size: 3.5rem;
-    color: #004080; 
+    color: var(--sc) !important; 
     margin-top: 25px; 
     margin-bottom: 5px;
     padding: 0 150px;
@@ -23,7 +23,7 @@ body {
 h2 {
     text-align: center;
     font-size: 2rem;
-    color: #666;
+    color: var(--sc) !important;
     margin-top: 0;
     margin-bottom: 10px;
 }
