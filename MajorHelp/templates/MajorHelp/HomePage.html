@@ -4,35 +4,85 @@
 {% block title %}Home{% endblock %}
 
 {% block content %}
-<div class="home-page-container">
-    <div class="text-section">
-        {% if user.is_authenticated %}
-            <h1 style="font-size: 2.5rem; margin-bottom: 20px;">Welcome back, {{ user.username }}!</h1>
-        {% else %}
-            <h1 style="font-size: 2.5rem; margin-bottom: 20px;">We're here to help.</h1>
-        {% endif %}
+<style>
+    .hero-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding-top: 100px;
+    padding: 100px 20px;
+    min-height: 60vh;  /* ← full screen height */
 
-        <p class="info-text">
-            Welcome to MajorHelp – your personalized guide to finding the best colleges that fit your goals and budget. Whether you're exploring campuses, comparing tuition rates, or just getting started on your educational journey, MajorHelp is here to assist you every step of the way. With a user-friendly interface, you can easily browse through tailored options, connect with campuses, and manage your college search in one place.
-        </p>
+    /* ↓ Shift image down by changing background-position */
+    background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url("{% static 'images/home/home2.png' %}");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center top 30%;  /* Move image down by 30% */
 
-        {% if user.is_authenticated %}
-            <a href="{% url 'MajorHelp:calc' %}" class="get-started-btn">
-                Get Started
-            </a>
-        {% else %}
-            <a href="{% url 'MajorHelp:login' %}" class="get-started-btn">
-                Log in
-            </a>
-            <p class="signup-link">
-                Don't have an account? <a href="{% url 'MajorHelp:signup' %}">Sign up here</a>
-            </p>
-        {% endif %}
-    </div>
+    color: white;
+    text-align: center;
+    position: relative;
+}
 
-    <div class="image-section">
-        <img src="{% static 'images/home/home2.png' %}" alt="Testing Image" style="width:100%;">
-        <div class="overlay"></div>
-    </div>
+    .hero-wrapper h1 {
+        font-size: 3rem;
+        font-weight: 700;
+        margin-bottom: 20px;
+    }
+
+    .hero-wrapper p {
+        max-width: 800px;
+        font-size: 1.1rem;
+        margin-bottom: 30px;
+        line-height: 1.7;
+    }
+
+    .hero-wrapper .btn {
+        padding: 12px 30px;
+        font-size: 1rem;
+        font-weight: bold;
+        color: #fff;
+        background-color: #4fc7cf;
+        border: none;
+        border-radius: 30px;
+        text-decoration: none;
+        transition: background-color 0.3s ease;
+    }
+
+    .hero-wrapper .btn:hover {
+        background-color: #3bb2ba;
+    }
+
+    .signup-link {
+        margin-top: 15px;
+        font-size: 0.95rem;
+    }
+
+    .signup-link a {
+        color: #4fc7cf;
+        text-decoration: underline;
+    }
+</style>
+
+<div class="hero-wrapper">
+    {% if user.is_authenticated %}
+        <h1>Welcome back, {{ user.username }}!</h1>
+    {% else %}
+        <h1>We're here to help.</h1>
+    {% endif %}
+
+    <p>
+        MajorHelp is your personalized guide to finding the best colleges that align with your goals and budget. Whether you're exploring campuses, comparing tuition, or just starting your search, we’re here to support you every step of the way.
+    </p>
+
+    {% if user.is_authenticated %}
+        <a href="{% url 'MajorHelp:calc' %}" class="btn">Get Started</a>
+    {% else %}
+        <a href="{% url 'MajorHelp:login' %}" class="btn">Log In</a>
+        <div class="signup-link">
+            Don’t have an account? <a href="{% url 'MajorHelp:signup' %}">Sign up here</a>
+        </div>
+    {% endif %}
 </div>
 {% endblock %}
