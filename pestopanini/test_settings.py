@@ -53,17 +53,24 @@ def create_test_user(sender, **kwargs):
 
 
 def populate_database(sender, **kwargs):
-    
+    FinancialAid = apps.get_model('MajorHelp', 'FinancialAid')
+    University = apps.get_model('MajorHelp', 'University')
+    Major = apps.get_model('MajorHelp', 'Major')
 
-    exampleAid = apps.get_model('MajorHelp', 'FinancialAid').objects.create(name="exampleAid") 
-    exampleUni = apps.get_model('MajorHelp', 'University').objects.create(name="exampleUni", slug="exampleUni")
+    # Check to see if the info already exists
+    uni = University.objects.filter(name="exampleUni").first()
 
-    exampleUni.applicableAids.add(exampleAid)
+    # Create if it doesn't already exist
+    if not uni:
+        exampleAid = FinancialAid.objects.create(name="exampleAid") 
+        exampleUni = University.objects.create(name="exampleUni", slug="exampleUni", location="Mars")
 
-    apps.get_model('MajorHelp', 'Major').objects.create(
-        major_name="exampleMajor", slug="exampleMajor", university=exampleUni,
-        department='Humanities and Social Sciences'
-    )
+        exampleUni.applicableAids.add(exampleAid)
+
+        Major.objects.create(
+            major_name="exampleMajor", slug="exampleMajor", university=exampleUni,
+            department='Humanities and Social Sciences'
+        )
 
 
 # Connect the function to the post_migrate signal
