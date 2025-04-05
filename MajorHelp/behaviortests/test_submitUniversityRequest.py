@@ -20,6 +20,7 @@ class TestSubmitUniversityRequest():
   
   def test_submitUniversityRequest(self):
     self.driver.get("http://127.0.0.1:8000/")
+    self.driver.set_window_size(1920, 1080)
     self.driver.find_element(By.LINK_TEXT, "Search").click()
     self.driver.find_element(By.ID, "filter-dropdown").click()
     dropdown = self.driver.find_element(By.ID, "filter-dropdown")
@@ -27,8 +28,9 @@ class TestSubmitUniversityRequest():
     self.driver.find_element(By.ID, "school-option").click()
     self.driver.find_element(By.ID, "search-query").click()
     self.driver.find_element(By.ID, "search-query").send_keys("DoesNotExistU")
-    self.driver.find_element(By.CSS_SELECTOR, "button").click()
+    self.driver.find_element(By.CSS_SELECTOR, ".fas").click()
     self.driver.find_element(By.LINK_TEXT, "Request University").click()
     self.driver.find_element(By.ID, "request_text").click()
     self.driver.find_element(By.ID, "request_text").send_keys("DoesNotExistU")
+    self.driver.find_element(By.CSS_SELECTOR, "button").click()
   
