@@ -1,73 +1,15 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block title %}Search Page{% endblock %}
 
 {% block stylesheet %}
-<style>
-    /* changes text color */
-    .filter-label {
-        color: white;
-        margin-right: 10px;
-    }
 
-    /* Centering the search container */
-    .search-container {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        height: 30vh;
-        padding: 20px;
-    }
-
-    /* Styling the search bar */
-    #search-query {
-        width: 500px; /* Larger width for the search bar */
-        height: 40px; /* Increase height for bigger input */
-        padding: 10px;
-        font-size: 16px;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-        margin-right: 10px; /* Space between search bar and filter dropdown */
-    }
-
-    /* Making filter dropdown and search bar in a horizontal row */
-    .search-bar-container {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin-bottom: 20px;
-    }
-
-    /* Styling the filter dropdown */
-    .filter-dropdown select {
-        width: 200px; 
-        height: 40px; /* same as search bar */
-        padding: 10px;
-        font-size: 16px;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-        cursor: pointer;
-    }
-
-    /* Adjust the button appearance */
-    button {
-        padding: 10px 20px;
-        font-size: 16px;
-        border: none;
-        background-color: #4CAF50;
-        color: white;
-        border-radius: 5px;
-        cursor: pointer;
-    }
-
-    button:hover {
-        background-color: #45a049;
-    }
-</style>
 {% endblock %}
 
 {% block script %}
+<link rel="stylesheet" href="{% static 'css/search/search.css' %}">
+
 <script>
     const departmentOptions = [
         'Humanities and Social Sciences',
@@ -84,19 +26,15 @@
 
     function setActiveFilter(filter) {
         document.getElementById("filter").value = filter;
-
         const searchFieldContainer = document.getElementById("search-field-container");
 
         if (filter === 'department') {
             const select = document.createElement("select");
             select.name = "query";
             select.id = "search-query";
-
-            // Add "Pick a Department" as the default greyed-out option
             select.innerHTML = `<option value="" disabled selected>Pick a Department</option>` +
                 departmentOptions.map(option => `<option value="${option}">${option}</option>`).join('');
-
-            searchFieldContainer.innerHTML = ''; 
+            searchFieldContainer.innerHTML = '';
             searchFieldContainer.appendChild(select);
         } else {
             const input = document.createElement("input");
@@ -104,45 +42,44 @@
             input.id = "search-query";
             input.name = "query";
             input.placeholder = `Enter ${filter} name...`;
-            searchFieldContainer.innerHTML = ''; 
+            searchFieldContainer.innerHTML = '';
             searchFieldContainer.appendChild(input);
         }
     }
 
     window.onload = function () {
-        const filter = "{{ filter_type }}"; // Django variable for the current filter type
+        const filter = "{{ filter_type }}";
         setActiveFilter(filter);
-
-        // Set the dropdown to the correct filter on page load
         document.getElementById("filter-dropdown").value = filter;
     };
 </script>
 {% endblock %}
 
 {% block content %}
-<div class="search-container">
-    <h2 class="filter-label">Search</h2>
-    <form action="/search/" method="get">
-        <!-- Container for the search bar and filter dropdown -->
-        <div class="search-bar-container">
-            <div id="search-field-container">
-                <input type="text" id="search-query" name="query" placeholder="Enter your search term..." value="{{ query }}">
-            </div>
+<div class="hero-section">
+    <div class="overlay">
+        <h1 class="hero-heading">Find your <span class="highlight">school.</span></h1>
 
-            <!-- Dropdown for filter -->
-            <div class="filter-dropdown">
-                <label for="filter-dropdown" class="filter-label"> Filter by: </label>
-                <select id="filter-dropdown" name="filter-dropdown" onchange="setActiveFilter(this.value)">
-                    <option value="department" id="department-option">Department</option>
-                    <option value="school" id="school-option">School</option>
-                    <option value="major" id="major-option">Major</option>
-                </select>
-            </div>
-        </div>
+        <form action="/search/" method="get" class="styled-search-form">
+            <div class="search-wrapper">
+                <div id="search-field-container" class="search-input">
+                    <input type="text" id="search-query" name="query" placeholder="Enter your search term..." value="{{ query }}">
+                </div>
 
-        <input type="hidden" id="filter" name="filter" value="department">
-        
-        <button type="submit">Search</button>
-    </form>
+                <div class="filter-dropdown">
+                    <label for="filter-dropdown" class="filter-label">Filter by:</label>
+                    <select id="filter-dropdown" name="filter-dropdown" onchange="setActiveFilter(this.value)">
+                        <option value="department" id="department-option">Department</option>
+                        <option value="school" id="school-option">School</option>
+                        <option value="major" id="major-option">Major</option>
+                    </select>
+                </div>
+
+                <input type="hidden" id="filter" name="filter" value="department">
+                <button type="submit"><i class="fas fa-search"></i></button>
+            </div>
+        </form>
+
+    </div>
 </div>
-{% endblock %} 
+{% endblock %}

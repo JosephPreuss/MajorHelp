@@ -1,103 +1,113 @@
-{% extends "base.html" %} <!-- Extending base.html -->
-
+{% extends "base.html" %}
 {% load static %}
 
-{% block title %}Contact Us{% endblock %} <!-- Title block for the page -->
+{% block title %}Contact Us{% endblock %}
 
 {% block content %}
-
 <style>
-    .content-box {
-        max-width: 900px; 
-        background-color: #fff; /* White background for the content box */
-        padding: 20px; 
-        margin: 0 auto; 
-        margin-top: 20px;
-        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1); 
-        border-radius: 10px; 
+    .contact-wrapper {
+        max-width: 800px;
+        margin: 40px auto;
+        padding: 40px;
+        background-color: #ffffff;
+        border-radius: 12px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+        text-align: center;
     }
 
-    .content-box h1, .content-box p {
-        font-family: Arial, sans-serif;
+    .contact-wrapper h1 {
+        font-size: 2.5rem;
+        margin-bottom: 10px;
+        font-weight: 700;
     }
 
-    .content-section {
-        margin-bottom: 20px; 
+    .contact-wrapper h1 span {
+        color: #4fc7cf;
     }
 
-    .content-section p {
-        margin: 0;
+    .contact-wrapper p {
+        font-size: 1rem;
+        color: #444;
+        margin-bottom: 30px;
     }
 
-    .right-image {
-        width: 250px;
-        height: 250px;
-        border-radius: 50%; 
-        object-fit: contain; 
-        float: right; 
-        margin: 0 0 20px 40px; /* Adjusted margin to move the image up */
-    }
-
-    .columns-container {
+    .contact-info {
         display: flex;
-        justify-content: space-between;
-        margin-top: 20px;
+        justify-content: space-around;
+        flex-wrap: wrap;
+        gap: 30px;
+        margin-top: 30px;
     }
 
-    .column {
-        width: 45%; /* Set equal width for both columns */
+    .contact-box {
+        flex: 1 1 200px;
+        background-color: #f9f9f9;
+        padding: 20px;
+        border-radius: 10px;
+        transition: 0.3s ease;
     }
 
-    .column h2 {
-        margin-top: 0;
+    .contact-box:hover {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     }
 
-    .text-left {
-        text-align: left;
+    .contact-box h3 {
+        color: #4fc7cf;
+        margin-bottom: 10px;
     }
 
-    .text-right {
-        text-align: right;
+    .contact-box i {
+        font-size: 1.6rem;
+        margin-bottom: 10px;
+        color: #4fc7cf;
+    }
+
+    .contact-box p {
+        font-size: 0.95rem;
+        color: #333;
+    }
+
+    .contact-img {
+        width: 180px;
+        margin-top: 30px;
+    }
+
+    @media (max-width: 600px) {
+        .contact-info {
+            flex-direction: column;
+        }
     }
 </style>
 
-<div class="container">
-    <div class="row">
-        <div class="col-md-8 card mb-4 mt-3 left top">
-            <div class="content-box"> <!-- Applying the content-box styling -->
-                <img src="{% static 'images/contact/contact_1.png' %}" alt="image for contact page" class="right-image">
-                <h1>Wanna Reach <span style="color: #4fc7cf;">Us</span></h1>
+<div class="contact-wrapper">
+    <h1>Contact <span>Us</span></h1>
+    <p>Have questions or feedback? We're here to help! Reach out via email or follow us on our socials below.</p>
 
-                <div class="content-section">
-                    <p>We'd love to hear from you! Whether you have questions, feedback, or suggestions, feel free to reach out. 
-                       We're here to help and always looking for ways to improve your experience.
-                       For any inquiries or support, please email us at <a href="mailto:majorhelp37@gmail.com">majorhelp37@gmail.com</a>. 
-                       Our team will get back to you within 3-5 business days.</p>
-                </div>
-
-                <!-- Flex container for social media and feedback columns -->
-                <div class="columns-container">
-                    <!-- Social media text column (left) -->
-                    <div class="column text-left">
-                        <h2><span style="color: #4fc7cf;">Social Media</span></h2>
-                        <p>Stay in touch with us on:</p>
-                        <ul>
-                            <li>Twitter: ________</li>
-                            <li>Instagram: ________</li>
-                            <li>Facebook: ________</li>
-                        </ul>
-                    </div>
-
-                    <!-- Feedback text column (right) -->
-                    <div class="column text-right">
-                        <h2><span style="color: #4fc7cf;">Feedback</span></h2>
-                        <p>We'd love to hear from you! Send us your thoughts and feedback at:</p>
-                        <p><strong>Email:</strong> majorhelp37@gmail.com</p>
-                    </div>
-                </div>
-            </div>
+    <div class="contact-info">
+        <div class="contact-box">
+            <i class="fas fa-envelope"></i>
+            <h3>Email</h3>
+            <p><a href="mailto:majorhelp37@gmail.com">majorhelp37@gmail.com</a></p>
+        </div>
+        <div class="contact-box">
+            <i class="fab fa-twitter"></i>
+            <h3>Twitter</h3>
+            <p>@MajorHelp</p>
+        </div>
+        <div class="contact-box">
+            <i class="fab fa-instagram"></i>
+            <h3>Instagram</h3>
+            <p>@MajorHelpApp</p>
+        </div>
+        <div class="contact-box">
+            <i class="fab fa-facebook"></i>
+            <h3>Facebook</h3>
+            <p>/MajorHelpOfficial</p>
         </div>
     </div>
+
 </div>
 
+<!-- FontAwesome for icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
 {% endblock %}

@@ -3,7 +3,14 @@
 {% block title %}College Map{% endblock %}
 
 {% block content %}
-<h1 style="text-align: center;">Explore Colleges</h1>
+<link rel="stylesheet" href="{% static 'css/map/college_map.css' %}">
+<h1 style="text-align: center;">
+    <span style="color: #4FC7CF;">Explore</span> Colleges
+  </h1>  
+<p style="text-align: center; font-size: 1.2rem; color: #555; margin-top: 10px;">
+    A map showcasing all the universities currently in our database.
+</p>
+
 <div id="map" style="height: 600px; width: 100%; margin-top: 20px;"></div>
 
 <!-- Leaflet CSS -->
