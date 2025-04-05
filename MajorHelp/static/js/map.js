@@ -31,7 +31,7 @@ document.addEventListener("DOMContentLoaded", function () {
         { name: "MIT", lat: 42.3601, lng: -71.0942, color: "#8A8B8C", url: "/UniversityOverview/mit/" },
         { name: "Princeton", lat: 40.3431, lng: -74.6551, color: "#E87722", url: "/UniversityOverview/princetonuniversity/" },
         { name: "Clemson", lat: 34.6834, lng: -82.8374, color: "#F66733", url: "/UniversityOverview/clemson/" },
-        { name: "UofSC", lat: 33.9940, lng: -81.0301, color: "#73000A", url: "/universityofsouthcarolinacolumbia/" }
+        { name: "UofSC", lat: 33.9940, lng: -81.0301, color: "#73000A", url: "/UniversityOverview/universityofsouthcarolinacolumbia/" }
     ];
 
     universities.forEach(u => {
