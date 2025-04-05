@@ -1,0 +1,232 @@
+/* Extend css changes from major_results */
+.filter-label {
+    color: white;
+    margin-right: 10px;
+}
+
+.search-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    margin: 20px;
+}
+
+#search-field-container {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    width: 100%;
+    justify-content: center;
+}
+
+#search-query {
+    padding: 10px;
+    font-size: 16px;
+    width: 300px;
+    margin-right: 10px;
+    margin-left: 20px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+}
+
+#filter-dropdown-container {
+    display: flex;
+    align-items: center;
+    margin-left: 10px;
+}
+
+.filter-dropdown select {
+    padding: 10px;
+    font-size: 16px;
+    width: 300px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+}
+
+button[type="submit"] {
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    margin-top: 10px;
+    border-radius: 5px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    box-sizing: border-box;
+}
+
+button[type="submit"]:hover {
+    background-color: #45a049;
+}
+
+#filters-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-top: 20px;
+    gap: 20px;
+}
+
+.filter-dropdown {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 250px;
+}
+
+.filter-dropdown select {
+    padding: 10px;
+    font-size: 16px;
+    width: 100%;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+    height: 40px;
+}
+
+.filter-button {
+    padding: 10px 20px;
+    font-size: 16px;
+    border: none;
+    background-color: #4CAF50;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.filter-button:hover {
+    background-color: #45a049;
+}
+
+#filters-section {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.filter-section {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 250px;
+}
+
+.filter-section select,
+.filter-section input {
+    padding: 10px;
+    font-size: 16px;
+    width: 100%;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+    height: 40px;
+}
+
+button[type="button"] {
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    margin-top: 10px;
+    border-radius: 5px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    box-sizing: border-box;
+}
+
+button[type="button"]:hover {
+    background-color: #45a049;
+}
+
+.filter-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.filter-buttons button {
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    background-color: #4CAF50;
+    color: white;
+    border-radius: 5px;
+    border: none;
+}
+
+.filter-buttons button:hover {
+    background-color: #45a049;
+}
+.fixed-button {
+position: fixed;
+bottom: 20px;
+right: 20px;
+z-index: 10000;
+}
+.fixed-button a {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    border-radius: 5px;
+    text-decoration: none;
+}
+.fixed-button a:hover {
+    background-color: #45a049;
+}
+.space {
+    visibility: hidden !important;
+}
+.result-item {
+    background-color: #d7f2f4; 
+    padding: 15px 20px; 
+    border-radius: 5px; 
+    margin-bottom: 20px;
+    border: 2.4px solid white;
+    margin-right: 20px;
+    margin-left: 15px;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1); 
+}
+.result-item h3 {
+    color: #10393c;
+}
+
+.result-item h4 {
+    color: #26858c;
+}
+
+.result-item ul {
+    color: #217278;
+    margin-left: 25px;
+    margin-bottom: 15px;
+}
+
+.result-item a.result-link {
+    color: #008080;
+    font-size: 24px;
+    font-weight: 900
+}
+
+.result-item a.major-link {
+    color: #008080;
+    font-size: 20px;
+    font-weight: 900
+}
+
+.filter-section {
+    color: white;
+}
+
+.department-header {
+    padding-top: 25px;
+    text-decoration: underline;
+    margin-left: 25px;
+}
