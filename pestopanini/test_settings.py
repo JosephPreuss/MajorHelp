@@ -15,6 +15,12 @@ DATABASES = {
 # Optional: Disable debug mode for behavioral tests
 DEBUG = True  # (Going to keep it true for now)
 
+
+def init(sender, **kwargs):
+    create_test_user(sender, **kwargs)
+    populate_database(sender, **kwargs)
+
+
 # Function to create a test user
 def create_test_user(sender, **kwargs):
     # Get the custom user model dynamically
@@ -30,7 +36,7 @@ def create_test_user(sender, **kwargs):
                 password="password",
                 email="testEmail@example.com",
                 is_staff=False,
-                is_superuser=False,
+                is_superuser=True,
                 is_active=True,
             )
             print(f"Test user created: {user.username}")
@@ -43,6 +49,22 @@ def create_test_user(sender, **kwargs):
             Please set it to 'true' to continue.
             """
         )
+    
+
+
+def populate_database(sender, **kwargs):
+    
+
+    exampleAid = apps.get_model('MajorHelp', 'FinancialAid').objects.create(name="exampleAid") 
+    exampleUni = apps.get_model('MajorHelp', 'University').objects.create(name="exampleUni", slug="exampleUni")
+
+    exampleUni.applicableAids.add(exampleAid)
+
+    apps.get_model('MajorHelp', 'Major').objects.create(
+        major_name="exampleMajor", slug="exampleMajor", university=exampleUni,
+        department='Humanities and Social Sciences'
+    )
+
 
 # Connect the function to the post_migrate signal
-post_migrate.connect(create_test_user)
+post_migrate.connect(init)
