@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'MajorHelp.apps.MajorhelpConfig',
     'django.contrib.humanize',
+    'channels',
 ]
 
 MIDDLEWARE = [
@@ -162,3 +163,11 @@ EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER")  # Set these environment var
 EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD")
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
+# Set ASGI application
+ASGI_APPLICATION = 'pestopanini.asgi.application'
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels.layers.InMemoryChannelLayer"
+    },
+}

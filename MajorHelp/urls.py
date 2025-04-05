@@ -90,4 +90,7 @@ urlpatterns = [
     #URLS for favorite page
     path('toggle-favorite/<str:object_type>/<int:object_id>/', views.toggle_favorite, name='toggle-favorite'),
     path('favorites/', favorites_list, name='favorites-list'),
+
+    # majorhelp map url
+    path('map/', views.college_map, name='college_map'),
 ]

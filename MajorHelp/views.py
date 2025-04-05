@@ -55,6 +55,10 @@ from django.views.decorators.http import require_POST # used for favorite featur
 from django.utils.datastructures import MultiValueDictKeyError
 
 # views.py
+
+def college_map(request):
+    return render(request, 'map/college_map.html')
+
 @login_required
 def major_chat(request):
     return render(request, 'majorchat/chat.html')
