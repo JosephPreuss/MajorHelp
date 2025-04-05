@@ -70,7 +70,7 @@ class University(models.Model):
     )
 
     # Automatically populated slug
-    slug = models.SlugField(default="", editable=False, null=False, unique=True)
+    slug = models.SlugField(default="", editable=True, null=False, unique=True)
 
     applicableAids = models.ManyToManyField(FinancialAid, related_name="university", blank=True)
 
