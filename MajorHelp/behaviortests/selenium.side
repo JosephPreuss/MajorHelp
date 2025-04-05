@@ -408,21 +408,21 @@
     "id": "c71987e8-675c-42ef-ad0e-7fe870a13b3f",
     "name": "submitUniversityRequest",
     "commands": [{
-      "id": "17667813-0caf-49a6-946b-b3be5fb11d79",
+      "id": "c251d428-5ef9-4adf-a42d-fdd1e335ca8b",
       "comment": "",
       "command": "open",
       "target": "/",
       "targets": [],
       "value": ""
     }, {
-      "id": "ec935924-1fe6-461a-8d22-c3442dd36d17",
+      "id": "8024c9b9-7a6f-473d-b710-9679a8a5564e",
       "comment": "",
       "command": "setWindowSize",
-      "target": "3824x2012",
+      "target": "1920x1080",
       "targets": [],
       "value": ""
     }, {
-      "id": "81d5183d-cb08-4f37-b6e2-8c907de4e713",
+      "id": "09d228a1-b2be-440f-8f61-ac691010965f",
       "comment": "",
       "command": "click",
       "target": "linkText=Search",
@@ -436,7 +436,7 @@
       ],
       "value": ""
     }, {
-      "id": "9b7eba83-303e-42b5-bf3a-8dbbc052e00a",
+      "id": "f1c91a8a-8b5b-4da6-9fa0-696da0b658b7",
       "comment": "",
       "command": "click",
       "target": "id=filter-dropdown",
@@ -449,14 +449,14 @@
       ],
       "value": ""
     }, {
-      "id": "37d69e6e-4abd-4b73-a0e2-e41b0b67f539",
+      "id": "0d40e1f7-a96e-4ad5-b466-0ca39f80e98e",
       "comment": "",
       "command": "select",
       "target": "id=filter-dropdown",
       "targets": [],
       "value": "label=School"
     }, {
-      "id": "1f79e871-9e7c-48d8-984a-637685846b71",
+      "id": "0de10e52-16c9-43bf-bb51-0ba08965ee2a",
       "comment": "",
       "command": "click",
       "target": "id=school-option",
@@ -470,7 +470,7 @@
       ],
       "value": ""
     }, {
-      "id": "c9eb2a1f-1861-4161-b348-15060f83678a",
+      "id": "3d3874ce-8e46-49c0-a7f5-f6296ed82d6d",
       "comment": "",
       "command": "click",
       "target": "id=search-query",
@@ -484,7 +484,7 @@
       ],
       "value": ""
     }, {
-      "id": "49f43d0b-9c92-4cab-960c-db2a7101d8f1",
+      "id": "4d3a0999-bc73-48a7-b087-04f883558917",
       "comment": "",
       "command": "type",
       "target": "id=search-query",
@@ -498,19 +498,17 @@
       ],
       "value": "DoesNotExistU"
     }, {
-      "id": "529e3563-22eb-4a9e-bee9-681322ecedea",
+      "id": "f8746aef-0ec4-4bff-b02e-021af5564ce6",
       "comment": "",
       "command": "click",
-      "target": "css=button",
+      "target": "css=.fas",
       "targets": [
-        ["css=button", "css:finder"],
-        ["xpath=//button[@type='submit']", "xpath:attributes"],
-        ["xpath=//button", "xpath:position"],
-        ["xpath=//button[contains(.,'Search')]", "xpath:innerText"]
+        ["css=.fas", "css:finder"],
+        ["xpath=//i", "xpath:position"]
       ],
       "value": ""
     }, {
-      "id": "6b99c1bf-e50a-4dd7-b90d-da2aa55e630c",
+      "id": "59f76cf5-ea31-407a-9022-a6d68b5adc37",
       "comment": "",
       "command": "click",
       "target": "linkText=Request University",
@@ -519,12 +517,12 @@
         ["css=.fixed-button > a", "css:finder"],
         ["xpath=//a[contains(text(),'Request University')]", "xpath:link"],
         ["xpath=//a[contains(@href, '/search/university-request/')]", "xpath:href"],
-        ["xpath=//div[4]/a", "xpath:position"],
+        ["xpath=//div[3]/a", "xpath:position"],
         ["xpath=//a[contains(.,'Request University')]", "xpath:innerText"]
       ],
       "value": ""
     }, {
-      "id": "53264c61-3d45-450a-b5c9-0e644b42f88a",
+      "id": "c917e43c-71f0-42f0-a554-01c77d726b2b",
       "comment": "",
       "command": "click",
       "target": "id=request_text",
@@ -537,7 +535,7 @@
       ],
       "value": ""
     }, {
-      "id": "c3094340-1272-4d8e-a739-045fb83eb52a",
+      "id": "6621c2e6-997a-43a1-8d6d-338acceb02d8",
       "comment": "",
       "command": "type",
       "target": "id=request_text",
@@ -549,6 +547,18 @@
         ["xpath=//textarea", "xpath:position"]
       ],
       "value": "DoesNotExistU"
+    }, {
+      "id": "b75bf48d-b83c-446b-aca2-7e827a2e59b1",
+      "comment": "",
+      "command": "click",
+      "target": "css=button",
+      "targets": [
+        ["css=button", "css:finder"],
+        ["xpath=//button[@type='submit']", "xpath:attributes"],
+        ["xpath=//button", "xpath:position"],
+        ["xpath=//button[contains(.,'Submit Request')]", "xpath:innerText"]
+      ],
+      "value": ""
     }]
   }, {
     "id": "714f1217-502d-4750-b30e-5effad1ee97c",
