@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="{% static 'css/overview/MajorOverview.css' %}">
 </head>
 <body>
-    <a href="javascript:history.back()" class="back-button">Go Back</a>
+    <a href="javascript:history.back()" class="back-button" onclick="location.reload()">Go Back</a>
 
     <!-- Favorite button -->
     <button id="favorite-btn" class="favorite-btn" data-object-type="major" data-object-id="{{ major.id }}">
