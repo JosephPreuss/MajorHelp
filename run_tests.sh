@@ -127,6 +127,8 @@ echo "Starting the server in the background..." &&
 python manage.py runserver --settings=pestopanini.test_settings &> /dev/null &
 SERVER_PID=$!
 
+trap "kill $SERVER_PID; unset DJANGO_TEST_ENV; deactivate" EXIT
+
 # Run the tests
 echo "Running tests..."
 
@@ -135,7 +137,7 @@ pytest $1
 
 # Kill the server process
 echo "Stopping the server..."
-kill $SERVER_PID
+pkill -f "manage.py runserver"
 
 # Clear the DJANGO_TEST_ENV environment variable
 unset DJANGO_TEST_ENV
