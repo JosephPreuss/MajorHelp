@@ -17,16 +17,8 @@ DEBUG = True  # (Going to keep it true for now)
 
 
 def init(sender, **kwargs):
-    if os.environ.get("DJANGO_TEST_ENV") == "true":
-        create_test_user(sender, **kwargs)
-        populate_database(sender, **kwargs)
-    else:
-        raise RuntimeError(
-            """
-            DJANGO_TEST_ENV is not set to 'true'. 
-            Please set it to 'true' to continue.
-            """
-        )
+    create_test_user(sender, **kwargs)
+    populate_database(sender, **kwargs)
 
 
 # Function to create a test user

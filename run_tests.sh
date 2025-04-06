@@ -32,9 +32,6 @@ run_test_server() {
     # Activate the virtual environment
     activate_venv
     
-    # Set the environment variable for the test environment
-    export DJANGO_TEST_ENV=true
-
     # Set up the test database
     echo "Applying migrations to set up the test database..."
     python manage.py migrate --settings=pestopanini.test_settings && 
@@ -43,8 +40,6 @@ run_test_server() {
     echo "Starting the server..." &&
     python manage.py runserver --settings=pestopanini.test_settings
 
-    # Clear the DJANGO_TEST_ENV environment variable
-    unset DJANGO_TEST_ENV
 
     # Deactivate the virtual environment
     deactivate
@@ -115,9 +110,6 @@ shift $((OPTIND - 1))
 # Activate the virtual environment
 activate_venv
 
-# Set the environment variable for the test environment
-export DJANGO_TEST_ENV=true
-
 # Set up the test database
 echo "Applying migrations to set up the test database..."
 python manage.py migrate --settings=pestopanini.test_settings &&
@@ -138,9 +130,6 @@ pytest $1
 # Kill the server process
 echo "Stopping the server..."
 pkill -f "manage.py runserver"
-
-# Clear the DJANGO_TEST_ENV environment variable
-unset DJANGO_TEST_ENV
 
 # Deactivate the virtual environment
 deactivate
