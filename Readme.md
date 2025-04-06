@@ -276,6 +276,13 @@ For deployment, choose a hosting provider like Heroku, AWS, or DigitalOcean. Set
 See issue #190.
 </details>
 
+> [!NOTE]
+> The following methods rely on ``pytest`` to handle the behavioral tests, however, pytest can occasionally return a false negative for a test in a non-deterministic way. As a fallback, tests are also stored in ``MajorHelp/behaviortests/selenium.side`` and can be run with the [Selenium IDE](https://www.selenium.dev/selenium-ide/)
+
+<details>
+See issue #191
+</details>
+
 
 ## Linux
 <details>
