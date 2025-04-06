@@ -32,6 +32,27 @@ py -m pip install -r requirements.txt
 
 </details>
 
+<details>
+<summary> (Execution policy error?) </summary>
+
+If you're having issues executing ``venv\Scripts\activate.bat``, then you might have to update your execution policy
+
+THIS CHANGE IS PERMAMENT AND AFFECTS SYSTEM GLOBALLY 
+
+```powershell copy
+set-executionpolicy remotesigned
+```
+Run this command as administrator 
+
+
+Reset the execution policy with this
+
+```powershell copy
+set-executionpolicy restricted
+```
+
+</details>
+
 <br>
 
 This will create the virtual environment and place your shell inside it. 
@@ -297,7 +318,7 @@ py manage.py runserver
 While the server is running, simply run 
 
 ```powershell copy
-pytest
+python -m pytest
 ```
 
 and both the unit and behavioral tests will run.
