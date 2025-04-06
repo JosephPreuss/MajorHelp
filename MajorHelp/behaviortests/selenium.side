@@ -682,7 +682,7 @@
       ],
       "value": "${KEY_ENTER}"
     }, {
-      "id": "cc5c6530-7776-4f92-860d-9eb72d99c7af",
+      "id": "30d15041-ecd4-4e47-ab22-eb2cfade1d97",
       "comment": "",
       "command": "click",
       "target": "css=.btn",
@@ -693,6 +693,13 @@
         ["xpath=//button[contains(.,'Login')]", "xpath:innerText"]
       ],
       "value": ""
+    }, {
+      "id": "1b578a20-1532-4d33-ad0a-93f92efcd1d3",
+      "comment": "",
+      "command": "waitForElementPresent",
+      "target": "css=.logout-button",
+      "targets": [],
+      "value": "30000"
     }, {
       "id": "012eb56f-4125-4f8a-8242-de8b4eda1107",
       "comment": "",
