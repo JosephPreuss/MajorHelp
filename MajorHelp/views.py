@@ -530,6 +530,15 @@ class SchoolResultsView(View):
         else:
             sorted_results = results
 
+# Get favorite major IDs for the current user
+        favorite_major_ids = []
+        if request.user.is_authenticated:
+            favorite_major_ids = list(
+                Favorite.objects.filter(
+                    user=request.user,
+                    major__in=majors
+                ).values_list('major_id', flat=True)
+            )
         # Render the template
         return render(request, 'search/school_results.html', {
             'query': query,
@@ -539,6 +548,7 @@ class SchoolResultsView(View):
             'min_tuition': min_tuition,
             'max_tuition': max_tuition,
             'is_out_state': is_out_state,
+            'favorite_major_ids': favorite_major_ids,
         })
 
 
@@ -575,6 +585,16 @@ class DepartmentResultsView(View):
         elif sort_order == 'high_to_low':
             majors = majors.order_by('-out_of_state_min_tuition' if is_out_state else '-in_state_min_tuition')
 
+        # Get favorite major IDs for the current user
+        favorite_major_ids = []
+        if request.user.is_authenticated:
+            favorite_major_ids = list(
+                Favorite.objects.filter(
+                    user=request.user,
+                    major__in=majors
+                ).values_list('major_id', flat=True)
+            )
+
         # Group majors by university and department
         results = {}
         for major in majors:
@@ -587,9 +607,12 @@ class DepartmentResultsView(View):
                 }
             if major.department not in results[university]['departments']:
                 results[university]['departments'][major.department] = []
-            results[university]['departments'][major.department].append(major)
+            
+            results[university]['departments'][major.department].append({
+                'major': major,
+                'is_favorite': major.id in favorite_major_ids
+            })
 
-        # Render the template
         return render(request, 'search/department_results.html', {
             'query': query,
             'results': results,
@@ -598,6 +621,7 @@ class DepartmentResultsView(View):
             'min_tuition': min_tuition,
             'max_tuition': max_tuition,
             'is_out_state': is_out_state,
+            'favorite_major_ids': favorite_major_ids,
         })
 
 class MajorResultsView(View):
@@ -646,6 +670,16 @@ class MajorResultsView(View):
                 results[university]['departments'][major.department] = []
             results[university]['departments'][major.department].append(major)
 
+        favorite_major_ids = []
+        if request.user.is_authenticated:
+            favorite_major_ids = list(
+                Favorite.objects.filter(
+                    user=request.user,
+                    major__in=majors
+                ).values_list('major_id', flat=True)
+            )
+
+    
         # Render the template
         return render(request, 'search/major_results.html', {
             'query': query,
@@ -655,6 +689,7 @@ class MajorResultsView(View):
             'min_tuition': min_tuition,
             'max_tuition': max_tuition,
             'is_out_state': is_out_state,
+            'favorite_major_ids': favorite_major_ids,
         })
     
 class MajorOverviewView(DetailView):

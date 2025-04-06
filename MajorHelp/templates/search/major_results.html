@@ -93,6 +93,37 @@
             text-decoration: underline;
             margin-left: 25px;
         }
+        /* new styles for favorite star indicator */
+        .favorite-btn {
+            font-size: 24px;
+            color: #ccc;
+            cursor: default;
+            pointer-events: none;
+            display: inline-block;
+            margin-right: 8px;
+        }
+
+        .favorite-btn.favorited {
+            color: gold;
+        }
+
+        .major-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            position: relative;
+            padding-left: 10px;
+        }
+
+        .major-info {
+            flex: 1;
+        }
+
+        .favorite-btn-container {
+            display: flex;
+            align-items: center;
+            position: relative;
+        }
     </style>
 {% endblock %}
 
@@ -151,6 +182,32 @@
             document.getElementById("is-out-state-hidden").value = document.getElementById("is-out-state").checked ? "true" : "false";
             document.getElementById("filter-form").submit();
         }
+
+    /* shows errors but it is just in styling, code still works fine need to disable the red squiggly line */
+    document.addEventListener('DOMContentLoaded', function() {
+        const favoriteMajorIds = {{ favorite_major_ids|safe }};
+        document.querySelectorAll('.favorite-btn').forEach(button => {
+            const majorId = parseInt(button.dataset.majorId);
+            if (favoriteMajorIds.includes(majorId)) {
+                button.innerHTML = '★';
+                button.classList.add('favorited');
+            } else {
+                button.innerHTML = '☆';
+                button.classList.remove('favorited');
+            }
+            
+            // Make stars non-clickable
+            button.style.pointerEvents = 'none';
+            button.style.cursor = 'default';
+        });
+
+        // Handle back button to force refresh
+        window.addEventListener('pageshow', function(event) {
+            if (event.persisted || performance.navigation.type === 2) {
+                window.location.reload();
+            }
+        });
+    });
     </script>
 {% endblock %}
 
@@ -266,11 +323,19 @@
                 <ul class="major-list">
                     {% for major in majors %}
                         <li class="major-item">
-                            <a href="{% url 'MajorHelp:major-detail' slug=major.slug %}" class="major-link">{{ major.major_name }}</a>
-                            <span class="major-tuition">
-                                (In-State: ${{ major.in_state_min_tuition }} - ${{ major.in_state_max_tuition }},
-                                Out-of-State: ${{ major.out_of_state_min_tuition }} - ${{ major.out_of_state_max_tuition }})
-                            </span>
+                            <div class="favorite-btn-container">
+                                <span class="favorite-btn {% if major.id in favorite_major_ids %}favorited{% endif %}" 
+                                    data-major-id="{{ major.id }}">
+                                    {% if major.id in favorite_major_ids %}★{% else %}☆{% endif %}
+                                </span>
+                            </div>
+                            <div class="major-info">
+                                <a href="{% url 'MajorHelp:major-detail' slug=major.slug %}" class="major-link">{{ major.major_name }}</a>
+                                <span class="major-tuition">
+                                    (In-State: ${{ major.in_state_min_tuition }} - ${{ major.in_state_max_tuition }},
+                                    Out-of-State: ${{ major.out_of_state_min_tuition }} - ${{ major.out_of_state_max_tuition }})
+                                </span>
+                            </div>
                         </li>
                     {% endfor %}
                 </ul>
