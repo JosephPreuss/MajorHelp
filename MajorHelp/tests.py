@@ -4,7 +4,7 @@ from django.test import Client
 
 from django.urls import reverse
 
-from django.contrib.auth import get_user_model
+from django.contrib.auth import get_user_model, authenticate
 
 import json
 
@@ -42,18 +42,18 @@ class RequestTests(TestCase):
 
 
 class CalcTests(TestCase):
-    @classmethod
-    def setUpTestData(cls):
-        cls.user = get_user_model().objects.create_user(username='testuser', password='password', email="email@example.com")
-        exampleAid = FinancialAid.objects.create(name="exampleAid") 
-        exampleUni = University.objects.create(name="exampleUni")
+    #@classmethod
+    #def setUpTestData(cls):
+        #get_user_model().objects.create_user(username='testuser', password='password', email="email@example.com")
+        #exampleAid = FinancialAid.objects.create(name="exampleAid") 
+        #exampleUni = University.objects.create(name="exampleUni")
 
-        exampleUni.applicableAids.add(exampleAid)
+        #exampleUni.applicableAids.add(exampleAid)
 
-        Major.objects.create(
-            major_name="exampleMajor", slug="exampleMajor", university=exampleUni,
-            department='Humanities and Social Sciences'
-        )
+        # Major.objects.create(
+        #     major_name="exampleMajor", slug="exampleMajor", university=exampleUni,
+        #     department='Humanities and Social Sciences'
+        # )
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -594,11 +594,16 @@ class CalcTests(TestCase):
 class UniRatingsTests(TestCase):
     def setUp(self):
     # Create test users
-        self.user = CustomUser.objects.create_user(
-            username="testuser",
-            password="testpassword",
-            email="testuser@example.com",
-        )
+
+        # user is already precreated
+
+        self.user = authenticate(username="testuser", password="password")
+
+        # self.user = CustomUser.objects.create_user(
+        #     username="testuser",
+        #     password="testpassword",
+        #     email="testuser@example.com",
+        # )
 
         self.user2 = CustomUser.objects.create_user(
             username="testuser2",
@@ -766,22 +771,22 @@ class LoginTest(TestCase):
     def setUp(self):
         # Create a test user with the necessary data
         self.username = "testuser"
-        self.password = "securepassword123"
-        self.user_data = {
-            'username': self.username,
-            'password': self.password,
-            'confirm_password': self.password,
-            'email': "testuser@example.com",
-            'role': 'alumni' 
-        }
+        self.password = "password"
+        # self.user_data = {
+        #     'username': self.username,
+        #     'password': self.password,
+        #     'confirm_password': self.password,
+        #     'email': "email@example.com",
+        #     'role': 'alumni' 
+        # }
         
-        # Use CustomUserCreationForm or your own user creation logic here
-        self.user = CustomUser.objects.create_user(
-            username=self.username,
-            password=self.password,
-            email=self.user_data['email'],
-            role=self.user_data['role']
-        )
+        # # Use CustomUserCreationForm or your own user creation logic here
+        # self.user = CustomUser.objects.create_user(
+        #     username=self.username,
+        #     password=self.password,
+        #     email=self.user_data['email'],
+        #     role=self.user_data['role']
+        # )
 
         self.url = reverse('MajorHelp:login')  
 

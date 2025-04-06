@@ -14,6 +14,11 @@ class TestTestcalcCaseInsensitive():
   def setup_method(self, method):
     self.driver = webdriver.Firefox()
     self.vars = {}
+    # Wait until the page has loaded
+    WebDriverWait(self.driver, 10).until(
+        expected_conditions.presence_of_element_located((By.TAG_NAME, "body"))
+    )
+    self.driver.maximize_window()
   
   def teardown_method(self, method):
     self.driver.quit()
@@ -22,7 +27,7 @@ class TestTestcalcCaseInsensitive():
     self.driver.get("http://127.0.0.1:8000/")
     self.driver.find_element(By.LINK_TEXT, "Tuition Calculator").click()
     self.driver.find_element(By.ID, "uni-search-0").click()
-    self.driver.find_element(By.ID, "uni-search-0").send_keys("UofSC")
+    self.driver.find_element(By.ID, "uni-search-0").send_keys("exampleuni")
     WebDriverWait(self.driver, 30).until(expected_conditions.presence_of_element_located((By.CSS_SELECTOR, ".uni-results > .result-item")))
     self.driver.find_element(By.CSS_SELECTOR, ".result-item").click()
     self.driver.find_element(By.ID, "uni-search-0").click()
@@ -30,7 +35,7 @@ class TestTestcalcCaseInsensitive():
     element = self.driver.find_element(By.ID, "uni-search-0")
     actions = ActionChains(self.driver)
     actions.double_click(element).perform()
-    self.driver.find_element(By.ID, "uni-search-0").send_keys("UOFSC")
+    self.driver.find_element(By.ID, "uni-search-0").send_keys("EXAMPLEUNI")
     WebDriverWait(self.driver, 30).until(expected_conditions.presence_of_element_located((By.CSS_SELECTOR, ".result-item")))
     self.driver.find_element(By.CSS_SELECTOR, ".result-item").click()
     self.driver.find_element(By.ID, "uni-search-0").click()
@@ -38,7 +43,7 @@ class TestTestcalcCaseInsensitive():
     element = self.driver.find_element(By.ID, "uni-search-0")
     actions = ActionChains(self.driver)
     actions.double_click(element).perform()
-    self.driver.find_element(By.ID, "uni-search-0").send_keys("uofsc")
+    self.driver.find_element(By.ID, "uni-search-0").send_keys("ExampleUni")
     WebDriverWait(self.driver, 30).until(expected_conditions.presence_of_element_located((By.CSS_SELECTOR, ".result-item")))
     self.driver.find_element(By.CSS_SELECTOR, ".result-item").click()
     self.driver.find_element(By.ID, "uni-search-0").click()
@@ -46,7 +51,7 @@ class TestTestcalcCaseInsensitive():
     element = self.driver.find_element(By.ID, "uni-search-0")
     actions = ActionChains(self.driver)
     actions.double_click(element).perform()
-    self.driver.find_element(By.ID, "uni-search-0").send_keys("UoFsC")
+    self.driver.find_element(By.ID, "uni-search-0").send_keys("ExaMpLe UnI")
     WebDriverWait(self.driver, 30).until(expected_conditions.presence_of_element_located((By.CSS_SELECTOR, ".result-item")))
     self.driver.find_element(By.CSS_SELECTOR, ".result-item").click()
   

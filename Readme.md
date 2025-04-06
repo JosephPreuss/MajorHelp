@@ -32,6 +32,27 @@ py -m pip install -r requirements.txt
 
 </details>
 
+<details>
+<summary> (Execution policy error?) </summary>
+
+If you're having issues executing ``venv\Scripts\activate.bat``, then you might have to update your execution policy
+
+THIS CHANGE IS PERMAMENT AND AFFECTS SYSTEM GLOBALLY 
+
+```powershell copy
+set-executionpolicy remotesigned
+```
+Run this command as administrator 
+
+
+Reset the execution policy with this
+
+```powershell copy
+set-executionpolicy restricted
+```
+
+</details>
+
 <br>
 
 This will create the virtual environment and place your shell inside it. 
@@ -249,59 +270,17 @@ For deployment, choose a hosting provider like Heroku, AWS, or DigitalOcean. Set
 # Testing
 
 > [!NOTE]
-> The behavoral tests in ``MajorHelp/behaviortests/`` will fail if the server is not already running locally.
-
-## Windows
-<details>
-<summary> Windows Guide </summary>
-
-### Prerequisites
-
-First, start by activating the virtual environment if you haven't already
-
-```powershell copy
-venv\Scripts\Activate.ps1
-```
+> Currently testing isn't supported on Windows devices. WSL may be a decent workaround, however behavioral tests can return false positives if the Linux Subsystem's browser does not load correctly.
 
 <details>
-<summary> (Using cmd?) </summary>
-
-```cmd copy
-venv\Scripts\activate.bat
-```
-
+See issue #190.
 </details>
-<br>
 
-Next, make sure you have a local instance of the server running, preferably in another terminal
-(Make sure you're activated)
+> [!NOTE]
+> The following methods rely on ``pytest`` to handle the behavioral tests, however, pytest can occasionally return a false negative for a test in a non-deterministic way. As a fallback, tests are also stored in ``MajorHelp/behaviortests/selenium.side`` and can be run with the [Selenium IDE](https://www.selenium.dev/selenium-ide/)
 
-```powershell copy
-python manage.py runserver
-```
 <details>
-<summary> (Using cmd?) </summary>
-
-```cmd copy
-py manage.py runserver
-```
-
-</details>
-<br>
-
-
-
-
-#### Running the tests
-
-While the server is running, simply run 
-
-```powershell copy
-pytest
-```
-
-and both the unit and behavioral tests will run.
-
+See issue #191
 </details>
 
 
@@ -309,11 +288,29 @@ and both the unit and behavioral tests will run.
 <details>
 <summary> Linux Guide </summary>
 
-### Method 1 - Oneliner (Bash)
+### Method 1 - Helper Script (Bash)
 
-This oneliner will activate the venv, start the server in the background, run the tests, and then closes the server,
+A helper script has been provided for running the unit and behavioral tests for MajorHelp.
+Tests will be run in a test database.
 ```bash copy
-source venv/bin/activate && python manage.py runserver &> /dev/null & pytest ; kill %- 
+./run_tests.sh
+```
+
+The script can also accept a path argument to source tests from, by default it uses the working directory.
+
+```bash copy
+./run_tests.sh ./path/to/tests.py
+```
+
+
+To facilitate creating new tests, or to run the server in the test environment, use the ``-r`` flag or ``--run-test-server``.
+```bash copy
+./run_tests.sh --run-test-server
+```
+
+When you are finished, run the script run with the ``-c`` flag or ``--clean`` to remove the test database and clean any cache.
+```bash copy
+./run_test --clean
 ```
 
 ### Method 2 - Manual
@@ -327,11 +324,16 @@ First, start by activating the virtual environment if you haven't already
 source venv/bin/activate
 ```
 
+Then, set up the test environment
+```bash copy
+python manage.py migrate --settings=pestopanini.test_settings
+```
+
 Next, make sure you have a local instance of the server running, preferably in another terminal
 (Make sure you're activated)
 
 ```bash copy
-python manage.py runserver
+python manage.py runserver --settings=pestopanini.test_settings
 ```
 
 

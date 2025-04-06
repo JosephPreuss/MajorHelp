@@ -14,12 +14,18 @@ class TestSubmitUniversityRequest():
   def setup_method(self, method):
     self.driver = webdriver.Firefox()
     self.vars = {}
+    # Wait until the page has loaded
+    WebDriverWait(self.driver, 10).until(
+        expected_conditions.presence_of_element_located((By.TAG_NAME, "body"))
+    )
+    self.driver.maximize_window()
   
   def teardown_method(self, method):
     self.driver.quit()
   
   def test_submitUniversityRequest(self):
     self.driver.get("http://127.0.0.1:8000/")
+    #self.driver.set_window_size(1920, 1080)
     self.driver.find_element(By.LINK_TEXT, "Search").click()
     self.driver.find_element(By.ID, "filter-dropdown").click()
     dropdown = self.driver.find_element(By.ID, "filter-dropdown")
@@ -27,8 +33,9 @@ class TestSubmitUniversityRequest():
     self.driver.find_element(By.ID, "school-option").click()
     self.driver.find_element(By.ID, "search-query").click()
     self.driver.find_element(By.ID, "search-query").send_keys("DoesNotExistU")
-    self.driver.find_element(By.CSS_SELECTOR, "button").click()
+    self.driver.find_element(By.CSS_SELECTOR, ".fas").click()
     self.driver.find_element(By.LINK_TEXT, "Request University").click()
     self.driver.find_element(By.ID, "request_text").click()
     self.driver.find_element(By.ID, "request_text").send_keys("DoesNotExistU")
+    self.driver.find_element(By.CSS_SELECTOR, "button").click()
   
