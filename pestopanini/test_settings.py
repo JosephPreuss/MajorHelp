@@ -27,17 +27,18 @@ def create_test_user(sender, **kwargs):
     User = apps.get_model('MajorHelp', 'CustomUser')  # Replace 'MajorHelp' with the app name containing CustomUser
     if os.environ.get("DJANGO_TEST_ENV") == "true":
         # Try to retrieve the user if it already exists
-        user = User.objects.filter(username="testuser_behavioral", email="testEmail@example.com").first()
+        user = User.objects.filter(username="testuser", email="email@example.com").first()
         
         # If the user doesn't exist, create it
         if not user:
             user = User.objects.create_user(
-                username="testuser_behavioral",
+                username="testuser",
                 password="password",
-                email="testEmail@example.com",
+                email="email@example.com",
                 is_staff=False,
-                is_superuser=True,
+                is_superuser=False,
                 is_active=True,
+                role="alumni"
             )
             print(f"Test user created: {user.username}")
         # else:
@@ -53,6 +54,7 @@ def create_test_user(sender, **kwargs):
 
 
 def populate_database(sender, **kwargs):
+    # "runtime" imports
     FinancialAid = apps.get_model('MajorHelp', 'FinancialAid')
     University = apps.get_model('MajorHelp', 'University')
     Major = apps.get_model('MajorHelp', 'Major')
@@ -63,13 +65,22 @@ def populate_database(sender, **kwargs):
     # Create if it doesn't already exist
     if not uni:
         exampleAid = FinancialAid.objects.create(name="exampleAid") 
-        exampleUni = University.objects.create(name="exampleUni", slug="exampleUni", location="Mars")
+        exampleUni = University.objects.create(name="exampleUni", slug="exampleUni", location="nowhere")
 
         exampleUni.applicableAids.add(exampleAid)
 
         Major.objects.create(
             major_name="exampleMajor", slug="exampleMajor", university=exampleUni,
             department='Humanities and Social Sciences'
+        )
+
+
+
+        MercuryU = University.objects.create(name="MercuryU", location="Borealis Plantia")
+
+        Major.objects.create(
+            major_name="Solar Engineering", university=MercuryU,
+            department='Engineering and Technology'
         )
 
 
