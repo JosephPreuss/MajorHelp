@@ -14,6 +14,11 @@ class TestTestcalcNoLoginDismiss():
   def setup_method(self, method):
     self.driver = webdriver.Firefox()
     self.vars = {}
+    # Wait until the page has loaded
+    WebDriverWait(self.driver, 10).until(
+        expected_conditions.presence_of_element_located((By.TAG_NAME, "body"))
+    )
+    self.driver.maximize_window()
   
   def teardown_method(self, method):
     self.driver.quit()

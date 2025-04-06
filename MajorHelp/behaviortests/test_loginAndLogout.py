@@ -14,13 +14,18 @@ class TestLoginAndLogout():
   def setup_method(self, method):
     self.driver = webdriver.Firefox()
     self.vars = {}
+    # Wait until the page has loaded
+    WebDriverWait(self.driver, 10).until(
+        expected_conditions.presence_of_element_located((By.TAG_NAME, "body"))
+    )
+    self.driver.maximize_window()
   
   def teardown_method(self, method):
     self.driver.quit()
   
   def test_loginAndLogout(self):
     self.driver.get("http://127.0.0.1:8000/")
-    self.driver.set_window_size(1908, 2036)
+    #self.driver.set_window_size(1908, 2036)
     self.driver.find_element(By.LINK_TEXT, "Log In").click()
     self.driver.find_element(By.ID, "id_username").click()
     self.driver.find_element(By.ID, "id_username").send_keys("testuser")
