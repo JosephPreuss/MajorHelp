@@ -20,15 +20,15 @@
     </div>
     <div id="panel-open" style="display: none;">
         <p>Create, save, and load calculations here.   <span onclick="hidePanel()" class="right-align fake-link">Hide.</span></p>
+        <b>Load Calculator</b><br style="margin-bottom: 5px;">
+        <span>Name: <input type="text" id="loadCalc" class="loadCalc" placeholder="Calc to be Loaded"></span>
+        <div id="loadResults" class="loadResults"></div>
         <br>
         <div id="calc-table">
             {% include 'calc/calc_panel.html' with num="0" %}
         </div>
         <br>
         <span class="fake-link" onclick="newCalc()">New Calculator</span>
-        &nbsp;&nbsp;
-        <input type="text" id="loadCalc" class="loadCalc" placeholder="Load Calculator">
-        <div id="loadResults" class="loadResults"></div>
     </div>
 
     {% else %}
