@@ -21,7 +21,7 @@
     <div id="panel-open" style="display: none;">
         <p>Create, save, and load calculations here.   <span onclick="hidePanel()" class="right-align fake-link">Hide.</span></p>
         <b>Load Calculator</b><br style="margin-bottom: 5px;">
-        <span>Name: <input type="text" id="loadCalc" class="loadCalc" placeholder="Calc to be Loaded"></span>
+        <span>Name: <input type="text" id="loadCalc" class="loadCalc" placeholder="Calc to be Loaded" onclick="updateCalcResults()"></span>
         <div id="loadResults" class="loadResults"></div>
         <br>
         <div id="calc-table">
@@ -36,7 +36,7 @@
         <a href="{% url 'MajorHelp:login' %}">Log In</a> or <a href="{% url 'MajorHelp:signup' %}">Sign Up</a>
         to compare and save your calculations.
         <br>
-        <span class="fake-link" onclick="dismiss()">Dismiss.</span>
+        <span class="fake-link" onclick="dismiss('calc-panel')">Dismiss.</span>
     </div>
     {% endif %}
 </div>

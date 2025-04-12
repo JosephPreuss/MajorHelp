@@ -907,7 +907,7 @@ async function deleteSave(calcKey) {
 
 async function updateCalcResults() {
     const query = document.getElementById("loadCalc").value.trim();
-    if (!query) return;
+    // if (!query) return;
 
     const data = await fetchSavedCalculators(query);
     if (!data === null) return;

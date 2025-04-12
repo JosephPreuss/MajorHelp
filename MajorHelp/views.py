@@ -826,8 +826,11 @@ def calc_list(request):
 
     query = request.GET.get('query')
 
-    if not query:
-        return HttpResponse("Error - No query provided", status=400)
+    # #if not query:
+    # #    return HttpResponse("Error - No query provided", status=400)
+    #
+    # Above is commented out due to Vedal wanting all calcs to show when the
+    # user clicks on the search bar.
 
     # lower the query so that the filtering can be case insensitive
     query = query.lower()
@@ -860,8 +863,6 @@ def calc_list(request):
         data['calculators'].append(
             user.savedCalcs[key]
         )
-
-    print(data)
 
     # Return the data
 
