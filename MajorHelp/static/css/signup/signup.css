@@ -8,6 +8,7 @@ body {
 
 /* Overall Signup Container */
 .signup-container {
+    position: relative; /* Allows absolute positioning of child elements */
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -22,21 +23,30 @@ body {
 
 /* Header Styling */
 .signup-header {
-    text-align: left;
-    margin-right: 45wh;
+    position: absolute; /* Position relative to .signup-container */
+    top: 20px; /* Adjust as needed to align with the first form entry */
+    left: 40px; /* Align to the left of the container */
+    transform: translateX(0); /* Remove centering */
+    text-align: left; /* Align text to the left */
+    width: auto; /* Adjust width to fit content */
+    padding-left: 20px; /* Add some padding for spacing */
 }
 
 .signup-header h1 {
-    text-align: left;          
     font-size: 70px;
-    margin-bottom: 20px;       
-    font-weight: bold;        
-    color: #000;              
-    padding-left: 20px;       
+    margin-bottom: 20px;
+    font-weight: bold;
+    color: #000;
 }
 
 .signup-header .highlight {
     color: #4FC7CF;
+}
+
+/* Adjust the form to avoid overlapping with the header */
+.signup-form {
+    margin-top: 100px; /* Add space to account for the header */
+    width: 100%;
 }
 
 /* Form Group Styling */
