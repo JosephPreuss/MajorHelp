@@ -503,6 +503,7 @@ async function selectUniversity(calc, name) {
     document.getElementById(`uni-name-${calc}`).textContent = name;
     document.getElementById(`uni-box-${calc}`).style.visibility = "visible";
     document.getElementById(`uni-results-${calc}`).innerHTML = "";
+    document.getElementById(`uni-search-${calc}`).value = name;
     document.getElementById(`dept-dropdown-${calc}`).innerHTML =
         `<option value="" disabled selected>Select a Department</option>` +
         DEPARTMENT_CHOICES.map(dept => `<option value="${dept}">${dept}</option>`).join('');
@@ -719,9 +720,10 @@ async function displayOutput(calc, university, outstate, major, aid=null) {
             // User has not redefined the default present name,
             // for readability, redefine the calc name to the 
             // University name.
-            calcName.textContent = university;
+            const generatedName = university + ' - ' + major
+            calcName.textContent = generatedName;
 
-            calcInput[calc]['calcName'] = university;
+            calcInput[calc]['calcName'] = generatedName;
         }
 
 
