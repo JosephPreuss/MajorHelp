@@ -970,7 +970,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const scriptTag = document.getElementById("saved-calcs-data");
 
     if (scriptTag) {
-        let savedCalculators = {};
         try {
             savedCalculators = JSON.parse(scriptTag.textContent);
             console.log("Loaded saved data:", savedCalculators);
@@ -986,3 +985,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
     initializeCalculators(); 
 });
+
+function loadSelectedCalc() {
+    const dropdown = document.getElementById("loadCalc");
+    const key = dropdown.value;
+
+    if (!key || !window.savedCalculators || !window.savedCalculators[key]) {
+        showNotification("No calculator selected or not found.", true);
+        return;
+    }
+
+    const selectedCalc = window.savedCalculators[key];
+    loadSavedCalculator(selectedCalc); // Uses your existing loader
+
+    dropdown.value = ""; 
+    dropdown.blur();     
+}
