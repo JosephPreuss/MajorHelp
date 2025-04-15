@@ -5,7 +5,7 @@
         <input type="text" id="uni-search-{{num|default:''}}" class="uni-search" placeholder="Enter your university">
         <div id="uni-results-{{num|default:''}}" class="uni-results search-results"></div>
         <h3 id="uni-box-{{num|default:''}}" class="uni-box">You have selected <span id="uni-name-{{num|default:''}}" class="uni-name color-text">Nothing</span>.</h3>
-        <input type="checkbox" id="outstate-{{num|default:''}}" class="outstate"> Out-of-State (Select aid again to update)
+        <input type="checkbox" id="outstate-{{num|default:''}}" class="outstate"> Out-of-State 
 
         <h2>Select your <span class="color-text">department</span>.</h2>
         <select id="dept-dropdown-{{num|default:''}}" class="dept-dropdown">
@@ -14,7 +14,12 @@
         
         <h2>Now choose your <span class="color-text">major</span>.</h2>
         <div id="major-results-{{num|default:''}}" class="major-results search-results"></div>
-        <h3 id="major-box-{{num|default:''}}" class="major-box">You have selected <span id="major-name-{{num|default:''}}" class="major-name color-text">Nothing</span>.</h3>
+        <h3 id="major-box-{{num|default:''}}" class="major-box">
+            You have selected 
+            <span id="major-name-{{num|default:''}}" class="major-name color-text">Nothing</span>
+            <span class="reselect-btn" onclick="toggleMajorResults({{num|default:'0'}})">✖</span>
+          </h3>          
+          <div id="major-results-{{num|default:''}}" class="major-results search-results"></div>
 
         <div id="input-aid-{{num|default:''}}" class="input-aid">
             <h2>Do any of these apply to <span class="color-text">you</span>?</h2>

@@ -72,7 +72,7 @@ body::before {
     }
 
     .hero-heading .highlight {
-        color: #4fc7cf;
+        color: #c5e1e3;
     }
 
     .styled-search-form {
@@ -99,7 +99,7 @@ body::before {
     #search-query,
     .filter-dropdown select {
         height: 45px;
-        width: 100%;
+        width: 90%;
         font-size: 16px;
         padding: 0 15px;
         border: none;
@@ -117,7 +117,7 @@ body::before {
     .filter-label {
         font-weight: bold;
         color: #fff;
-        margin-right: 5px;
+        margin-right: 0px;
     }
 
     button[type="submit"] {

@@ -229,3 +229,15 @@ body {
 .master-template {
     display: none !important; /* Ensure it’s never visible */
   }
+
+.reselect-btn {
+    cursor: pointer;
+    color: #268f95;
+    margin-left: 8px;
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+
+.reselect-btn:hover {
+    color: #d9534f;
+}

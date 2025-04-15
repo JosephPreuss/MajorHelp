@@ -66,6 +66,7 @@ function initializeCalculators() {
         panel.querySelector(".save").addEventListener('click', () => saveCalc(panelNum));
         panel.querySelector(".clear").addEventListener('click', () => clearCalc(panelNum));
         panel.querySelector(".remove").addEventListener('click', () => removeCalc(panelNum));
+        
     });
 
     // Initialize the calculators themselves
@@ -76,10 +77,15 @@ function initializeCalculators() {
         const calcNum = parseInt(calc.id.split("-")[1]); 
         const uniSearch = calc.querySelector(".uni-search");
         const deptDropdown = calc.querySelector(".dept-dropdown");
+        const outstateCheckbox = document.getElementById(`outstate-${calcNum}`);
+        
 
         // Attach event listeners
         uniSearch.addEventListener("input", () => updateUniversityResults(calcNum));
         deptDropdown.addEventListener("change", () => updateMajorResults(calcNum));
+        if (outstateCheckbox) {
+            outstateCheckbox.addEventListener("change", () => handleOutstateToggle(calcNum));
+        }
 
         // Add new entry to calcInput array
         calcInput.push({
@@ -110,6 +116,7 @@ function newCalc(values=null, load=false) {
         const calcElem = document.getElementById(`calculator-${calc}`);
         document.getElementById("calc-table").appendChild(entryElem);
         document.getElementById("calculators").appendChild(calcElem);
+        
 
         // restore the json
         if (values) {
@@ -142,6 +149,7 @@ function newCalc(values=null, load=false) {
         // Duplicate the calculator's panel
         const masterPanel = document.getElementById("calculator-master-panel-container").children[0];
         const panel = masterPanel.cloneNode(true);
+        
 
         panel.id += calc;
 
@@ -154,6 +162,7 @@ function newCalc(values=null, load=false) {
         panel.querySelector(".save").addEventListener('click', () => saveCalc(calc));
         panel.querySelector(".clear").addEventListener('click', () => clearCalc(calc));
         panel.querySelector(".remove").addEventListener('click', () => removeCalc(calc));
+       
 
 
         // Update contents of the panel
@@ -245,6 +254,10 @@ function newCalc(values=null, load=false) {
             deleteBtn.onclick = () => deleteSave(values.calcName.toLowerCase());
         }
     }
+    const outstateCheckbox = document.getElementById(`outstate-${calc}`);
+    if (outstateCheckbox) {
+        outstateCheckbox.addEventListener("change", () => handleOutstateToggle(calc));
+    }
 }
 
 async function saveCalc(calc) {
@@ -296,6 +309,9 @@ async function saveCalc(calc) {
         // Re-bind the deleteSave functionality
         deleteBtn.onclick = () => deleteSave(calcKey);
     }
+    await refreshSavedDropdown();  
+    console.log("Refreshing dropdown after save/delete");
+
 }
 
 // https://docs.djangoproject.com/en/5.2/howto/csrf/#using-csrf
@@ -342,7 +358,7 @@ async function updateCalc(calc) {
     // Select the department
     const deptDropdown = document.getElementById(`dept-dropdown-${calc}`);
     deptDropdown.value = input.dept;
-    await updateMajorResults(calc);
+    await updateMajorResults(calc,true);
 
     // Select the major
     await selectMajor(calc, input.major);
@@ -500,6 +516,12 @@ async function selectUniversity(calc, name) {
     document.getElementById(`uni-name-${calc}`).textContent = name;
     document.getElementById(`uni-box-${calc}`).style.visibility = "visible";
     document.getElementById(`uni-results-${calc}`).innerHTML = "";
+    document.getElementById(`uni-search-${calc}`).value = name;
+    const input = document.getElementById(`uni-search-${calc}`);
+    if (input) {
+        input.value = name;
+        autoResizeInput(input); 
+    }
     document.getElementById(`dept-dropdown-${calc}`).innerHTML =
         `<option value="" disabled selected>Select a Department</option>` +
         DEPARTMENT_CHOICES.map(dept => `<option value="${dept}">${dept}</option>`).join('');
@@ -513,10 +535,11 @@ async function selectUniversity(calc, name) {
     document.getElementById(`aid-results-${calc}`).replaceChildren();
 
     // Finally update the JSON
+    
     calcInput[calc]['uni'] = name;
 }
 
-async function updateMajorResults(calc) {
+async function updateMajorResults(calc, preserveExisting = false) {
     // Get data
     const university = document.getElementById(`uni-name-${calc}`).textContent;
     const department = document.getElementById(`dept-dropdown-${calc}`).value;
@@ -539,7 +562,26 @@ async function updateMajorResults(calc) {
     } else {
         majorContainer.innerHTML = "<p>No majors found.</p>";
     }
+    if(!preserveExisting) { 
+        majorContainer.style.display = "block";
+        majorContainer.classList.remove("hidden");
 
+        const majorNameSpan = document.getElementById(`major-name-${calc}`);
+        majorNameSpan.textContent = "Nothing";
+        document.getElementById(`major-box-${calc}`).style.visibility = "hidden";
+
+        const output = document.getElementById(`output-${calc}`);
+        output.style.display = "none";
+
+        calcInput[calc]['major'] = "";
+        calcInput[calc]['aid'] = "";
+
+        document.getElementById(`aid-output-${calc}`).style.display = "none";
+        document.getElementById(`aid-box-${calc}`).style.visibility = "hidden";
+        document.getElementById(`aid-name-${calc}`).innerText = "Nothing";
+        document.getElementById(`input-aid-${calc}`).style.display = "none";
+        document.getElementById(`aid-results-${calc}`).innerHTML = "";
+    }
     // Update dept in JSON
     calcInput[calc]['dept'] = department;
 }
@@ -564,6 +606,7 @@ async function selectMajor(calc, major) {
     // Update input
     document.getElementById(`major-box-${calc}`).style.visibility = "visible";
     document.getElementById(`major-name-${calc}`).textContent = major;
+    document.getElementById(`major-results-${calc}`).style.display = "none";
 
     // Check if financial aid applies.
     const aidData = await fetchFinancialAid(university);
@@ -709,16 +752,36 @@ async function displayOutput(calc, university, outstate, major, aid=null) {
         // "Calculator 1,2,3..." calc name
         const regex = "[C,c]alculator (\\d)+";
 
-        if (calcName.textContent === calcInput[calc]['uni'] || 
-            RegExp(regex).test(calcName.textContent))
-        {
 
             // User has not redefined the default present name,
             // for readability, redefine the calc name to the 
             // University name.
-            calcName.textContent = university;
+        const generatedName = university + ' - ' + major
+        calcName.textContent = generatedName;
 
-            calcInput[calc]['calcName'] = university;
+        calcInput[calc]['calcName'] = generatedName;
+
+        const deleteBtn = panel.querySelector(".delete-save");
+        if (deleteBtn) {
+            deleteBtn.style.display = "none";
+            deleteBtn.onclick = null;
+        
+            const newName = calcInput[calc]['calcName'].toLowerCase();
+
+            const scriptTag = document.getElementById("saved-calcs-data");
+            let savedCalcs = {};
+            if (scriptTag) {
+                try {
+                    savedCalcs = JSON.parse(scriptTag.textContent);
+                } catch (e) {
+                    console.error("Could not parse saved calculator data");
+                }
+            }
+        
+            if (savedCalcs && savedCalcs[newName]) {
+                deleteBtn.style.display = "inline";
+                deleteBtn.onclick = () => deleteSave(newName);
+            }
         }
 
 
@@ -830,7 +893,7 @@ async function loadSavedCalculators(savedCalculators) {
         const deptDropdown = document.getElementById(`dept-dropdown-${index}`);
         if (deptDropdown) {
             deptDropdown.value = data.dept;
-            await updateMajorResults(index);
+            await updateMajorResults(index,true);
         }
 
         await selectMajor(index, data.major);
@@ -903,6 +966,8 @@ async function deleteSave(calcKey) {
             if (deleteBtn) deleteBtn.style.display = "none";
         }
     });
+    await refreshSavedDropdown();  
+
 }
 
 async function updateCalcResults() {
@@ -963,14 +1028,13 @@ document.addEventListener("DOMContentLoaded", () => {
         loggedIn = true;
         
         // Set up load Calculator event listener
-        document.getElementById("loadCalc").addEventListener("input", () => updateCalcResults());
+        //document.getElementById("loadCalc").addEventListener("input", () => updateCalcResults());
     }
     console.log(loggedIn ? "User is logged in." : "User is anonymous.");
 
     const scriptTag = document.getElementById("saved-calcs-data");
 
     if (scriptTag) {
-        let savedCalculators = {};
         try {
             savedCalculators = JSON.parse(scriptTag.textContent);
             console.log("Loaded saved data:", savedCalculators);
@@ -978,11 +1042,98 @@ document.addEventListener("DOMContentLoaded", () => {
             console.error("Failed to parse saved calculator data:", e);
         }
         
-        // TODO, replace function call with a similar version that only gets the calculators from
-        //       the previous session.
-
-        //loadSavedCalculators(savedCalculators);
     }
 
     initializeCalculators(); 
 });
+
+function loadSelectedCalc() {
+    const dropdown = document.getElementById("loadCalc");
+    const key = dropdown.value;
+
+    if (!key || !window.savedCalculators || !window.savedCalculators[key]) {
+        showNotification("No calculator selected or not found.", true);
+        return;
+    }
+
+    const selectedCalc = window.savedCalculators[key];
+    loadSavedCalculator(selectedCalc); // Uses your existing loader
+
+    dropdown.selectedIndex = 0;
+}
+
+async function refreshSavedDropdown() {
+    const dropdown = document.getElementById("loadCalc");
+    if (!dropdown) return;
+
+    // Clear all existing options
+    dropdown.innerHTML = `
+        <option value="" disabled selected hidden>Saved Calculators</option>
+    `;
+
+    try {
+        const response = await fetch("/api/calcs/?query=");
+        if (!response.ok) throw new Error("Failed to fetch calculators.");
+
+        const data = await response.json();
+        window.savedCalculators = {};
+
+        if (data.calculators.length === 0) {
+            dropdown.innerHTML += `<option disabled>No saved calculators</option>`;
+            return;
+        }
+
+        data.calculators.forEach(calc => {
+            const key = calc.calcName.toLowerCase();
+            window.savedCalculators[key] = calc;
+            dropdown.innerHTML += `<option value="${key}">${calc.calcName}</option>`;
+        });
+
+        // Reset to placeholder visually
+        dropdown.selectedIndex = 0;
+
+    } catch (err) {
+        console.error("Error refreshing dropdown:", err);
+        dropdown.innerHTML += `<option disabled>Error loading saves</option>`;
+    }
+}
+
+function handleOutstateToggle(calc) {
+    const outstateCheckbox = document.getElementById(`outstate-${calc}`);
+    if (!outstateCheckbox) return;
+
+    // Update the JSON
+    calcInput[calc].outstate = outstateCheckbox.checked;
+
+    const uni = calcInput[calc].uni;
+    const major = calcInput[calc].major;
+    const aid = calcInput[calc].aid || null;
+
+    if (uni && major) {
+        // Recalculate and update UI
+        displayOutput(calc, uni, outstateCheckbox.checked, major, aid);
+    }
+}
+
+function autoResizeInput(inputElement) {
+    if (!inputElement) return;
+
+    const minCh = 15;  //Minimum characters worth of width 
+    const contentLength = inputElement.value.length + 1;
+    const widthCh = Math.max(contentLength, minCh);
+
+    inputElement.style.width = `${widthCh}ch`;
+}
+
+function toggleMajorResults(calc) {
+    const results = document.getElementById(`major-results-${calc}`);
+    if (!results) return;
+
+    // Always make visible
+    results.style.display = "block";
+    results.classList.remove("hidden");
+
+    // Rebuild major list based on current university + department
+    updateMajorResults(calc);
+}
+
