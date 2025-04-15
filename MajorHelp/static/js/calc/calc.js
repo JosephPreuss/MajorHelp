@@ -48,8 +48,8 @@ function expandPanel() {
     document.getElementById("panel-open").style.display = "block";
 }
 
-function dismiss() {
-    document.getElementById("calc-panel").style.display = "none";
+function dismiss(id) {
+    document.getElementById(id).style.display = "none";
 }
 
 function initializeCalculators() {
@@ -907,7 +907,7 @@ async function deleteSave(calcKey) {
 
 async function updateCalcResults() {
     const query = document.getElementById("loadCalc").value.trim();
-    if (!query) return;
+    // if (!query) return;
 
     const data = await fetchSavedCalculators(query);
     if (!data === null) return;
@@ -927,7 +927,8 @@ async function updateCalcResults() {
             resultsContainer.appendChild(option);
         });
     } else {
-        resultsContainer.innerHTML = "<p>No saved calculators found.</p>"; 
+        resultsContainer.innerHTML = 
+        "<p id=\"NoSavedCalcsFound\">No saved calculators found. &nbsp; <span class=\"fake-link\" onclick=\"dismiss('NoSavedCalcsFound')\">Dismiss.</p>"; 
     }
 }
 
