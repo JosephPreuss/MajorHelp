@@ -787,6 +787,7 @@ def calc_list(request):
         return HttpResponse("Error - You must be logged in", status=401)
     
     user = request.user
+    user.refresh_from_db()
 
 
     query = request.GET.get('query')

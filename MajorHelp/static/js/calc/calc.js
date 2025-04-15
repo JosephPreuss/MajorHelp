@@ -296,6 +296,9 @@ async function saveCalc(calc) {
         // Re-bind the deleteSave functionality
         deleteBtn.onclick = () => deleteSave(calcKey);
     }
+    await refreshSavedDropdown();  
+    console.log("Refreshing dropdown after save/delete");
+
 }
 
 // https://docs.djangoproject.com/en/5.2/howto/csrf/#using-csrf
@@ -903,6 +906,8 @@ async function deleteSave(calcKey) {
             if (deleteBtn) deleteBtn.style.display = "none";
         }
     });
+    await refreshSavedDropdown();  
+
 }
 
 async function updateCalcResults() {
@@ -963,7 +968,7 @@ document.addEventListener("DOMContentLoaded", () => {
         loggedIn = true;
         
         // Set up load Calculator event listener
-        document.getElementById("loadCalc").addEventListener("input", () => updateCalcResults());
+        //document.getElementById("loadCalc").addEventListener("input", () => updateCalcResults());
     }
     console.log(loggedIn ? "User is logged in." : "User is anonymous.");
 
@@ -995,4 +1000,40 @@ function loadSelectedCalc() {
     loadSavedCalculator(selectedCalc); // Uses your existing loader
 
     dropdown.selectedIndex = 0;
+}
+
+async function refreshSavedDropdown() {
+    const dropdown = document.getElementById("loadCalc");
+    if (!dropdown) return;
+
+    // Clear all existing options
+    dropdown.innerHTML = `
+        <option value="" disabled selected hidden>Saved Calculators</option>
+    `;
+
+    try {
+        const response = await fetch("/api/calcs/?query=");
+        if (!response.ok) throw new Error("Failed to fetch calculators.");
+
+        const data = await response.json();
+        window.savedCalculators = {};
+
+        if (data.calculators.length === 0) {
+            dropdown.innerHTML += `<option disabled>No saved calculators</option>`;
+            return;
+        }
+
+        data.calculators.forEach(calc => {
+            const key = calc.calcName.toLowerCase();
+            window.savedCalculators[key] = calc;
+            dropdown.innerHTML += `<option value="${key}">${calc.calcName}</option>`;
+        });
+
+        // Reset to placeholder visually
+        dropdown.selectedIndex = 0;
+
+    } catch (err) {
+        console.error("Error refreshing dropdown:", err);
+        dropdown.innerHTML += `<option disabled>Error loading saves</option>`;
+    }
 }
