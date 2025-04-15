@@ -23,7 +23,7 @@ body {
 /* Header Styling */
 .signup-header {
     text-align: left;
-    margin-right: 1120px;
+    margin-right: 45wh;
 }
 
 .signup-header h1 {
@@ -42,7 +42,7 @@ body {
 /* Form Group Styling */
 .signup-form .form-group {
     display: flex;
-    gap: 110px;
+    gap: 4vw;
     width: 100%;
 }
 
