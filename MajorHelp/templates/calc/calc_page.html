@@ -21,16 +21,20 @@
     <div id="panel-open" style="display: none;">
         <p>Create, save, and load calculations here.   <span onclick="hidePanel()" class="right-align fake-link">Hide.</span></p>
         <b>Load Calculator</b><br style="margin-bottom: 5px;">
-        <span>Name:
-            <select id="loadCalc" class="loadCalc" onchange="loadSelectedCalc()" style="min-width: 250px;">
-                <option value="" hidden selected>Calc to be Loaded</option>
-                {% for key, calc in saved_calcs.items %}
-                    <option value="{{ key }}">{{ calc.calcName }}</option>
-                {% empty %}
-                    <option disabled>No saved calculators</option>
-                {% endfor %}
-            </select>
-        </span>        
+        <span>
+            <div style="position: relative; display: inline-block;">
+                <select id="loadCalc" onchange="loadSelectedCalc()" class="loadCalc">
+                    <!-- Visible placeholder -->
+                    <option value="" disabled selected>Saved Calculators</option>
+                  
+                    {% for key, calc in saved_calcs.items %}
+                      <option value="{{ key }}">{{ calc.calcName }}</option>
+                    {% empty %}
+                      <option disabled>No saved calculators</option>
+                    {% endfor %}
+                </select>                  
+            </div>
+          </span>              
         <div id="loadResults" class="loadResults"></div>
         <br>
         <div id="calc-table">
