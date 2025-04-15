@@ -99,7 +99,7 @@ body::before {
     #search-query,
     .filter-dropdown select {
         height: 45px;
-        width: 100%;
+        width: 90%;
         font-size: 16px;
         padding: 0 15px;
         border: none;
