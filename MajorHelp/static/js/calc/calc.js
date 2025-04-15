@@ -977,10 +977,6 @@ document.addEventListener("DOMContentLoaded", () => {
             console.error("Failed to parse saved calculator data:", e);
         }
         
-        // TODO, replace function call with a similar version that only gets the calculators from
-        //       the previous session.
-
-        //loadSavedCalculators(savedCalculators);
     }
 
     initializeCalculators(); 
