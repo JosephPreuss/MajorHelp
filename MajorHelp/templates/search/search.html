@@ -61,9 +61,7 @@
 
         <form action="/search/" method="get" class="styled-search-form">
             <div class="search-wrapper">
-                <div id="search-field-container" class="search-input">
-                    <input type="text" id="search-query" name="query" placeholder="Enter your search term..." value="{{ query }}">
-                </div>
+                
 
                 <div class="filter-dropdown">
                     <label for="filter-dropdown" class="filter-label">Filter by:</label>
@@ -72,6 +70,10 @@
                         <option value="school" id="school-option">School</option>
                         <option value="major" id="major-option">Major</option>
                     </select>
+                </div>
+
+                <div id="search-field-container" class="search-input">
+                    <input type="text" id="search-query" name="query" placeholder="Enter your search term..." value="{{ query }}">
                 </div>
 
                 <input type="hidden" id="filter" name="filter" value="department">
