@@ -57,6 +57,7 @@
 
     .nav-links li a {
         font-size: 16px;
+        text-decoration: underline !important;
         color: #40c4c6;
         transition: color 0.3s;
     }
