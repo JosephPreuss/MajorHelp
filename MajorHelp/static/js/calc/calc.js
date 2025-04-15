@@ -998,6 +998,5 @@ function loadSelectedCalc() {
     const selectedCalc = window.savedCalculators[key];
     loadSavedCalculator(selectedCalc); // Uses your existing loader
 
-    dropdown.value = ""; 
-    dropdown.blur();     
+    dropdown.selectedIndex = 0;
 }
