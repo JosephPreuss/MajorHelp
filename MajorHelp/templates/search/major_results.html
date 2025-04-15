@@ -203,12 +203,16 @@
                 <ul class="major-list">
                     {% for major in majors %}
                         <li class="major-item">
+
+                            <!-- Do we need these for favorited majors?
                             <div class="favorite-btn-container">
                                 <span class="favorite-btn {% if major.id in favorite_major_ids %}favorited{% endif %}" 
                                     data-major-id="{{ major.id }}">
                                     {% if major.id in favorite_major_ids %}★{% else %}☆{% endif %}
                                 </span>
                             </div>
+                            -->
+
                             <div class="major-info">
                                 <a href="{% url 'MajorHelp:major-detail' slug=major.slug %}" class="major-link">{{ major.major_name }}</a>
                                 <span class="major-tuition">
@@ -216,6 +220,7 @@
                                     Out-of-State: ${{ major.out_of_state_min_tuition }} - ${{ major.out_of_state_max_tuition }})
                                 </span>
                             </div>
+                            <p>  </p>
                         </li>
                     {% endfor %}
                 </ul>
