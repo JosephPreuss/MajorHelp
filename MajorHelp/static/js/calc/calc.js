@@ -1136,4 +1136,3 @@ function toggleMajorResults(calc) {
     // Rebuild major list based on current university + department
     updateMajorResults(calc);
 }
-

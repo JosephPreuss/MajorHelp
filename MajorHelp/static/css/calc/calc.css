@@ -121,7 +121,8 @@ body {
     max-width: 900px; 
     background-color: #fff; /* White background for the content box */
     padding: 20px; 
-    margin: 20px 5px; 
+    margin: 0 auto; 
+    margin-top: 20px;
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1); 
     border-radius: 10px;  
 }
@@ -212,7 +213,7 @@ body {
 
 .result-item {
     padding: 10px;
-    margin: 5px 2px;
+    margin: 5px 0;
     background-color: #f0f8ff;
     border: 1px solid #008080;
     border-radius: 5px;
