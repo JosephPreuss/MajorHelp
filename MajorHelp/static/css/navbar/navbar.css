@@ -1,4 +1,4 @@
-    /* Reset styling */
+/* Reset styling */
     
     body, ul, li, a, form, button {
         margin: 0;
@@ -73,8 +73,13 @@
     }
 
     .sign-in, .register, .logout-button, .settings-button {
-        padding: 8px 15px;
-        font-size: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        white-space: nowrap; /* Prevent text wrapping */
+        min-width: 100px; /* Ensure enough space for text */
+        padding: 6px 18px; /* Maintain consistent padding */
+        font-size: 14px; /* Keep font size consistent */
         border-radius: 20px;
         border: 2px solid #40c4c6;
         transition: all 0.3s;
