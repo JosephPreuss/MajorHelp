@@ -25,7 +25,7 @@
                 const select = document.createElement("select");
                 select.name = "query";
                 select.id = "search-query";
-                select.innerHTML = `<option value="" disabled selected>Select a Department</option>` +
+                select.innerHTML = `<option value="" disabled selected>Select a Concentration</option>` +
                     departmentOptions.map(option => `<option value="${option}">${option}</option>`).join('');
                 searchFieldContainer.appendChild(select);
             } else {
@@ -83,7 +83,7 @@
         <div class="filter-dropdown">
             <select id="filter-select" onchange="setActiveFilter(this.value)">
                 <option value="major" selected>Major</option>
-                <option value="department">Department</option>
+                <option value="department">Concentration</option>
                 <option value="school">School</option>
             </select>
         </div>
@@ -95,9 +95,9 @@
     <!-- Filter Section -->
     <div id="filters-section">
         <div class="filter-section" id="department-filter" style="display: none;">
-            <label for="department">Department:</label>
+            <label for="department">Concentration:</label>
             <select id="department-dropdown" name="department" onchange="reloadPage()">
-                <option value="" disabled selected>Select Department</option>
+                <option value="" disabled selected>Select a Concentration</option>
                 {% for department in departmentOptions %}
                     <option value="{{ department }}" {% if department == request.GET.department %}selected{% endif %}>{{ department }}</option>
                 {% endfor %}
