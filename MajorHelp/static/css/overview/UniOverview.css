@@ -7,13 +7,13 @@ body {
     height: auto;
     display: flex;
     flex-direction: column;
-    background-color: var(--pc) !important;
+    background-color: var(--pc) !important; /* Sets text to the primary color assigned to a university */
 }
 
 h1 {
     text-align: center;
     font-size: 3.5rem;
-    color: var(--sc) !important; 
+    color: var(--sc) !important; /* Sets text to the secondary color assigned to a university */
     margin-top: 25px; 
     margin-bottom: 5px;
     padding: 0 150px;
@@ -23,7 +23,7 @@ h1 {
 h2 {
     text-align: center;
     font-size: 2rem;
-    color: var(--sc) !important;
+    color: var(--sc) !important; /* Sets text to the secondary color assigned to a university */
     margin-top: 0;
     margin-bottom: 10px;
 }
