@@ -186,6 +186,12 @@ function newCalc(values=null, load=false) {
             el.id = el.id + calc; // Append calcCount to IDs
         });
 
+        const reselectBtn = clone.querySelector(".reselect-btn");
+        if (reselectBtn) {
+            reselectBtn.setAttribute("onclick", `toggleMajorResults(${calc})`);
+        }
+
+
         // Attach event listeners to the new calculator
         const uniSearch = clone.querySelector(".uni-search");
         const deptDropdown = clone.querySelector(".dept-dropdown");
@@ -233,15 +239,28 @@ function newCalc(values=null, load=false) {
     if (values)
         updateCalc(calc);
 
-    if (values && values.uni && values.major) {
-        // Make sure to set the checkbox state BEFORE rendering output
-        const outstateCheckbox = document.getElementById(`outstate-${calc}`);
-        if (outstateCheckbox) {
-            outstateCheckbox.checked = values.outstate === true;
-        }
-    
-        displayOutput(calc, values.uni, values.outstate, values.major, values.aid || null);
+    if (values && values.uni) {
+    // Set the checkbox state BEFORE rendering output
+    const outstateCheckbox = document.getElementById(`outstate-${calc}`);
+    if (outstateCheckbox) {
+        outstateCheckbox.checked = values.outstate === true;
     }
+
+    if (values.major && values.major !== "None") {
+        displayOutput(calc, values.uni, values.outstate, values.major, values.aid || null);
+    } else {
+        // Show "Missing Major" fallback
+        const majorSpan = document.getElementById(`major-name-${calc}`);
+        if (majorSpan) majorSpan.textContent = "Missing Major";
+        const majorBox = document.getElementById(`major-box-${calc}`);
+        if (majorBox) majorBox.style.visibility = "visible";
+
+        // Optionally hide output
+        const output = document.getElementById(`output-${calc}`);
+        if (output) output.style.display = "none";
+    }
+}
+
     
 
     // If the Calculator is one thats being loaded in, add the "Delete Save"
@@ -299,16 +318,20 @@ async function saveCalc(calc) {
 
     // Automatically show the "Remove Save" button
     const panel = document.getElementById(`entry-${calc}`);
-    const deleteBtn = panel.querySelector(".delete-save");
-    if (deleteBtn) {
-        deleteBtn.style.display = "inline";
-    
-        // Get the current calc name (key for saving)
-        const calcKey = calcInput[calc].calcName.toLowerCase();
-    
-        // Re-bind the deleteSave functionality
-        deleteBtn.onclick = () => deleteSave(calcKey);
-    }
+    const calcKey = calcInput[calc].calcName.toLowerCase();
+
+    // Show "Delete Save" on ALL matching calculator panels
+    document.querySelectorAll(".calc-entry").forEach(panel => {
+        const name = panel.querySelector(".calc-name").textContent.toLowerCase();
+        if (name === calcKey) {
+            const deleteBtn = panel.querySelector(".delete-save");
+            if (deleteBtn) {
+                deleteBtn.style.display = "inline";
+                deleteBtn.onclick = () => deleteSave(calcKey);
+            }
+        }
+    });
+
     await refreshSavedDropdown();  
     console.log("Refreshing dropdown after save/delete");
 
@@ -393,6 +416,14 @@ function clearCalc(calc) {
 
     // Reset the name
     panel.querySelector(".calc-name").innerText = `Calculator ${calc}`;
+
+    // Hide and unbind Delete Save button
+    const deleteBtn = panel.querySelector(".delete-save");
+    if (deleteBtn) {
+        deleteBtn.style.display = "none";
+        deleteBtn.onclick = null;
+    }
+
 
     // Reset the summary
 
@@ -872,6 +903,12 @@ async function loadSavedCalculators(savedCalculators) {
         const panel = document.getElementById(panelId);
         const calc = document.getElementById(calcId);
 
+        const reselectBtn = clone.querySelector(".reselect-btn");
+        if (reselectBtn) {
+            reselectBtn.setAttribute("onclick", `toggleMajorResults(${calc})`);
+        }
+
+
         calcInput[index] = {
             calcName: data.calcName || `Calculator ${index}`,
             uni: data.uni || "",
@@ -908,6 +945,7 @@ async function loadSavedCalculators(savedCalculators) {
 
         document.getElementById(`major-name-${index}`).textContent = data.major;
         document.getElementById(`major-box-${index}`).style.visibility = "visible";
+        
 
         document.getElementById(`aid-name-${index}`).textContent = data.aid || "None";
         document.getElementById(`aid-box-${index}`).style.visibility = data.aid ? "visible" : "hidden";
@@ -1017,7 +1055,9 @@ function loadSavedCalculator(calcJSON) {
     document.getElementById("loadCalc").value = "";
 
     // call newCalc
-    newCalc(calcJSON, true);
+    const freshCopy = JSON.parse(JSON.stringify(calcJSON));
+    newCalc(freshCopy, true);
+
 
     // Send a notification to the user that the calculator has loaded successfully
     showNotification("Calculator loaded successfully!");
