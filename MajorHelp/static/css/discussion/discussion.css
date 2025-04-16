@@ -3,7 +3,7 @@
     padding: 2rem;
     border-radius: 12px;
     margin: 2rem auto;
-    width: 95%;              /* use more screen space */
+    width: 85%;              /* use more screen space */
     max-width: 1500px;       /* keep a readable max width */
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); /* subtle shadow */
 }

@@ -31,7 +31,7 @@
             const select = document.createElement("select");
             select.name = "query";
             select.id = "search-query";
-            select.innerHTML = `<option value="" disabled selected>Pick a Major Concentration</option>` +
+            select.innerHTML = `<option value="" disabled selected>Select a Concentration</option>` +
                 departmentOptions.map(option => `<option value="${option}">${option}</option>`).join('');
             searchFieldContainer.innerHTML = '';
             searchFieldContainer.appendChild(select);
@@ -66,7 +66,7 @@
                 <div class="filter-dropdown">
                     <label for="filter-dropdown" class="filter-label">Filter by:</label>
                     <select id="filter-dropdown" name="filter-dropdown" onchange="setActiveFilter(this.value)">
-                        <option value="department" id="department-option">Major Concentration</option>
+                        <option value="department" id="department-option">Concentration</option>
                         <option value="school" id="school-option">School</option>
                         <option value="major" id="major-option">Major</option>
                     </select>

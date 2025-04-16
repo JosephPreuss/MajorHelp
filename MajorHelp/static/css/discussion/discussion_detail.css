@@ -7,6 +7,7 @@ body::after {
 
 .thread-wrapper {
     max-width: 1200px;
+    width: 85%;
     margin: 2rem auto;
     padding: 2rem;
     background: #fff;
