@@ -268,4 +268,8 @@ body {
     color: #d9534f;
 }
 
+.uni-results {
+    display: none;
+    margin-top: 10px; /* small spacing only when shown */
+}
 
