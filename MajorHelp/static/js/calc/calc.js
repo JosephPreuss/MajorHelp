@@ -542,33 +542,37 @@ async function fetchUniversityData(query) {
 }
 
 async function selectUniversity(calc, name) {
+    const input = document.getElementById(`uni-search-${calc}`);
+    const pill = document.getElementById(`uni-pill-${calc}`);
+    const pillText = document.getElementById(`uni-pill-text-${calc}`);
 
-    // Update the input display
+    // Hide input, show pill
+    input.style.display = "none";
+    pill.style.display = "inline-flex";
+    pillText.textContent = name;
+
     document.getElementById(`uni-name-${calc}`).textContent = name;
     document.getElementById(`uni-box-${calc}`).style.visibility = "visible";
     document.getElementById(`uni-results-${calc}`).innerHTML = "";
-    document.getElementById(`uni-search-${calc}`).value = name;
-    const input = document.getElementById(`uni-search-${calc}`);
-    if (input) {
-        input.value = name;
-        autoResizeInput(input); 
-    }
+
+    input.value = name;
+    autoResizeInput(input);
+
+    // Set dept dropdown
     document.getElementById(`dept-dropdown-${calc}`).innerHTML =
         `<option value="" disabled selected>Select a Department</option>` +
         DEPARTMENT_CHOICES.map(dept => `<option value="${dept}">${dept}</option>`).join('');
 
-    // Clear the major list if it is populated already
+    // Clear downstream fields
     document.getElementById(`major-results-${calc}`).replaceChildren();
     document.getElementById(`major-box-${calc}`).style.visibility = "hidden";
-
-    // Clear the Financial Aid list if its populated already
     document.getElementById(`input-aid-${calc}`).style.display = "none";
     document.getElementById(`aid-results-${calc}`).replaceChildren();
 
-    // Finally update the JSON
-    
+    // Update JSON
     calcInput[calc]['uni'] = name;
 }
+
 
 async function updateMajorResults(calc, preserveExisting = false) {
     // Get data
@@ -1158,7 +1162,7 @@ function handleOutstateToggle(calc) {
 function autoResizeInput(inputElement) {
     if (!inputElement) return;
 
-    const minCh = 15;  //Minimum characters worth of width 
+    const minCh = 20;  //Minimum characters worth of width 
     const contentLength = inputElement.value.length + 1;
     const widthCh = Math.max(contentLength, minCh);
 
@@ -1175,4 +1179,26 @@ function toggleMajorResults(calc) {
 
     // Rebuild major list based on current university + department
     updateMajorResults(calc);
+}
+
+function clearUniversity(calc) {
+    const input = document.getElementById(`uni-search-${calc}`);
+    const pill = document.getElementById(`uni-pill-${calc}`);
+
+    // Clear input & JSON
+    input.value = "";
+    calcInput[calc]['uni'] = "";
+
+    // Hide pill, show input
+    pill.style.display = "none";
+    input.style.display = "inline";
+
+    // Also reset department and major areas
+    document.getElementById(`dept-dropdown-${calc}`).innerHTML =
+        `<option value="" disabled selected>Select a Department</option>`;
+    document.getElementById(`major-results-${calc}`).replaceChildren();
+    document.getElementById(`major-box-${calc}`).style.visibility = "hidden";
+
+    document.getElementById(`input-aid-${calc}`).style.display = "none";
+    document.getElementById(`aid-results-${calc}`).replaceChildren();
 }

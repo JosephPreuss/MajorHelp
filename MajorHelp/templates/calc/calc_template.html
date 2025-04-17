@@ -2,7 +2,13 @@
 <div id="calculator-{{num|default:''}}" class="calculator">
     <div id="input-{{num|default:''}}" class="input content-box">
         <h2>Start by choosing your <span class="color-text">school</span>.</h2>
-        <input type="text" id="uni-search-{{num|default:''}}" class="uni-search" placeholder="Enter your university">
+        <div id="uni-select-wrapper-{{num}}">
+            <input type="text" id="uni-search-{{num}}" class="uni-search" placeholder="Enter your university">
+            <div id="uni-pill-{{num}}" class="uni-pill" style="display: none;">
+                <span id="uni-pill-text-{{num}}">Selected Uni</span>
+                <span class="uni-pill-x" onclick="clearUniversity({{num}})">×</span>
+            </div>
+        </div>        
         <div id="uni-results-{{num|default:''}}" class="uni-results search-results"></div>
         <h3 id="uni-box-{{num|default:''}}" class="uni-box">You have selected <span id="uni-name-{{num|default:''}}" class="uni-name color-text">Nothing</span>.</h3>
         <input type="checkbox" id="outstate-{{num|default:''}}" class="outstate"> Out-of-State 

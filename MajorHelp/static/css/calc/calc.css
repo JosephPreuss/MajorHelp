@@ -242,3 +242,30 @@ body {
 .reselect-btn:hover {
     color: #d9534f;
 }
+
+.uni-pill {
+    display: inline-flex;
+    align-items: center;
+    background-color: #f0f0f0;
+    border-radius: 20px;
+    padding: 5px 10px;
+    font-size: 0.95rem;
+    border: 1px solid #ccc;
+    margin-top: 5px;
+}
+
+.uni-pill span {
+    margin-right: 8px;
+}
+
+.uni-pill-x {
+    cursor: pointer;
+    font-weight: bold;
+    color: #888;
+}
+
+.uni-pill-x:hover {
+    color: #d9534f;
+}
+
+
