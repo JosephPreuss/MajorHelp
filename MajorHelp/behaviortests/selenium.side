@@ -987,77 +987,61 @@
       ],
       "value": ""
     }, {
-      "id": "c5a03691-6e1a-4035-b2dc-ed6f61c3657d",
-      "comment": "",
-      "command": "click",
-      "target": "id=loadCalc",
-      "targets": [
-        ["id=loadCalc", "id"],
-        ["css=#loadCalc", "css:finder"],
-        ["xpath=//input[@id='loadCalc']", "xpath:attributes"],
-        ["xpath=//div[@id='panel-open']/input", "xpath:idRelative"],
-        ["xpath=//div[2]/input", "xpath:position"]
-      ],
-      "value": ""
-    }, {
-      "id": "4ed0c0b6-f23e-4a47-813f-354e9e310647",
-      "comment": "",
-      "command": "click",
-      "target": "id=loadCalc",
-      "targets": [
-        ["id=loadCalc", "id"],
-        ["css=#loadCalc", "css:finder"],
-        ["xpath=//input[@id='loadCalc']", "xpath:attributes"],
-        ["xpath=//div[@id='panel-open']/input", "xpath:idRelative"],
-        ["xpath=//div[2]/input", "xpath:position"]
-      ],
-      "value": ""
-    }, {
-      "id": "2fbd60b5-edf5-42b3-be4f-f6bc1e3a97a5",
-      "comment": "",
-      "command": "type",
-      "target": "id=loadCalc",
-      "targets": [
-        ["id=loadCalc", "id"],
-        ["css=#loadCalc", "css:finder"],
-        ["xpath=//input[@id='loadCalc']", "xpath:attributes"],
-        ["xpath=//div[@id='panel-open']/input", "xpath:idRelative"],
-        ["xpath=//div[2]/input", "xpath:position"]
-      ],
-      "value": "MarsU"
-    }, {
       "id": "38e181f6-e42a-49c9-aaaa-ffa8cb427ad3",
       "comment": "",
-      "command": "waitForElementPresent",
+      "command": "//waitForElementPresent",
       "target": "xpath=//div[contains(@class, 'result-item')]/strong[contains(text(), 'MarsU')]",
       "targets": [],
       "value": "30000"
     }, {
       "id": "15547491-581e-4565-88af-943db8d2fa20",
       "comment": "",
-      "command": "click",
+      "command": "//click",
       "target": "xpath=//div[contains(@class, 'result-item')]/strong[contains(text(), 'MarsU')]",
-      "targets": [
-        ["css=.result-item", "css:finder"],
-        ["xpath=//div[@id='loadResults']/div", "xpath:idRelative"],
-        ["xpath=//div[2]/div[2]/div", "xpath:position"]
-      ],
+      "targets": [],
       "value": ""
     }, {
-      "id": "052b78d9-d356-4fc5-8e1d-7d7049ef10cd",
+      "id": "8ba2cc28-f9e4-4338-9423-897d08189aba",
       "comment": "",
-      "command": "mouseOver",
-      "target": "css=.fake-link:nth-child(5)",
+      "command": "click",
+      "target": "id=loadCalc",
       "targets": [
-        ["css=.fake-link:nth-child(5)", "css:finder"],
-        ["xpath=//span[@onclick='newCalc()']", "xpath:attributes"],
-        ["xpath=//div[@id='panel-open']/span", "xpath:idRelative"],
-        ["xpath=//div[2]/span", "xpath:position"],
-        ["xpath=//span[contains(.,'New Calculator')]", "xpath:innerText"]
+        ["id=loadCalc", "id"],
+        ["css=#loadCalc", "css:finder"],
+        ["xpath=//select[@id='loadCalc']", "xpath:attributes"],
+        ["xpath=//div[@id='panel-open']/span/div/select", "xpath:idRelative"],
+        ["xpath=//select", "xpath:position"]
       ],
       "value": ""
     }, {
-      "id": "d686b47f-3ec3-4f02-a269-25f1645afa95",
+      "id": "582422f2-4353-4db5-9895-f2bd4bf05bbb",
+      "comment": "",
+      "command": "select",
+      "target": "id=loadCalc",
+      "targets": [],
+      "value": "label=Saved Calculators"
+    }, {
+      "id": "8dc91fc4-a4e1-495b-8878-972c91f9f995",
+      "comment": "",
+      "command": "click",
+      "target": "css=#loadCalc > option:nth-child(2)",
+      "targets": [
+        ["css=#loadCalc > option:nth-child(2)", "css:finder"],
+        ["xpath=//option[@value='marsu - lowland terraforming']", "xpath:attributes"],
+        ["xpath=//select[@id='loadCalc']/option[2]", "xpath:idRelative"],
+        ["xpath=//option[2]", "xpath:position"],
+        ["xpath=//option[contains(.,'MarsU - Lowland Terraforming')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "b9cea326-ec71-49a7-bb1e-12284532ab1d",
+      "comment": "",
+      "command": "pause",
+      "target": "1000",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "0e0c8755-6973-4db8-83c9-c29145aa4e19",
       "comment": "",
       "command": "click",
       "target": "css=#entry-0 .delete-save",
@@ -1068,7 +1052,7 @@
       ],
       "value": ""
     }, {
-      "id": "1779b2be-986c-4525-9b25-71d1a8ac7d0f",
+      "id": "c996639e-41f6-4814-9084-377c74aa63b4",
       "comment": "",
       "command": "click",
       "target": "css=.logout-button",
