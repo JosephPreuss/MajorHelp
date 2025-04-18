@@ -324,7 +324,8 @@ class CustomLoginView(LoginView):
             self.request.session.set_expiry(0)
         else:
             # Keep session active for 2 weeks
-            self.request.session.set_expiry(1209600)  
+            self.request.session.set_expiry(1209600) 
+        self.request.session.modified = True   
         
         return super().form_valid(form)
     
@@ -668,7 +669,7 @@ class MajorOverviewView(DetailView):
         context = super().get_context_data(**kwargs)
         major = self.object
 
-        # Calculate average rating
+        # Calculate average rating (if you keep the rating field)
         reviews = major.major_reviews.all()
         if reviews.exists():
             average_rating = reviews.aggregate(Avg('rating'))['rating__avg']
@@ -676,22 +677,20 @@ class MajorOverviewView(DetailView):
         else:
             context['average_rating'] = 0.0
 
+        # ✅ These are used in the template
         context['reviews'] = reviews
+        context['latest_post_list'] = reviews.order_by('-pub_date')
         context['star_range'] = [1, 2, 3, 4, 5]
 
         # Check if user has already left a review
         if self.request.user.is_authenticated:
-            context['user_review'] = MajorReview.objects.filter(
-                user=self.request.user, 
-                major=major
-            ).first()
-
-            # Check if major is favorited - use consistent naming ('is_favorite')
+            context['user_review'] = reviews.filter(user=self.request.user).first()
             context['is_favorite'] = Favorite.objects.filter(
                 user=self.request.user,
                 major=major
             ).exists()
         else:
+            context['user_review'] = None
             context['is_favorite'] = False
 
         return context
@@ -710,34 +709,38 @@ class CalcView(View):
 
 
 # LeaveMajorReview View - Exclusive for leaving reviews for a major at a specific school
+# changed to be like LeaveUnivserityReview 
 
-@login_required
-def LeaveMajorReview(request, slug):
-    major = get_object_or_404(Major, slug=slug)
 
-    # Check if the form is submitted via POST
-    if request.method == 'POST':
-        # Get the review text and rating from the form
-        review_text = request.POST.get('review_text')
-        rating = request.POST.get('rating')  # Get the selected rating (1-5)
+class LeaveMajorReview (View):
+    def post(self, request, username):
+        review_text = request.POST.get("review_text", "").strip()
+        major_id = request.POST.get("major_id")
 
-        if not (1 <= int(rating) <= 5):
-            messages.error(request, 'Please provide a valid rating between 1 and 5.')
-            return redirect('MajorHelp:major-detail', slug=slug)
+        if not review_text:
+            messages.error(request, 'Review text cannot be empty.')
+            return redirect('MajorHelp:major-detail', slug=major_id)
 
-        # Create and save the review using the MajorReview model
-        MajorReview.objects.create(
-            major=major,
-            user=request.user,  # Use request.user which is a User object
-            review_text=review_text,
-            university=major.university,  # Link the university associated with the major
-            rating=rating  # Save the rating
-        )
+        major = get_object_or_404(Major, pk=major_id)
+        user = request.user
 
-        messages.success(request, 'Your review has been successfully submitted!')
-        return redirect('MajorHelp:major-detail', slug=slug)
+        # Check for existing review by this user for this major
+        existing_review = MajorReview.objects.filter(user=user, major=major).exists()
 
-    return render(request, 'leave_review.html', {'major': major})
+        if existing_review:
+            messages.error(request, 'You have already submitted a review for this major.')
+        else:
+            MajorReview.objects.create(
+                user=user,
+                review_text=review_text,
+                major=major,
+                university=major.university
+            )
+            messages.success(request, 'Your review has been successfully submitted!')
+
+        return redirect('MajorHelp:major-detail', slug=major.slug)
+
+
 
 # Render review stars in Major Overview
 class UniversityRequestView(View):
@@ -1122,41 +1125,3 @@ def favorites_list(request):
         'major_favorites': major_favorites
     })
 
-
-# Major overview class created to handle favorites 
-class MajorOverviewView(DetailView):
-    model = Major
-    template_name = "major/MajorOverviewPage.html"
-    context_object_name = "major"
-    slug_field = 'slug'
-    slug_url_kwarg = 'slug'
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        major = self.object
-
-        # Calculate average rating
-        reviews = major.major_reviews.all()
-        if reviews.exists():
-            average_rating = reviews.aggregate(Avg('rating'))['rating__avg']
-            context['average_rating'] = round(float(average_rating), 1)
-        else:
-            context['average_rating'] = 0.0
-
-        context['reviews'] = reviews
-        context['star_range'] = [1, 2, 3, 4, 5]
-
-        # Check if user has already left a review
-        if self.request.user.is_authenticated:
-            context['user_review'] = MajorReview.objects.filter(
-                user=self.request.user, 
-                major=major
-            ).first()
-
-            # Check if major is favorited
-            context['is_favorite'] = Favorite.objects.filter(
-                user=self.request.user,
-                major=major
-            ).exists()
-
-        return context

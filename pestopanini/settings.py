@@ -154,6 +154,8 @@ AUTH_USER_MODEL = 'MajorHelp.CustomUser'
 
 SESSION_EXPIRE_AT_BROWSER_CLOSE = False  # Allows sessions to persist
 SESSION_COOKIE_AGE = 1209600  # 2 weeks (14 days)
+SESSION_ENGINE = 'django.contrib.sessions.backends.db' # stores session data into the Database (hopping this fixes login credential issue)
+
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
