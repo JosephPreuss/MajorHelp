@@ -808,7 +808,7 @@ async function displayOutput(calc, university, outstate, major, aid=null) {
 
         const deleteBtn = panel.querySelector(".delete-save");
         if (deleteBtn) {
-            deleteBtn.style.display = "none";
+            //deleteBtn.style.display = "none";
             deleteBtn.onclick = null;
         
             const newName = calcInput[calc]['calcName'].toLowerCase();
