@@ -421,29 +421,31 @@ function clearCalc(calc) {
     // Get the panel DOM
     const panel = document.getElementById(`entry-${calc}`);
 
-    // Reset the name
-    panel.querySelector(".calc-name").innerText = `Calculator ${calc}`;
+    if (panel !== null) {
 
-    // Hide and unbind Delete Save button
-    const deleteBtn = panel.querySelector(".delete-save");
-    if (deleteBtn) {
-        deleteBtn.style.display = "none";
-        deleteBtn.onclick = null;
+        // Reset the name
+        panel.querySelector(".calc-name").innerText = `Calculator ${calc}`;
+
+        // Hide and unbind Delete Save button
+        const deleteBtn = panel.querySelector(".delete-save");
+        if (deleteBtn) {
+            deleteBtn.style.display = "none";
+            deleteBtn.onclick = null;
+        }
+
+
+        // Reset the summary
+
+        // Get the container containing the summary
+        const summary = panel.querySelector(".calc-details");
+
+        Array.from(summary.children).forEach(child => {
+            child.innerText = "None";
+        });
+
+        // Hide the aid span
+        summary.querySelector(".aid").style.display = "none";
     }
-
-
-    // Reset the summary
-
-    // Get the container containing the summary
-    const summary = panel.querySelector(".calc-details");
-
-    Array.from(summary.children).forEach(child => {
-        child.innerText = "None";
-    });
-
-    // Hide the aid span
-    summary.querySelector(".aid").style.display = "none";
-    
 
     // reset the calculator itself
 
@@ -808,7 +810,7 @@ async function displayOutput(calc, university, outstate, major, aid=null) {
 
         const deleteBtn = panel.querySelector(".delete-save");
         if (deleteBtn) {
-            deleteBtn.style.display = "none";
+            //deleteBtn.style.display = "none";
             deleteBtn.onclick = null;
         
             const newName = calcInput[calc]['calcName'].toLowerCase();

@@ -57,13 +57,60 @@ activate_venv() {
     fi
 }
 
+# Function to run Selenium Side Runner for .side files
+run_selenium_tests() {
+    local path=$1
+
+    # Resolve the path name for display
+    local pathName
+    if [ "$path" = "." ]; then
+        pathName="current directory"
+    else
+        pathName="$path"
+    fi
+
+    echo "Running Selenium tests in $pathName..."
+
+    # Search for .side files recursively
+    local found=false
+    while IFS= read -r -d '' file; do
+        echo "Running $file..."
+        node_modules/.bin/selenium-side-runner -c "browserName=firefox" "$file"
+        found=true
+    done < <(find "$path" -type f -name "*.side" -print0)
+
+    if [ "$found" = false ]; then
+        echo "No .side files found in $pathName, skipping..."
+    fi
+}
+
+# Function to run Python tests using pytest
+run_unit_tests() {
+    local path=$1
+
+    local pathName
+    if [ "$path" = "." ]; then
+        pathName="current directory"
+    else
+        pathName="$path"
+    fi
+
+    echo "Running unit tests in $pathName..."
+    pytest "$path" 
+}
+
+
+
+
 # Parse options using get opt
 TEMP=$(getopt -o crh --long clean,run-test-server,help -n "$0" -- "$@")
 
 # check if getopt was successful
 if [ $? != 0 ]; then
     echo "Error parsing options." >&2
-    exit 1
+    ex
+# Reorder arguments as parsed by getopt
+it 1
 fi
 
 # Reorder arguments as parsed by getopt
@@ -104,34 +151,79 @@ done
 
 # Default Behavior, run tests.
 
+# Check if selenium side-runner is installed
+# at node_modules/.bin/selenium-side-runner
+runBehavioralTests=
+if [ ! -f "node_modules/.bin/selenium-side-runner" ]; then
+    printf "\033[1;33m" # Red text
+
+    printf "WARN: selenium-side-runner not found at \n\n"
+
+    printf "\033[0m" # Reset formatting
+    printf "\t./node_modules/.bin/selenium-side-runner \n\n"
+    printf "\033[1;33m" # Red text
+
+    printf "Please install it to run behavioral tests.\n\n"
+    printf "HINT: npm install selenium-side-runner\n\n"
+
+    printf "\033[0m" # Reset formatting
+
+    runBehavioralTests=false
+    sleep 1
+else
+    runBehavioralTests=true
+fi
+
+
 # Shift processed options
 shift $((OPTIND - 1))
+TEST_PATH=${1:-.} # Default to current directory if no path is provided
 
 # Activate the virtual environment
 activate_venv
 
+
 # Set up the test database
 echo "Applying migrations to set up the test database..."
 python manage.py migrate --settings=pestopanini.test_settings &&
+
+
 
 # Start the server in the background, suppressing output
 echo "Starting the server in the background..." &&
 python manage.py runserver --settings=pestopanini.test_settings &> /dev/null &
 SERVER_PID=$!
 
+
+# set up trap to kill the server and deactivate the virtual environment
+# in case of unexpected exit
 trap "kill $SERVER_PID; unset DJANGO_TEST_ENV; deactivate" EXIT
 
-# Run the tests
-echo "Running tests..."
 
-# if $1 is given, then it will run pytest at that directory
-pytest $1
+
+# Run the unit tests
+echo "Running unit tests..."
+
+# Run unit tests
+run_unit_tests "$TEST_PATH"
+
+
+
+# Run Selenium tests for .side files
+if [[ "$runBehavioralTests" == "true" ]]; then
+    echo "Running behavioral tests..."
+    run_selenium_tests "$TEST_PATH"
+else
+    echo "Skipping behavioral tests."
+fi
+
+
 
 # Kill the server process
 echo "Stopping the server..."
 pkill -f "manage.py runserver"
 
-# Deactivate the virtual environment
-deactivate
 
-echo "All tests completed successfully."
+if [[ "$runBehavioralTests" == "false" ]]; then
+    echo "NOTE:Behavioral tests were skipped. Due to missing selenium-side-runner."
+fi
