@@ -4,12 +4,9 @@ loggedIn = false;
 calcCount = 0;
 
 const DEPARTMENT_CHOICES = [
-    "Humanities and Social Sciences",
-    "Natural Sciences and Mathematics",
     "Business and Economics",
     "Education",
     "Engineering and Technology",
-    "Health Sciences",
     "Arts and Design",
     "Agriculture and Environmental Studies",
     "Communication and Media",
