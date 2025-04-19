@@ -4,12 +4,9 @@ loggedIn = false;
 calcCount = 0;
 
 const DEPARTMENT_CHOICES = [
-    "Humanities and Social Sciences",
-    "Natural Sciences and Mathematics",
     "Business and Economics",
     "Education",
     "Engineering and Technology",
-    "Health Sciences",
     "Arts and Design",
     "Agriculture and Environmental Studies",
     "Communication and Media",
@@ -186,10 +183,17 @@ function newCalc(values=null, load=false) {
             el.id = el.id + calc; // Append calcCount to IDs
         });
 
-        const reselectBtn = clone.querySelector(".reselect-btn");
-        if (reselectBtn) {
-            reselectBtn.setAttribute("onclick", `toggleMajorResults(${calc})`);
+        
+        const uniReselectBtn = clone.querySelector(`#uni-box-${calc} .reselect-btn`);
+        if (uniReselectBtn) {
+            uniReselectBtn.setAttribute("onclick", `clearUniversity(${calc})`);
         }
+
+        const majorReselectBtn = clone.querySelector(`#major-box-${calc} .reselect-btn`);
+        if (majorReselectBtn) {
+            majorReselectBtn.setAttribute("onclick", `toggleMajorResults(${calc})`);
+        }
+
 
 
         // Attach event listeners to the new calculator
@@ -414,29 +418,31 @@ function clearCalc(calc) {
     // Get the panel DOM
     const panel = document.getElementById(`entry-${calc}`);
 
-    // Reset the name
-    panel.querySelector(".calc-name").innerText = `Calculator ${calc}`;
+    if (panel !== null) {
 
-    // Hide and unbind Delete Save button
-    const deleteBtn = panel.querySelector(".delete-save");
-    if (deleteBtn) {
-        deleteBtn.style.display = "none";
-        deleteBtn.onclick = null;
+        // Reset the name
+        panel.querySelector(".calc-name").innerText = `Calculator ${calc}`;
+
+        // Hide and unbind Delete Save button
+        const deleteBtn = panel.querySelector(".delete-save");
+        if (deleteBtn) {
+            deleteBtn.style.display = "none";
+            deleteBtn.onclick = null;
+        }
+
+
+        // Reset the summary
+
+        // Get the container containing the summary
+        const summary = panel.querySelector(".calc-details");
+
+        Array.from(summary.children).forEach(child => {
+            child.innerText = "None";
+        });
+
+        // Hide the aid span
+        summary.querySelector(".aid").style.display = "none";
     }
-
-
-    // Reset the summary
-
-    // Get the container containing the summary
-    const summary = panel.querySelector(".calc-details");
-
-    Array.from(summary.children).forEach(child => {
-        child.innerText = "None";
-    });
-
-    // Hide the aid span
-    summary.querySelector(".aid").style.display = "none";
-    
 
     // reset the calculator itself
 
@@ -451,6 +457,9 @@ function clearCalc(calc) {
     // University
     calculator.querySelector(".uni-search").value = "";
 
+    calculator.querySelector(".uni-search").style.display = "inline";
+
+
     calculator.querySelector(".uni-results").replaceChildren();
 
     calculator.querySelector(".uni-box").style.visibility = "hidden";
@@ -462,7 +471,7 @@ function clearCalc(calc) {
     // department
     calculator.querySelector(".dept-dropdown").replaceChildren();
     calculator.querySelector(".dept-dropdown").innerHTML = 
-        "<option value=\"\" disabled selected>Select a Department</option>";
+        "<option value=\"\" disabled selected>Select a Concentration</option>";
 
     // Major
     calculator.querySelector(".major-results").replaceChildren();
@@ -510,14 +519,19 @@ function removeCalc(calc) {
 
 async function updateUniversityResults(calc) {
     const query = document.getElementById(`uni-search-${calc}`).value.trim();
-    if(!query) return;
+    const resultsContainer = document.getElementById(`uni-results-${calc}`);
+    
+    if (!query) {
+        resultsContainer.style.display = "none";
+        resultsContainer.innerHTML = "";
+        return;
+    }
 
     const data = await fetchUniversityData(query);
-    if (data === null) return;
-    const resultsContainer = document.getElementById(`uni-results-${calc}`);
     resultsContainer.innerHTML = "";
 
     if (data && data.universities.length > 0) {
+        resultsContainer.style.display = "block";
         data.universities.forEach(uni => {
             let option = document.createElement("div");
             option.classList.add("result-item");
@@ -526,7 +540,7 @@ async function updateUniversityResults(calc) {
             resultsContainer.appendChild(option);
         });
     } else {
-        resultsContainer.innerHTML = "<p>No universities found.</p>";
+        resultsContainer.style.display = "none"; // ✅ Hide if no results
     }
 }
 
@@ -543,35 +557,30 @@ async function fetchUniversityData(query) {
 
 async function selectUniversity(calc, name) {
     const input = document.getElementById(`uni-search-${calc}`);
-    const pill = document.getElementById(`uni-pill-${calc}`);
-    const pillText = document.getElementById(`uni-pill-text-${calc}`);
-
-    // Hide input, show pill
+    
+    input.value = name;
     input.style.display = "none";
-    pill.style.display = "inline-flex";
-    pillText.textContent = name;
 
     document.getElementById(`uni-name-${calc}`).textContent = name;
     document.getElementById(`uni-box-${calc}`).style.visibility = "visible";
     document.getElementById(`uni-results-${calc}`).innerHTML = "";
 
-    input.value = name;
     autoResizeInput(input);
 
     // Set dept dropdown
     document.getElementById(`dept-dropdown-${calc}`).innerHTML =
-        `<option value="" disabled selected>Select a Department</option>` +
+        `<option value="" disabled selected>Select a Concentration</option>` +
         DEPARTMENT_CHOICES.map(dept => `<option value="${dept}">${dept}</option>`).join('');
 
-    // Clear downstream fields
+    // Reset downstream
     document.getElementById(`major-results-${calc}`).replaceChildren();
     document.getElementById(`major-box-${calc}`).style.visibility = "hidden";
     document.getElementById(`input-aid-${calc}`).style.display = "none";
     document.getElementById(`aid-results-${calc}`).replaceChildren();
 
-    // Update JSON
     calcInput[calc]['uni'] = name;
 }
+
 
 
 async function updateMajorResults(calc, preserveExisting = false) {
@@ -798,7 +807,7 @@ async function displayOutput(calc, university, outstate, major, aid=null) {
 
         const deleteBtn = panel.querySelector(".delete-save");
         if (deleteBtn) {
-            deleteBtn.style.display = "none";
+            //deleteBtn.style.display = "none";
             deleteBtn.onclick = null;
         
             const newName = calcInput[calc]['calcName'].toLowerCase();
@@ -925,8 +934,15 @@ async function loadSavedCalculators(savedCalculators) {
         const deleteSaveBtn = panel.querySelector(".delete-save");
         if (deleteSaveBtn) {
             deleteSaveBtn.style.display = "inline";
-            deleteSaveBtn.addEventListener('click', () => deleteSave(key)); // 👈 use key, not index
+        
+            // REMOVE any previous click listeners
+            const newBtn = deleteSaveBtn.cloneNode(true);
+            deleteSaveBtn.parentNode.replaceChild(newBtn, deleteSaveBtn);
+        
+            // THEN safely add a new listener
+            newBtn.addEventListener('click', () => deleteSave(key));
         }
+        
 
 
         await selectUniversity(index, data.uni);
@@ -1182,23 +1198,19 @@ function toggleMajorResults(calc) {
 }
 
 function clearUniversity(calc) {
+    clearCalc(calc);
+}
+
+function toggleUniversityResults(calc) {
+    const results = document.getElementById(`uni-results-${calc}`);
+    if (!results) return;
+
+    results.style.display = "block";
+    results.classList.remove("hidden");
+
     const input = document.getElementById(`uni-search-${calc}`);
-    const pill = document.getElementById(`uni-pill-${calc}`);
-
-    // Clear input & JSON
-    input.value = "";
-    calcInput[calc]['uni'] = "";
-
-    // Hide pill, show input
-    pill.style.display = "none";
     input.style.display = "inline";
 
-    // Also reset department and major areas
-    document.getElementById(`dept-dropdown-${calc}`).innerHTML =
-        `<option value="" disabled selected>Select a Department</option>`;
-    document.getElementById(`major-results-${calc}`).replaceChildren();
-    document.getElementById(`major-box-${calc}`).style.visibility = "hidden";
-
-    document.getElementById(`input-aid-${calc}`).style.display = "none";
-    document.getElementById(`aid-results-${calc}`).replaceChildren();
+    // Clear and reload universities if needed
+    updateUniversityResults(calc);
 }

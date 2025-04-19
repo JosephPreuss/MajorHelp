@@ -42,6 +42,9 @@ class University(models.Model):
     GraduationRate = models.DecimalField(default=0.0, max_digits=4, decimal_places=1)
     primary_color = models.CharField(default="#268f95", max_length=7)
     secondary_color = models.CharField(default="#FFFFFF", max_length=7)
+    latitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
+    longitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
+
 
     # Added for tuition calc
     in_state_base_min_tuition = models.IntegerField(
@@ -172,12 +175,9 @@ class Course(models.Model):
 # Update the Major model
 class Major(models.Model):
     DEPARTMENT_CHOICES = [
-        ('Humanities and Social Sciences', 'Humanities and Social Sciences'),
-        ('Natural Sciences and Mathematics', 'Natural Sciences and Mathematics'),
         ('Business and Economics', 'Business and Economics'),
         ('Education', 'Education'),
         ('Engineering and Technology', 'Engineering and Technology'),
-        ('Health Sciences', 'Health Sciences'),
         ('Arts and Design', 'Arts and Design'),
         ('Agriculture and Environmental Studies', 'Agriculture and Environmental Studies'),
         ('Communication and Media', 'Communication and Media'),
@@ -239,6 +239,8 @@ class Major(models.Model):
     # New field: Courses
     courses = models.ManyToManyField(Course, related_name="majors", blank=True)
 
+   
+
     def clean(self):
         if self.in_state_max_tuition < self.in_state_min_tuition:
             raise ValidationError("In-state max tuition cannot be less than in-state min tuition.")
@@ -247,18 +249,21 @@ class Major(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.slug:
-            university_slug = slugify(self.university.name).replace('-', '')
-            major_slug = slugify(self.major_name).replace('-', '')
-            self.slug = f"{university_slug}/{major_slug}"
+            self.slug = f"{slugify(self.university.name).replace('-', '')}-{slugify(self.major_name).replace('-', '')}"
         super().save(*args, **kwargs)
+
 
     def __str__(self):
         return (
             f"{self.major_name} at {self.university.name} "
-            f"(In-state: ${self.in_state_min_tuition} - ${self.in_state_max_tuition}, "
-            f"Out-of-state: ${self.out_of_state_min_tuition} - ${self.out_of_state_max_tuition})"
-            f"Grad In-state: ${self.grad_in_state_min_tuition} - ${self.grad_in_state_max_tuition}, "
-            f"Grad Out-of-state: ${self.grad_out_of_state_min_tuition} - ${self.grad_out_of_state_max_tuition})"
+            f"(In-state: ${self.in_state_min_tuition + self.university.in_state_base_min_tuition} - "
+            f"${self.in_state_max_tuition + self.university.in_state_base_max_tuition}, "
+            f"Out-of-state: ${self.out_of_state_min_tuition + self.university.out_of_state_base_min_tuition} - "
+            f"${self.out_of_state_max_tuition + self.university.out_of_state_base_max_tuition}, "
+            f"Grad In-state: ${self.grad_in_state_min_tuition + self.university.in_state_base_min_tuition} - "
+            f"${self.grad_in_state_max_tuition + self.university.in_state_base_max_tuition}, "
+            f"Grad Out-of-state: ${self.grad_out_of_state_min_tuition + self.university.out_of_state_base_min_tuition} - "
+            f"${self.grad_out_of_state_max_tuition + self.university.out_of_state_base_max_tuition})"
         )
 
 # Default user getter for MajorReview model

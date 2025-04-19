@@ -165,3 +165,118 @@ button:hover {
 .login-link a:hover {
     text-decoration: underline;
 }
+
+/*  Review Form styling from UniOverview.css */
+.new-post-form {
+    max-width: 1500px; 
+    background-color: #fff;
+    padding: 20px;
+    margin: 0 auto;
+    margin-top: 20px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+}
+
+.new-post-form h6 {
+    text-align: left;
+    font-size: 2.5rem;
+    color: #666;
+    margin-top: 0;
+    margin-bottom: 10px;
+    margin-left: 25px;
+    font-style: italic;
+    font-weight: 550;
+}
+
+.new-post-form .review-input {
+    width: 98%;
+    margin: 0 auto;
+    height: 100px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    resize: none;
+    font-size: 1.25rem;
+}
+
+.new-post-form .submit-review {
+    padding: 10px 20px;
+    background-color: #28a745;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+    font-size: 1.25rem;
+}
+
+.new-post-form .submit-review:hover {
+    background-color: #218838;
+}
+
+/*  review-list styling from UniOverview.css */
+.review-list {
+    max-width: 1500px;
+    background-color: #fff;
+    padding: 20px;
+    margin: 0 auto;
+    margin-top: 10px;
+    margin-bottom: 30px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+}
+
+.review-list ul {
+    list-style: none;
+    padding: 10px;
+    margin-bottom: 30px;
+}
+
+.review-list li {
+    margin-bottom: 10px;
+    padding: 10px;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+.review-list p5 {
+    margin-left: 10px;
+    font-size: 1.25rem;
+    padding: 5px;
+}
+
+.review-list p6 {
+    text-align: center;
+    color: #888;
+}
+.review-list p10 {
+    margin-left: 560px;
+    font-size: 1.5rem;
+    color: #666;
+    margin-top: 10px;
+    margin-bottom: 20px;
+    font-weight: 550;
+    text-decoration: underline;
+}
+
+.review-list p11 {
+    margin-left: 415px;
+    font-size: 1.5rem;
+    color: #666;
+    margin-top: 10px;
+    margin-bottom: 20px;
+    font-weight: 550;
+    text-decoration: underline;
+}
+
+.review-list h9 {
+    text-align: left;
+    font-size: 2.5rem;
+    color: #666;
+    margin-top: 0;
+    margin-bottom: 20px;
+    margin-left: 25px;
+    font-style: italic;
+    font-weight: 550;
+}

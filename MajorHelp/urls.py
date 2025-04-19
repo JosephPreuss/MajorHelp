@@ -61,7 +61,8 @@ urlpatterns = [
     #urls for major overviews
     path('MajorOverview/<slashslug:slug>/', views.MajorOverviewView.as_view(), name='major-detail'),
     # Leave review for Major
-    path('MajorOverview/<slashslug:slug>/review/', views.LeaveMajorReview, name='leave-major-review'),
+    path('create/review/major/<str:username>/', LeaveMajorReview.as_view(), name='create_major_review'),
+    
 
     # URLS for the Tuition Calculator
     path('calc/', CalcView.as_view(), name='calc'),

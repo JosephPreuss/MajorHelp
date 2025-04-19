@@ -5,6 +5,10 @@ from .models import *
 from .models import DiscussionCategory, DiscussionThread, ThreadReply
 from django.contrib.auth.admin import UserAdmin
 from .models import CustomUser
+from django.urls import path
+from django.http import HttpResponseRedirect
+from django.contrib import messages
+from django.utils.html import format_html
 
 #
 admin.site.register(DiscussionCategory)
@@ -104,6 +108,32 @@ class FavoriteAdmin(admin.ModelAdmin):
             return f"University: {obj.university.name}"
         return f"Major: {obj.major.major_name} ({obj.major.university.name})"
     display_favorite.short_description = 'Favorite Item'
+
+class UserAdmin(admin.ModelAdmin):
+    list_display = ('username', 'email', 'role', 'clear_saved_calcs_link')
+    list_filter = ('role',)
+
+    def get_urls(self):
+        urls = super().get_urls()
+        custom_urls = [
+            path('clear-saved-calcs/<int:user_id>/', self.admin_site.admin_view(self.clear_saved_calcs), name='clear_saved_calcs'),
+        ]
+        return custom_urls + urls
+
+    def clear_saved_calcs_link(self, obj):
+        return format_html(
+            '<a class="button" href="{}">Clear Saved Calcs</a>',
+            f'clear-saved-calcs/{obj.id}'
+        )
+    clear_saved_calcs_link.short_description = 'Saved Calcs'
+    clear_saved_calcs_link.allow_tags = True
+
+    def clear_saved_calcs(self, request, user_id):
+        user = CustomUser.objects.get(id=user_id)
+        user.savedCalcs = {}
+        user.save()
+        self.message_user(request, f"All saved calculators cleared for {user.username}.", messages.SUCCESS)
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 # Registering models
 admin.site.register(University, UniversityAdmin)
