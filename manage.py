@@ -3,6 +3,16 @@
 import os
 import sys
 
+import zipfile
+
+zip_path = "db.sqlite3.zip"
+db_path = "db.sqlite3"
+
+if not os.path.exists(db_path) and os.path.exists(zip_path):
+    print("Unzipping database...")
+    with zipfile.ZipFile(zip_path, 'r') as zip_ref:
+        zip_ref.extractall()
+
 
 def main():
     """Run administrative tasks."""
