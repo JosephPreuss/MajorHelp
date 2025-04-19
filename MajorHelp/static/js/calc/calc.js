@@ -78,12 +78,7 @@ function initializeCalculators() {
         
 
         // Attach event listeners
-        const searchButton = document.createElement("button");
-        searchButton.textContent = "Search";
-        searchButton.type = "button";
-        searchButton.addEventListener("click", () => updateUniversityResults(calcNum));
-        uniSearch.parentElement.appendChild(searchButton);
-
+        uniSearch.addEventListener("input", () => updateUniversityResults(calcNum));
         deptDropdown.addEventListener("change", () => updateMajorResults(calcNum));
         if (outstateCheckbox) {
             outstateCheckbox.addEventListener("change", () => handleOutstateToggle(calcNum));
@@ -204,10 +199,6 @@ function newCalc(values=null, load=false) {
         // Attach event listeners to the new calculator
         const uniSearch = clone.querySelector(".uni-search");
         const deptDropdown = clone.querySelector(".dept-dropdown");
-        const searchButton = clone.querySelector(".uni-search-btn");
-        if (searchButton) {
-            searchButton.addEventListener("click", () => updateUniversityResults(calc));
-        }
         uniSearch.addEventListener("input", () => updateUniversityResults(calc));
         deptDropdown.addEventListener("change", () => updateMajorResults(calc));
 
@@ -943,8 +934,15 @@ async function loadSavedCalculators(savedCalculators) {
         const deleteSaveBtn = panel.querySelector(".delete-save");
         if (deleteSaveBtn) {
             deleteSaveBtn.style.display = "inline";
-            deleteSaveBtn.addEventListener('click', () => deleteSave(key)); // 👈 use key, not index
+        
+            // REMOVE any previous click listeners
+            const newBtn = deleteSaveBtn.cloneNode(true);
+            deleteSaveBtn.parentNode.replaceChild(newBtn, deleteSaveBtn);
+        
+            // THEN safely add a new listener
+            newBtn.addEventListener('click', () => deleteSave(key));
         }
+        
 
 
         await selectUniversity(index, data.uni);
