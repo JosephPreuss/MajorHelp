@@ -78,7 +78,12 @@ function initializeCalculators() {
         
 
         // Attach event listeners
-        uniSearch.addEventListener("input", () => updateUniversityResults(calcNum));
+        const searchButton = document.createElement("button");
+        searchButton.textContent = "Search";
+        searchButton.type = "button";
+        searchButton.addEventListener("click", () => updateUniversityResults(calcNum));
+        uniSearch.parentElement.appendChild(searchButton);
+
         deptDropdown.addEventListener("change", () => updateMajorResults(calcNum));
         if (outstateCheckbox) {
             outstateCheckbox.addEventListener("change", () => handleOutstateToggle(calcNum));
@@ -199,6 +204,10 @@ function newCalc(values=null, load=false) {
         // Attach event listeners to the new calculator
         const uniSearch = clone.querySelector(".uni-search");
         const deptDropdown = clone.querySelector(".dept-dropdown");
+        const searchButton = clone.querySelector(".uni-search-btn");
+        if (searchButton) {
+            searchButton.addEventListener("click", () => updateUniversityResults(calc));
+        }
         uniSearch.addEventListener("input", () => updateUniversityResults(calc));
         deptDropdown.addEventListener("change", () => updateMajorResults(calc));
 

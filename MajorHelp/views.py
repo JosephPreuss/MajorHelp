@@ -49,6 +49,8 @@ from .forms import NewThreadForm
 from .forms import ThreadReplyForm  
 from django.shortcuts import get_object_or_404, redirect
 import json
+import re
+from django.db.models import Q
 
 from django.views.decorators.http import require_POST # used for favorite feature
 # Used to catch an exception if GET tries to get a value that isn't defined.
@@ -763,18 +765,28 @@ class UniversityRequestView(View):
 
 @csrf_exempt
 def university_search(request):
-    query = request.GET.get('query', '')
+    query = request.GET.get('query', '').strip()
 
     if not query:
         return HttpResponse("Error - No search query provided", status=400)
 
-    universities = University.objects.filter(name__icontains=query)
+    query_words = query.lower().split()
+    universities = University.objects.all()
 
-    if not universities.exists():
+    def ordered_match(name, words):
+        name_words = name.lower().split()
+        for i in range(len(name_words) - len(words) + 1):
+            if all(name_words[i + j].startswith(words[j]) for j in range(len(words))):
+                return True
+        return False
+
+    matched_unis = [uni for uni in universities if ordered_match(uni.name, query_words)]
+
+    if not matched_unis:
         return HttpResponse("Error - No university found", status=404)
 
     data = {"universities": []}
-    for uni in universities:
+    for uni in matched_unis:
         data["universities"].append({
             "name": uni.name,
             "location": uni.location,
@@ -782,6 +794,7 @@ def university_search(request):
         })
 
     return JsonResponse(data)
+
 
 def calc_list(request):
     if not request.user.is_authenticated:
