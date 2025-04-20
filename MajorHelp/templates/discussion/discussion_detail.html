@@ -4,6 +4,7 @@
 
 {% block content %}
 <link rel="stylesheet" href="{% static 'css/reply_modal.css' %}">
+<link rel="stylesheet" href="{% static 'css/discussion/delete.css' %}">
 
 <!-- 🌀 Blur Wrapper Start -->
 <div id="thread-blur-wrapper" class="thread-blur-wrapper">
@@ -16,10 +17,9 @@
             </div>
 
             {% if thread.author == user %}
-                <form method="post" action="{% url 'MajorHelp:delete_thread' thread.pk %}" style="margin-top: 0.5rem;">
-                    {% csrf_token %}
-                    <button type="submit" class="delete-button" onclick="return confirmDelete('this thread')">🗑️ Delete Thread</button>
-                </form>
+                <button type="button" class="delete-button" onclick="openModal('{% url 'MajorHelp:delete_thread' thread.pk %}', 'thread')">
+                    🗑️ Delete Thread
+                </button>
             {% endif %}
         </div>
 
@@ -33,10 +33,9 @@
                     <div class="reply-content">{{ reply.content }}</div>
 
                     {% if reply.author == user %}
-                        <form method="post" action="{% url 'MajorHelp:delete_reply' reply.pk %}" style="margin-top: 0.3rem;">
-                            {% csrf_token %}
-                            <button type="submit" class="delete-button" onclick="return confirmDelete('this reply')">🗑️ Delete</button>
-                        </form>
+                        <button type="button" class="delete-button" onclick="openModal('{% url 'MajorHelp:delete_reply' reply.pk %}', 'reply')">
+                            🗑️ Delete
+                        </button>
                     {% endif %}
                 </div>
             {% empty %}
@@ -67,11 +66,37 @@
     <p><a href="{% url 'MajorHelp:login' %}">Login</a> to post a reply.</p>
 {% endif %}
 
-<script src="{% static 'js/thread.js' %}"></script>
+<!-- ✅ Delete Confirmation Modal -->
+<div id="confirm-modal" class="confirm-modal">
+    <div class="modal-content">
+        <p id="confirm-message">Are you sure you want to delete?</p>
+        <form id="confirm-form" method="POST">
+            {% csrf_token %}
+            <div class="modal-actions">
+                <button type="submit" class="confirm-btn yes">Yes</button>
+                <button type="button" class="confirm-btn no" onclick="closeModal()">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
 
+<!-- ✅ JS Logic -->
+<script src="{% static 'js/thread.js' %}"></script>
 <script>
-    function confirmDelete(item) {
-      return confirm(`Are you sure you want to delete ${item}? This action cannot be undone.`);
+    function openModal(deleteUrl, itemType) {
+        const modal = document.getElementById('confirm-modal');
+        const form = document.getElementById('confirm-form');
+        const message = document.getElementById('confirm-message');
+
+        form.action = deleteUrl;
+        message.textContent = `Are you sure you want to delete this ${itemType}? This action cannot be undone.`;
+
+        modal.classList.add('active');
     }
-  </script>
+
+    function closeModal() {
+        const modal = document.getElementById('confirm-modal');
+        modal.classList.remove('active');
+    }
+</script>
 {% endblock %}
