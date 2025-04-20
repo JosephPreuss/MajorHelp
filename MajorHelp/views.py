@@ -1066,6 +1066,11 @@ def calculate(request):
         min_tuition = university.in_state_base_min_tuition + major.in_state_min_tuition 
         max_tuition = university.in_state_base_max_tuition + major.in_state_max_tuition
 
+    # Add university and major fees
+    min_tuition += university.fees + major.fees
+    max_tuition += university.fees + major.fees
+
+
     # Apply Aid
     min_tuition -= aid
     max_tuition -= aid
