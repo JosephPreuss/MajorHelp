@@ -534,7 +534,6 @@ async function updateUniversityResults(calc) {
 
     const calcObj = document.getElementById("calculator-0");
 
-    calcObj.querySelector(".submit-btn.result-item").style.display = "none"
     
     if (!query) {
         resultsContainer.style.display = "none";
@@ -575,6 +574,11 @@ async function selectUniversity(calc, name) {
     
     input.value = name;
     input.style.display = "none";
+    const submitBtn = document.getElementById(`calculator-${calc}`).querySelector(".submit-btn");
+    if (submitBtn) {
+        submitBtn.style.display = "none";
+    }
+
 
     document.getElementById(`uni-name-${calc}`).textContent = name;
     document.getElementById(`uni-box-${calc}`).style.visibility = "visible";
@@ -1213,6 +1217,11 @@ function toggleMajorResults(calc) {
 
 function clearUniversity(calc) {
     clearCalc(calc);
+    const submitBtn = document.getElementById(`calculator-${calc}`).querySelector(".submit-btn");
+    if (submitBtn) {
+        submitBtn.style.display = "inline";
+    }
+
 }
 
 function toggleUniversityResults(calc) {
