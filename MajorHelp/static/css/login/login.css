@@ -130,3 +130,50 @@ body::before {
     font-size: 14px;
     cursor: pointer;
 }
+
+.error-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    z-index: 999;
+    display: none;
+}
+
+.error-modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #ffffff;
+    color: #333;
+    padding: 30px 25px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    z-index: 1000;
+    text-align: center;
+    display: none;
+}
+
+.error-modal h3 {
+    margin-bottom: 10px;
+    font-size: 20px;
+}
+
+.modal-close-btn {
+    margin-top: 15px;
+    padding: 8px 18px;
+    border: none;
+    background: #4fc7cf;
+    color: white;
+    font-weight: bold;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.error-modal.active,
+.error-overlay.active {
+    display: block;
+}
