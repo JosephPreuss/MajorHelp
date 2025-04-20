@@ -72,13 +72,18 @@ function initializeCalculators() {
 
         // Extract number from id (e.g., "calculator-0" -> 0)
         const calcNum = parseInt(calc.id.split("-")[1]); 
-        const uniSearch = calc.querySelector(".uni-search");
+        //const uniSearch = calc.querySelector(".uni-search");
         const deptDropdown = calc.querySelector(".dept-dropdown");
         const outstateCheckbox = document.getElementById(`outstate-${calcNum}`);
-        
+
+
+        calc.querySelector(".submit-btn").addEventListener("click", () => updateUniversityResults(calcNum))
+        calc.querySelector(".re-uni.reselect-btn").addEventListener("click", () => clearUniversity(calcNum))
+        calc.querySelector(".re-maj.reselect-btn").addEventListener("click", () => toggleMajorResults(calcNum))
+
 
         // Attach event listeners
-        uniSearch.addEventListener("input", () => updateUniversityResults(calcNum));
+        //uniSearch.addEventListener("input", () => updateUniversityResults(calcNum));
         deptDropdown.addEventListener("change", () => updateMajorResults(calcNum));
         if (outstateCheckbox) {
             outstateCheckbox.addEventListener("change", () => handleOutstateToggle(calcNum));
@@ -179,7 +184,7 @@ function newCalc(values=null, load=false) {
         clone.id = `calculator-${calcCount}`;
 
         // Update all IDs
-        clone.querySelectorAll("[id]").forEach((el) => {
+        clone.querySelectorAll("[id]").forEach((el) => {``
             el.id = el.id + calc; // Append calcCount to IDs
         });
 
@@ -199,8 +204,11 @@ function newCalc(values=null, load=false) {
         // Attach event listeners to the new calculator
         const uniSearch = clone.querySelector(".uni-search");
         const deptDropdown = clone.querySelector(".dept-dropdown");
-        uniSearch.addEventListener("input", () => updateUniversityResults(calc));
+        //uniSearch.addEventListener("input", () => updateUniversityResults(calc));
         deptDropdown.addEventListener("change", () => updateMajorResults(calc));
+        clone.querySelector(".submit-btn").addEventListener("click", () => updateUniversityResults(calc))
+        clone.querySelector(".re-uni.reselect-btn").addEventListener("click", () => clearUniversity(calc))
+        clone.querySelector(".re-maj.reselect-btn").addEventListener("click", () => toggleMajorResults(calc))
 
 
         // Add new calculator to DOM
@@ -458,6 +466,7 @@ function clearCalc(calc) {
     calculator.querySelector(".uni-search").value = "";
 
     calculator.querySelector(".uni-search").style.display = "inline";
+    calculator.querySelector(".submit-btn.result-item").style.display = "inline";
 
 
     calculator.querySelector(".uni-results").replaceChildren();
@@ -517,9 +526,15 @@ function removeCalc(calc) {
     }
 }
 
+
+
 async function updateUniversityResults(calc) {
     const query = document.getElementById(`uni-search-${calc}`).value.trim();
     const resultsContainer = document.getElementById(`uni-results-${calc}`);
+
+    const calcObj = document.getElementById("calculator-0");
+
+    calcObj.querySelector(".submit-btn.result-item").style.display = "none"
     
     if (!query) {
         resultsContainer.style.display = "none";
@@ -780,7 +795,6 @@ async function displayOutput(calc, university, outstate, major, aid=null) {
     const data = await calculate(university, major, outstate, aid);
     if (!data) return;
 
-    // Update panel
 
     // Update the panel
     if (loggedIn) {

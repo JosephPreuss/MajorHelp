@@ -3,11 +3,12 @@
     <div id="input-{{num|default:''}}" class="input content-box">
         <h2>Start by choosing your <span class="color-text">school</span>.</h2>
         <input type="text" id="uni-search-{{num}}" class="uni-search" placeholder="Enter your university">
+        <div class="submit-btn result-item">Submit</div>
         <div id="uni-results-{{num}}" class="uni-results search-results"></div>
         <h3 id="uni-box-{{num}}" class="uni-box">
             You have selected 
             <span id="uni-name-{{num}}" class="uni-name color-text">Nothing</span>
-            <span class="reselect-btn" onclick="clearUniversity({{num}})">✖</span>
+            <span class="re-uni reselect-btn" onclick="clearUniversity({{num}})">✖</span>
         </h3>  
         <input type="checkbox" id="outstate-{{num|default:''}}" class="outstate"> Out-of-State 
 
@@ -21,7 +22,7 @@
         <h3 id="major-box-{{num|default:''}}" class="major-box">
             You have selected 
             <span id="major-name-{{num|default:''}}" class="major-name color-text">Nothing</span>
-            <span class="reselect-btn" onclick="toggleMajorResults({{num|default:'0'}})">✖</span>
+            <span class="re-maj reselect-btn" onclick="toggleMajorResults({{num|default:'0'}})">✖</span>
           </h3>          
 
         <div id="input-aid-{{num|default:''}}" class="input-aid">
