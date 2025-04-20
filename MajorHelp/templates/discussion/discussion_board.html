@@ -27,11 +27,18 @@
             <!-- Right side for discussions list -->
             <div class="discussion-main">
                 <div class="discussion-actions">
-                    <input type="text" placeholder="Search discussions..." class="search-input">
+                    <form method="get" action="{% url 'MajorHelp:discussion_board' %}" style="display: flex; gap: 10px;">
+                        {% if request.GET.category %}
+                            <input type="hidden" name="category" value="{{ request.GET.category }}">
+                        {% endif %}
+                        <input type="text" name="q" placeholder="Search discussions..." class="search-input" value="{{ request.GET.q }}">
+                        <button type="submit" class="new-discussion-button">Search</button>
+                    </form>
                     <a href="{% url 'MajorHelp:create_thread' %}">
                         <button class="new-discussion-button">+ New Discussion</button>
                     </a>
                 </div>
+                
 
                 <div class="discussion-list">
                     {% for thread in threads %}

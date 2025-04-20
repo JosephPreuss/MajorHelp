@@ -51,7 +51,9 @@ from django.shortcuts import get_object_or_404, redirect
 import json
 import re
 from django.db.models import Q
-
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render
+from .models import DiscussionThread
 from django.views.decorators.http import require_POST # used for favorite feature
 # Used to catch an exception if GET tries to get a value that isn't defined.
 from django.utils.datastructures import MultiValueDictKeyError
@@ -191,12 +193,19 @@ class DiscussionThreadDetailView(View):
 @login_required
 def discussion_board(request):
     category_id = request.GET.get('category')
+    query = request.GET.get('q', '')
+
     threads = DiscussionThread.objects.select_related('author', 'category').order_by('-created_at')
 
     if category_id:
         threads = threads.filter(category_id=category_id)
 
-    return render(request, 'discussion/discussion_board.html', {'threads': threads})
+    if query:
+        threads = threads.filter(title__icontains=query)
+
+    return render(request, 'discussion/discussion_board.html', {
+        'threads': threads,
+    })
 
 def settings_view(request):
     return render(request, 'settings.html')  # Make sure you have a 'settings.html' template, or adjust accordingly
