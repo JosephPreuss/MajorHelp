@@ -1,0 +1,96 @@
+<!-- Search Bar Section -->
+<div>
+    <h1 style="text-align: center; width: 100%; color: white">Search Again</h1>
+    <form action="{% url 'MajorHelp:search' %}" method="get" style="display: flex; align-items: center; gap: 10px;">
+      <div id="search-field-container" style="flex: 1;"></div>
+      <input type="hidden" id="filter" name="filter" value="{{ filter_type }}">
+      <button type="submit" class="search-button">Search</button>
+    </form>
+  </div>
+  
+  <!-- Filter Switch Dropdown -->
+  <div class="filter-buttons">
+    <div class="filter-dropdown">
+      <select id="filter-select" onchange="setActiveFilter(this.value)">
+        <option value="major" {% if filter_type == "major" %}selected{% endif %}>Major</option>
+        <option value="department" {% if filter_type == "department" %}selected{% endif %}>Concentration</option>
+        <option value="school" {% if filter_type == "school" %}selected{% endif %}>School</option>
+      </select>
+    </div>
+  </div>
+  
+  <!-- School Type Filter -->
+  <div class="filter-section">
+    <label for="school-type">School Type:</label>
+    <select id="school-type" onchange="window.location.href='?query={{ query }}&school_type=' + this.value;">
+      <option value="both" {% if school_type == 'both' %}selected{% endif %}>Both</option>
+      <option value="public" {% if school_type == 'public' %}selected{% endif %}>Public</option>
+      <option value="private" {% if school_type == 'private' %}selected{% endif %}>Private</option>
+    </select>
+  </div>
+  
+  <!-- Fixed Request Button -->
+  <div class="fixed-button">
+    <a href="{% url 'MajorHelp:university-request' %}">Request University</a>
+  </div>
+  
+  <!-- JavaScript Block -->
+  <script>
+    const departmentOptions = [
+      'Business and Economics',
+      'Education',
+      'Engineering and Technology',
+      'Arts and Design',
+      'Agriculture and Environmental Studies',
+      'Communication and Media',
+      'Law and Criminal Justice'
+    ];
+  
+    function setActiveFilter(filter) {
+      const container = document.getElementById("search-field-container");
+      if (!container) return;
+  
+      document.getElementById("filter").value = filter;
+      container.innerHTML = "";
+  
+      if (filter === "department") {
+        const select = document.createElement("select");
+        select.name = "query";
+        select.id = "search-query";
+        select.innerHTML = `<option value="" disabled selected>Select a Concentration</option>` +
+          departmentOptions.map(option => `<option value="${option}">${option}</option>`).join('');
+        container.appendChild(select);
+      } else {
+        const input = document.createElement("input");
+        input.type = "text";
+        input.id = "search-query";
+        input.name = "query";
+        input.placeholder = `Enter ${filter} name...`;
+        container.appendChild(input);
+      }
+    }
+  
+    document.addEventListener("DOMContentLoaded", function () {
+      const filter = "{{ filter_type|default:'major' }}";
+      const query = "{{ query|escapejs }}";
+  
+      setActiveFilter(filter);
+  
+      setTimeout(() => {
+        const field = document.getElementById("search-query");
+        if (!field) return;
+  
+        if (field.tagName === "SELECT") {
+          for (let i = 0; i < field.options.length; i++) {
+            if (field.options[i].value === query) {
+              field.options[i].selected = true;
+              break;
+            }
+          }
+        } else if (field.tagName === "INPUT") {
+          field.value = query;
+        }
+      }, 50);
+    });
+  </script>
+  

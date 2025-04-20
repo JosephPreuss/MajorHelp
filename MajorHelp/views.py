@@ -457,128 +457,56 @@ class SearchView(View):
 
 class SchoolResultsView(View):
     def get(self, request, query):
-        # Get filters from the request
-        school_type = request.GET.get('school_type', 'both')  # Default to 'both'
-        sort_order = request.GET.get('sort_order', 'none')  # Default to 'none'
-        min_tuition = request.GET.get('min_tuition', None)
-        max_tuition = request.GET.get('max_tuition', None)
-        is_out_state = request.GET.get('is_out_state', 'false') == 'true'
+        school_type = request.GET.get('school_type', 'both')
 
-        # Convert min_tuition and max_tuition to integers, if provided
-        try:
-            min_tuition = int(min_tuition) if min_tuition else None
-            max_tuition = int(max_tuition) if max_tuition else None
-        except ValueError:
-            min_tuition = None
-            max_tuition = None
-
-        # Fetch universities matching the query
         universities = University.objects.filter(name__icontains=query)
 
-        # Filter by school type
         if school_type == 'public':
             universities = universities.filter(is_public=True)
         elif school_type == 'private':
             universities = universities.filter(is_public=False)
 
-        # Initialize results dictionary
         results = {}
 
         for university in universities:
-            # Fetch associated majors
             majors = university.majors.all()
 
-            # Determine the tuition field based on out-of-state filter
-            min_tuition_field = 'out_of_state_min_tuition' if is_out_state else 'in_state_min_tuition'
-            max_tuition_field = 'out_of_state_max_tuition' if is_out_state else 'in_state_max_tuition'
-
-            # Filter majors by tuition range
-            if min_tuition is not None:
-                majors = majors.filter(**{f"{min_tuition_field}__gte": min_tuition})
-            if max_tuition is not None:
-                majors = majors.filter(**{f"{max_tuition_field}__lte": max_tuition})
-
-            # If no majors remain after filtering, exclude the university
             if not majors.exists():
                 continue
 
-            # Collect department data
             departments = {}
             for major in majors:
                 if major.department not in departments:
                     departments[major.department] = []
                 departments[major.department].append(major)
 
-            # Calculate minimum tuition for sorting
-            aggregated_min_tuition = majors.aggregate(
-                min_tuition=Min(min_tuition_field)
-            )['min_tuition']
-
-            # Add university details and aggregated department data to results
             results[university] = {
                 'location': university.location,
                 'type': 'Public' if university.is_public else 'Private',
                 'departments': departments,
-                'min_tuition': aggregated_min_tuition,
             }
 
-        # Sort results by tuition if requested
-        if sort_order in ['low_to_high', 'high_to_low']:
-            sorted_universities = sorted(
-                results.keys(),
-                key=lambda uni: results[uni]['min_tuition'],
-                reverse=(sort_order == 'high_to_low')
-            )
-            sorted_results = {uni: results[uni] for uni in sorted_universities}
-        else:
-            sorted_results = results
-
-        # Render the template
         return render(request, 'search/school_results.html', {
             'query': query,
-            'results': sorted_results,
+            'results': results,
             'school_type': school_type,
-            'sort_order': sort_order,
-            'min_tuition': min_tuition,
-            'max_tuition': max_tuition,
-            'is_out_state': is_out_state,
+            'filter_type': 'school',
         })
+
 
 
 
 class DepartmentResultsView(View):
     def get(self, request, query):
-        # Get filter values from the request
-        school_type = request.GET.get('school_type', 'both')  # Default to 'both'
-        sort_order = request.GET.get('sort_order', 'none')  # Default to 'none'
-        min_tuition = request.GET.get('min_tuition', None)  # Minimum tuition range
-        max_tuition = request.GET.get('max_tuition', None)  # Maximum tuition range
-        is_out_state = request.GET.get('is_out_state', 'false') == 'true'  # Check if out-of-state filter is enabled
+        school_type = request.GET.get('school_type', 'both')
 
-        # Fetch majors matching the query
         majors = Major.objects.filter(department__icontains=query)
 
-        # Filter by school type
         if school_type == 'public':
             majors = majors.filter(university__is_public=True)
         elif school_type == 'private':
             majors = majors.filter(university__is_public=False)
 
-        # Filter by tuition range
-        if min_tuition:
-            tuition_field = 'out_of_state_min_tuition' if is_out_state else 'in_state_min_tuition'
-            majors = majors.filter(**{f"{tuition_field}__gte": min_tuition})
-        if max_tuition:
-            tuition_field = 'out_of_state_max_tuition' if is_out_state else 'in_state_max_tuition'
-            majors = majors.filter(**{f"{tuition_field}__lte": max_tuition})
-
-        # Apply sorting
-        if sort_order == 'low_to_high':
-            majors = majors.order_by('out_of_state_min_tuition' if is_out_state else 'in_state_min_tuition')
-        elif sort_order == 'high_to_low':
-            majors = majors.order_by('-out_of_state_min_tuition' if is_out_state else '-in_state_min_tuition')
-
-        # Group majors by university and department
         results = {}
         for major in majors:
             university = major.university
@@ -592,48 +520,27 @@ class DepartmentResultsView(View):
                 results[university]['departments'][major.department] = []
             results[university]['departments'][major.department].append(major)
 
-        # Render the template
         return render(request, 'search/department_results.html', {
             'query': query,
             'results': results,
             'school_type': school_type,
-            'sort_order': sort_order,
-            'min_tuition': min_tuition,
-            'max_tuition': max_tuition,
-            'is_out_state': is_out_state,
+            'filter_type': 'department',  # for UI dropdown sync
         })
+
+
 
 class MajorResultsView(View):
     def get(self, request, query):
-        # Get filters from the request
-        school_type = request.GET.get('school_type', 'both')  # Default to 'both'
-        sort_order = request.GET.get('sort_order', 'none')  # Default to 'none'
-        min_tuition = request.GET.get('min_tuition', None)
-        max_tuition = request.GET.get('max_tuition', None)
-        is_out_state = request.GET.get('is_out_state', 'false') == 'true'
+        school_type = request.GET.get('school_type', 'both')
 
-        # Fetch majors matching the query
+        # Get majors matching the query
         majors = Major.objects.filter(major_name__icontains=query)
 
-        # Filter by school type
+        # Filter by public/private
         if school_type == 'public':
             majors = majors.filter(university__is_public=True)
         elif school_type == 'private':
             majors = majors.filter(university__is_public=False)
-
-        # Filter by tuition range
-        if min_tuition:
-            tuition_field = 'out_of_state_min_tuition' if is_out_state else 'in_state_min_tuition'
-            majors = majors.filter(**{f"{tuition_field}__gte": min_tuition})
-        if max_tuition:
-            tuition_field = 'out_of_state_max_tuition' if is_out_state else 'in_state_max_tuition'
-            majors = majors.filter(**{f"{tuition_field}__lte": max_tuition})
-
-        # Apply sorting
-        if sort_order == 'low_to_high':
-            majors = majors.order_by('out_of_state_min_tuition' if is_out_state else 'in_state_min_tuition')
-        elif sort_order == 'high_to_low':
-            majors = majors.order_by('-out_of_state_min_tuition' if is_out_state else '-in_state_min_tuition')
 
         # Group majors by university and department
         results = {}
@@ -649,16 +556,13 @@ class MajorResultsView(View):
                 results[university]['departments'][major.department] = []
             results[university]['departments'][major.department].append(major)
 
-        # Render the template
         return render(request, 'search/major_results.html', {
             'query': query,
             'results': results,
             'school_type': school_type,
-            'sort_order': sort_order,
-            'min_tuition': min_tuition,
-            'max_tuition': max_tuition,
-            'is_out_state': is_out_state,
+            'filter_type': 'major',  
         })
+
     
 class MajorOverviewView(DetailView):
     model = Major
