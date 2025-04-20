@@ -13,10 +13,10 @@
 <!-- Search Results -->
 <h2 style="font-size: 28px; color: white; margin-left: 20px;">Search Results for "{{ query }}"</h2>
 {% if results %}
-    {% for university, details in results.items %}
+    {% for university_slug, details in results.items %}
         <div class="result-item">
             <h3 class="result-header">
-                <a href="{% url 'MajorHelp:university-detail' slug=university.slug %}" class="result-link">{{ university.name }}</a>
+                <a href="{% url 'MajorHelp:university-detail' slug=university_slug %}" class="result-link">{{ details.name }}</a>
                 <span class="result-location">{{ details.location }}</span> | 
                 <span class="result-type">{{ details.type }}</span>
             </h3>
@@ -27,7 +27,7 @@
                         <li class="major-item">
                             <a href="{% url 'MajorHelp:major-detail' slug=major.slug %}" class="major-link">{{ major.major_name }}</a>
                             <span class="major-tuition">
-                                (In-State: ${{ major.in_state_min_tuition }} - ${{ major.in_state_max_tuition }},
+                                (In-State: ${{ major.in_state_min_tuition }} - ${{ major.in_state_max_tuition }} ,
                                 Out-of-State: ${{ major.out_of_state_min_tuition }} - ${{ major.out_of_state_max_tuition }})
                             </span>
                         </li>

@@ -431,7 +431,6 @@ def activate_account(request, token):
         messages.error(request, 'Invalid activation link.')
         return redirect('MajorHelp:signup')
 
-
 #the search function
 class SearchView(View):
     def get(self, request):
@@ -453,8 +452,6 @@ class SearchView(View):
         # Default behavior (in case of other filter types)
         return render(request, 'search/search.html', {'query': query, 'filter_type': filter_type})
 
-
-
 class SchoolResultsView(View):
     def get(self, request, query):
         school_type = request.GET.get('school_type', 'both')
@@ -469,18 +466,25 @@ class SchoolResultsView(View):
         results = {}
 
         for university in universities:
-            majors = university.majors.all()
+            # Pull only needed fields for majors
+            majors = university.majors.values(
+                'major_name', 'slug', 'department',
+                'in_state_min_tuition', 'in_state_max_tuition',
+                'out_of_state_min_tuition', 'out_of_state_max_tuition'
+            )
 
-            if not majors.exists():
+            if not majors:
                 continue
 
             departments = {}
             for major in majors:
-                if major.department not in departments:
-                    departments[major.department] = []
-                departments[major.department].append(major)
+                dept = major['department']
+                if dept not in departments:
+                    departments[dept] = []
+                departments[dept].append(major)
 
-            results[university] = {
+            results[university.slug] = {
+                'name': university.name,
                 'location': university.location,
                 'type': 'Public' if university.is_public else 'Private',
                 'departments': departments,
@@ -495,7 +499,6 @@ class SchoolResultsView(View):
 
 
 
-
 class DepartmentResultsView(View):
     def get(self, request, query):
         school_type = request.GET.get('school_type', 'both')
@@ -507,25 +510,37 @@ class DepartmentResultsView(View):
         elif school_type == 'private':
             majors = majors.filter(university__is_public=False)
 
+        majors = majors.values(
+            'major_name', 'slug', 'department',
+            'in_state_min_tuition', 'in_state_max_tuition',
+            'out_of_state_min_tuition', 'out_of_state_max_tuition',
+            'university__name', 'university__slug', 'university__location', 'university__is_public'
+        )
+
         results = {}
         for major in majors:
-            university = major.university
-            if university not in results:
-                results[university] = {
-                    'location': university.location,
-                    'type': 'Public' if university.is_public else 'Private',
+            uni_slug = major['university__slug']
+            if uni_slug not in results:
+                results[uni_slug] = {
+                    'name': major['university__name'],
+                    'location': major['university__location'],
+                    'type': 'Public' if major['university__is_public'] else 'Private',
                     'departments': {}
                 }
-            if major.department not in results[university]['departments']:
-                results[university]['departments'][major.department] = []
-            results[university]['departments'][major.department].append(major)
+
+            dept = major['department']
+            if dept not in results[uni_slug]['departments']:
+                results[uni_slug]['departments'][dept] = []
+
+            results[uni_slug]['departments'][dept].append(major)
 
         return render(request, 'search/department_results.html', {
             'query': query,
             'results': results,
             'school_type': school_type,
-            'filter_type': 'department',  # for UI dropdown sync
+            'filter_type': 'department',
         })
+
 
 
 
@@ -533,34 +548,43 @@ class MajorResultsView(View):
     def get(self, request, query):
         school_type = request.GET.get('school_type', 'both')
 
-        # Get majors matching the query
         majors = Major.objects.filter(major_name__icontains=query)
 
-        # Filter by public/private
         if school_type == 'public':
             majors = majors.filter(university__is_public=True)
         elif school_type == 'private':
             majors = majors.filter(university__is_public=False)
 
-        # Group majors by university and department
+        # Use .values() to only retrieve necessary fields
+        majors = majors.values(
+            'major_name', 'slug', 'department',
+            'in_state_min_tuition', 'in_state_max_tuition',
+            'out_of_state_min_tuition', 'out_of_state_max_tuition',
+            'university__name', 'university__slug', 'university__location', 'university__is_public'
+        )
+
         results = {}
         for major in majors:
-            university = major.university
-            if university not in results:
-                results[university] = {
-                    'location': university.location,
-                    'type': 'Public' if university.is_public else 'Private',
+            uni_slug = major['university__slug']
+            if uni_slug not in results:
+                results[uni_slug] = {
+                    'name': major['university__name'],
+                    'location': major['university__location'],
+                    'type': 'Public' if major['university__is_public'] else 'Private',
                     'departments': {}
                 }
-            if major.department not in results[university]['departments']:
-                results[university]['departments'][major.department] = []
-            results[university]['departments'][major.department].append(major)
+
+            dept = major['department']
+            if dept not in results[uni_slug]['departments']:
+                results[uni_slug]['departments'][dept] = []
+
+            results[uni_slug]['departments'][dept].append(major)
 
         return render(request, 'search/major_results.html', {
             'query': query,
             'results': results,
             'school_type': school_type,
-            'filter_type': 'major',  
+            'filter_type': 'major',
         })
 
     

@@ -13,10 +13,10 @@
 <!-- Search Results -->
 <h2 style="font-size: 28px; color: white; margin-left: 20px;">Search Results for "{{ query }}"</h2>
 {% if results %}
-    {% for university, details in results.items %}
+    {% for university_slug, details in results.items %}
         <div class="result-item">
             <h3 class="result-header">
-                <a href="{% url 'MajorHelp:university-detail' slug=university.slug %}" class="result-link">{{ university.name }}</a>
+                <a href="{% url 'MajorHelp:university-detail' slug=university_slug %}" class="result-link">{{ details.name }}</a>
                 <span class="result-location">{{ details.location }}</span> | 
                 <span class="result-type">{{ details.type }}</span>
             </h3>
