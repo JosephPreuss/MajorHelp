@@ -58,6 +58,8 @@ from django.views.decorators.http import require_POST # used for favorite featur
 # Used to catch an exception if GET tries to get a value that isn't defined.
 from django.utils.datastructures import MultiValueDictKeyError
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.shortcuts import render
+
 
 # views.py
 
@@ -526,57 +528,67 @@ class SchoolResultsView(View):
 class DepartmentResultsView(View):
     def get(self, request, query):
         school_type = request.GET.get('school_type', 'both')
+        page = request.GET.get('page')
 
+        # Step 1: Filter majors by department name (from preset list)
         majors_list = Major.objects.filter(department__icontains=query)
 
+        # Step 2: Apply school type filter
         if school_type == 'public':
             majors_list = majors_list.filter(university__is_public=True)
         elif school_type == 'private':
             majors_list = majors_list.filter(university__is_public=False)
 
-        majors_list = majors_list.values(
-            'major_name', 'slug', 'department',
-            'in_state_min_tuition', 'in_state_max_tuition',
-            'out_of_state_min_tuition', 'out_of_state_max_tuition',
-            'university__name', 'university__slug', 'university__location', 'university__is_public'
-        )
+        # Step 3: Prefetch related university data for speed
+        majors_list = majors_list.select_related('university').order_by('university__name')
 
-        # Pagination
-        paginator = Paginator(majors_list, 5)
-        page = request.GET.get('page')
-
-        try:
-            majors = paginator.page(page)
-        except PageNotAnInteger:
-            majors = paginator.page(1)
-        except EmptyPage:
-            majors = paginator.page(paginator.num_pages)
-
-        results = {}
-        for major in majors:
-            uni_slug = major['university__slug']
-            if uni_slug not in results:
-                results[uni_slug] = {
-                    'name': major['university__name'],
-                    'location': major['university__location'],
-                    'type': 'Public' if major['university__is_public'] else 'Private',
+        # Step 4: Group majors by university and department
+        grouped_results = {}
+        for major in majors_list:
+            uni = major.university
+            uni_slug = uni.slug
+            if uni_slug not in grouped_results:
+                grouped_results[uni_slug] = {
+                    'name': uni.name,
+                    'location': uni.location,
+                    'type': 'Public' if uni.is_public else 'Private',
                     'departments': {}
                 }
 
-            dept = major['department']
-            if dept not in results[uni_slug]['departments']:
-                results[uni_slug]['departments'][dept] = []
+            dept = major.department
+            grouped_results[uni_slug]['departments'].setdefault(dept, []).append({
+                'major_name': major.major_name,
+                'slug': major.slug,
+                'in_state_min_tuition': major.in_state_min_tuition,
+                'in_state_max_tuition': major.in_state_max_tuition,
+                'out_of_state_min_tuition': major.out_of_state_min_tuition,
+                'out_of_state_max_tuition': major.out_of_state_max_tuition,
+            })
 
-            results[uni_slug]['departments'][dept].append(major)
+        # Step 5: Paginate the grouped university results
+        university_items = list(grouped_results.items())  # list of (slug, data)
+        paginator = Paginator(university_items, 5)  # 5 universities per page
 
+        try:
+            paginated_results = paginator.page(page)
+        except PageNotAnInteger:
+            paginated_results = paginator.page(1)
+        except EmptyPage:
+            paginated_results = paginator.page(paginator.num_pages)
+
+        # Step 6: Reformat page results back into a dict
+        results_page_dict = dict(paginated_results.object_list)
+
+        # Step 7: Render
         return render(request, 'search/department_results.html', {
             'query': query,
-            'results': results,
+            'results': results_page_dict,
             'school_type': school_type,
             'filter_type': 'department',
-            'page_obj': majors,
-            'is_paginated': majors.has_other_pages(),
+            'page_obj': paginated_results,
+            'is_paginated': paginated_results.has_other_pages(),
         })
+
 
 
 class MajorResultsView(View):
