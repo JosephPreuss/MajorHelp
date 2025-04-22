@@ -465,7 +465,7 @@ class SchoolResultsView(View):
     def get(self, request, query):
         school_type = request.GET.get('school_type', 'both')
 
-        universities = University.objects.filter(name__icontains=query)
+        universities = University.objects.filter(name__istartswith=query)
 
         if school_type == 'public':
             universities = universities.filter(is_public=True)
@@ -557,7 +557,7 @@ class MajorResultsView(View):
     def get(self, request, query):
         school_type = request.GET.get('school_type', 'both')
 
-        majors = Major.objects.filter(major_name__icontains=query)
+        majors = Major.objects.filter(major_name__istartswith=query)
 
         if school_type == 'public':
             majors = majors.filter(university__is_public=True)
