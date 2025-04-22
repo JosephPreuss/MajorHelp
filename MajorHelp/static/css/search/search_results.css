@@ -264,3 +264,30 @@ z-index: 10000;
 .pagination a:hover {
     background-color: #1f6e72;
 }
+
+.accordion-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .accordion-toggle {
+    font-size: 24px;
+    font-weight: bold;
+    background: none;
+    border: none;
+    color: #008080;
+    cursor: pointer;
+    text-align: right;
+    padding: 0 10px;
+  }
+  
+  .accordion-toggle:hover {
+    text-decoration: underline;
+  }
+  
+  .accordion-content {
+    margin-left: 20px;
+    margin-top: 10px;
+  }
+  

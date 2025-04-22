@@ -22,7 +22,7 @@
   <!-- School Type Filter -->
   <div class="filter-section">
     <label for="school-type">School Type:</label>
-    <select id="school-type" onchange="window.location.href='?query={{ query }}&school_type=' + this.value;">
+    <select id="school-type" onchange="handleSchoolTypeChange(this.value)">
       <option value="both" {% if school_type == 'both' %}selected{% endif %}>Both</option>
       <option value="public" {% if school_type == 'public' %}selected{% endif %}>Public</option>
       <option value="private" {% if school_type == 'private' %}selected{% endif %}>Private</option>
@@ -92,5 +92,19 @@
         }
       }, 50);
     });
+  </script>
+  
+  <script>
+    function handleSchoolTypeChange(value) {
+      const url = new URL(window.location.href);
+      url.searchParams.set("school_type", value);
+      url.searchParams.set("page", "1"); // Always reset to page 1
+  
+      {% if current_letter %}
+        url.searchParams.set("letter", "{{ current_letter }}");
+      {% endif %}
+  
+      window.location.href = url.toString();
+    }
   </script>
   

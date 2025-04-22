@@ -479,7 +479,7 @@ class SchoolResultsView(View):
             universities_list = universities_list.filter(is_public=False)
 
         # Apply pagination (50 per page)
-        paginator = Paginator(universities_list, 5)
+        paginator = Paginator(universities_list, 20)
         page = request.GET.get('page')
 
         try:
@@ -522,28 +522,40 @@ class SchoolResultsView(View):
             'filter_type': 'school',
             'page_obj': universities,
             'is_paginated': universities.has_other_pages(),
+            
         })
 
 
 
+from django.views import View
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
+from django.shortcuts import render
+from .models import Major
+import string
+
 class DepartmentResultsView(View):
     def get(self, request, query):
         school_type = request.GET.get('school_type', 'both')
+        letter = request.GET.get('letter', '').upper()
         page = request.GET.get('page')
 
-        # Step 1: Filter majors by department name (from preset list)
+        # Step 1: Filter majors by department name
         majors_list = Major.objects.filter(department__icontains=query)
 
-        # Step 2: Apply school type filter
+        # Step 2: Filter by school type
         if school_type == 'public':
             majors_list = majors_list.filter(university__is_public=True)
         elif school_type == 'private':
             majors_list = majors_list.filter(university__is_public=False)
 
-        # Step 3: Prefetch related university data for speed
+        # Step 3: Filter by starting letter of university name (if given)
+        if letter:
+            majors_list = majors_list.filter(university__name__istartswith=letter)
+
+        # Step 4: Optimize query and order by university name
         majors_list = majors_list.select_related('university').order_by('university__name')
 
-        # Step 4: Group majors by university and department
+        # Step 5: Group majors by university and department
         grouped_results = {}
         for major in majors_list:
             uni = major.university
@@ -566,9 +578,9 @@ class DepartmentResultsView(View):
                 'out_of_state_max_tuition': major.out_of_state_max_tuition,
             })
 
-        # Step 5: Paginate the grouped university results
-        university_items = list(grouped_results.items())  # list of (slug, data)
-        paginator = Paginator(university_items, 5)  # 5 universities per page
+        # Step 6: Paginate universities (5 per page)
+        university_items = list(grouped_results.items())
+        paginator = Paginator(university_items, 5)
 
         try:
             paginated_results = paginator.page(page)
@@ -577,10 +589,9 @@ class DepartmentResultsView(View):
         except EmptyPage:
             paginated_results = paginator.page(paginator.num_pages)
 
-        # Step 6: Reformat page results back into a dict
         results_page_dict = dict(paginated_results.object_list)
 
-        # Step 7: Render
+        # Step 7: Render with alphabet filter and pagination
         return render(request, 'search/department_results.html', {
             'query': query,
             'results': results_page_dict,
@@ -588,6 +599,8 @@ class DepartmentResultsView(View):
             'filter_type': 'department',
             'page_obj': paginated_results,
             'is_paginated': paginated_results.has_other_pages(),
+            'alphabet': list(string.ascii_uppercase),
+            'current_letter': letter,
         })
 
 
@@ -596,16 +609,18 @@ from django.views import View
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.shortcuts import render
 from .models import Major
+import string
+import re
 
 class MajorResultsView(View):
     def get(self, request, query):
         school_type = request.GET.get('school_type', 'both')
         page = request.GET.get('page')
+        letter = request.GET.get('letter', '').upper()
 
-        # Step 1: Filter by major name
+        # Step 1: Filter by major name (prefix match)
         pattern = r'^' + re.escape(query)
         majors_qs = Major.objects.filter(major_name__iregex=pattern)
-
 
         # Step 2: Filter by school type
         if school_type == 'public':
@@ -613,10 +628,14 @@ class MajorResultsView(View):
         elif school_type == 'private':
             majors_qs = majors_qs.filter(university__is_public=False)
 
-        # Step 3: Optimize queries
+        # Step 3: Filter by university first letter
+        if letter:
+            majors_qs = majors_qs.filter(university__name__istartswith=letter)
+
+        # Step 4: Optimize and order
         majors_qs = majors_qs.select_related('university').order_by('university__name')
 
-        # Step 4: Group majors by university and department
+        # Step 5: Group by university → department → majors
         results = {}
         for major in majors_qs:
             uni = major.university
@@ -639,9 +658,9 @@ class MajorResultsView(View):
                 'out_of_state_max_tuition': major.out_of_state_max_tuition,
             })
 
-        # Step 5: Paginate at the university level
-        university_items = list(results.items())  # [(slug, data), ...]
-        paginator = Paginator(university_items, 5)  # 5 universities per page
+        # Step 6: Paginate
+        university_items = list(results.items())
+        paginator = Paginator(university_items, 10)
 
         try:
             page_obj = paginator.page(page)
@@ -650,7 +669,7 @@ class MajorResultsView(View):
         except EmptyPage:
             page_obj = paginator.page(paginator.num_pages)
 
-        # Step 6: Rebuild results dict for the current page
+        # Step 7: Slice current page's result data
         paginated_results = dict(page_obj.object_list)
 
         return render(request, 'search/major_results.html', {
@@ -660,7 +679,10 @@ class MajorResultsView(View):
             'filter_type': 'major',
             'page_obj': page_obj,
             'is_paginated': paginator.num_pages > 1,
+            'alphabet': list(string.ascii_uppercase),
+            'current_letter': letter,
         })
+
 
     
 class MajorOverviewView(DetailView):
