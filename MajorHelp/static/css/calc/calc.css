@@ -87,6 +87,7 @@ body {
     text-align: left;
     padding: 0 5px;
 }
+
   
   /* Specific styling for each column */
 .calc-name {
@@ -148,7 +149,7 @@ body {
 
 .uni-search {
     width: 80%;
-    height: 25px;
+    height: 34px;
     padding: 10px;
     font-size: 16px;
 }
@@ -234,6 +235,14 @@ body {
     cursor: pointer;
     transition: background-color 0.3s ease;
     display: inline-block;
+    height: 34px !important;
+    box-sizing: content-box !important;
+    vertical-align: middle !important;
+    line-height: 15px !important;
+}
+
+.aid{
+    height: 40px;
 }
 
 .result-item:hover {
