@@ -57,6 +57,7 @@ from .models import DiscussionThread
 from django.views.decorators.http import require_POST # used for favorite feature
 # Used to catch an exception if GET tries to get a value that isn't defined.
 from django.utils.datastructures import MultiValueDictKeyError
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 # views.py
 
@@ -463,19 +464,31 @@ class SearchView(View):
 
 class SchoolResultsView(View):
     def get(self, request, query):
+        # Get filter from the request
         school_type = request.GET.get('school_type', 'both')
 
-        universities = University.objects.filter(name__icontains=query)
+        # Filter universities based on query and school_type
+        universities_list = University.objects.filter(name__icontains=query)
 
         if school_type == 'public':
-            universities = universities.filter(is_public=True)
+            universities_list = universities_list.filter(is_public=True)
         elif school_type == 'private':
-            universities = universities.filter(is_public=False)
+            universities_list = universities_list.filter(is_public=False)
 
+        # Apply pagination (50 per page)
+        paginator = Paginator(universities_list, 5)
+        page = request.GET.get('page')
+
+        try:
+            universities = paginator.page(page)
+        except PageNotAnInteger:
+            universities = paginator.page(1)
+        except EmptyPage:
+            universities = paginator.page(paginator.num_pages)
+
+        # Prepare results structure
         results = {}
-
         for university in universities:
-            # Pull only needed fields for majors
             majors = university.majors.values(
                 'major_name', 'slug', 'department',
                 'in_state_min_tuition', 'in_state_max_tuition',
@@ -504,6 +517,8 @@ class SchoolResultsView(View):
             'results': results,
             'school_type': school_type,
             'filter_type': 'school',
+            'page_obj': universities,
+            'is_paginated': universities.has_other_pages(),
         })
 
 
@@ -512,19 +527,30 @@ class DepartmentResultsView(View):
     def get(self, request, query):
         school_type = request.GET.get('school_type', 'both')
 
-        majors = Major.objects.filter(department__icontains=query)
+        majors_list = Major.objects.filter(department__icontains=query)
 
         if school_type == 'public':
-            majors = majors.filter(university__is_public=True)
+            majors_list = majors_list.filter(university__is_public=True)
         elif school_type == 'private':
-            majors = majors.filter(university__is_public=False)
+            majors_list = majors_list.filter(university__is_public=False)
 
-        majors = majors.values(
+        majors_list = majors_list.values(
             'major_name', 'slug', 'department',
             'in_state_min_tuition', 'in_state_max_tuition',
             'out_of_state_min_tuition', 'out_of_state_max_tuition',
             'university__name', 'university__slug', 'university__location', 'university__is_public'
         )
+
+        # Pagination
+        paginator = Paginator(majors_list, 5)
+        page = request.GET.get('page')
+
+        try:
+            majors = paginator.page(page)
+        except PageNotAnInteger:
+            majors = paginator.page(1)
+        except EmptyPage:
+            majors = paginator.page(paginator.num_pages)
 
         results = {}
         for major in majors:
@@ -548,29 +574,39 @@ class DepartmentResultsView(View):
             'results': results,
             'school_type': school_type,
             'filter_type': 'department',
+            'page_obj': majors,
+            'is_paginated': majors.has_other_pages(),
         })
-
-
 
 
 class MajorResultsView(View):
     def get(self, request, query):
         school_type = request.GET.get('school_type', 'both')
 
-        majors = Major.objects.filter(major_name__icontains=query)
+        majors_list = Major.objects.filter(major_name__icontains=query)
 
         if school_type == 'public':
-            majors = majors.filter(university__is_public=True)
+            majors_list = majors_list.filter(university__is_public=True)
         elif school_type == 'private':
-            majors = majors.filter(university__is_public=False)
+            majors_list = majors_list.filter(university__is_public=False)
 
-        # Use .values() to only retrieve necessary fields
-        majors = majors.values(
+        majors_list = majors_list.values(
             'major_name', 'slug', 'department',
             'in_state_min_tuition', 'in_state_max_tuition',
             'out_of_state_min_tuition', 'out_of_state_max_tuition',
             'university__name', 'university__slug', 'university__location', 'university__is_public'
         )
+
+        # Pagination
+        paginator = Paginator(majors_list, 5)
+        page = request.GET.get('page')
+
+        try:
+            majors = paginator.page(page)
+        except PageNotAnInteger:
+            majors = paginator.page(1)
+        except EmptyPage:
+            majors = paginator.page(paginator.num_pages)
 
         results = {}
         for major in majors:
@@ -594,6 +630,8 @@ class MajorResultsView(View):
             'results': results,
             'school_type': school_type,
             'filter_type': 'major',
+            'page_obj': majors,
+            'is_paginated': majors.has_other_pages(),
         })
 
     

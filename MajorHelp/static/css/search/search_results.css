@@ -230,3 +230,37 @@ z-index: 10000;
     text-decoration: underline;
     margin-left: 25px;
 }
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+    gap: 10px;
+    flex-wrap: wrap;
+    height: 50px;
+    max-width: 100%;
+}
+
+.pagination a {
+    padding: 6px 12px;
+    background-color: #268f95;
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: bold;
+    height: 50px;
+    width: 110px;
+    font-size: 26px;
+    line-height: 45px;
+}
+
+.pagination span {
+    font-weight: bold;
+    color: #FFFFFF;
+    font-size: 26px;
+}
+
+.pagination a:hover {
+    background-color: #1f6e72;
+}
