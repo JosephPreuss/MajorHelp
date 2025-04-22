@@ -57,6 +57,7 @@ from .models import DiscussionThread
 from django.views.decorators.http import require_POST # used for favorite feature
 # Used to catch an exception if GET tries to get a value that isn't defined.
 from django.utils.datastructures import MultiValueDictKeyError
+import re
 
 # views.py
 
@@ -465,7 +466,9 @@ class SchoolResultsView(View):
     def get(self, request, query):
         school_type = request.GET.get('school_type', 'both')
 
-        universities = University.objects.filter(name__istartswith=query)
+        pattern = r'^' + re.escape(query)
+        universities = University.objects.filter(name__iregex=pattern)
+
 
         if school_type == 'public':
             universities = universities.filter(is_public=True)
@@ -557,7 +560,9 @@ class MajorResultsView(View):
     def get(self, request, query):
         school_type = request.GET.get('school_type', 'both')
 
-        majors = Major.objects.filter(major_name__istartswith=query)
+        pattern = r'^' + re.escape(query)
+        majors = Major.objects.filter(major_name__iregex=pattern)
+
 
         if school_type == 'public':
             majors = majors.filter(university__is_public=True)
