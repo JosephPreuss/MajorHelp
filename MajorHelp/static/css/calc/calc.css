@@ -146,6 +146,20 @@ body {
     visibility : hidden;
 }
 
+.uni-search {
+    width: 80%;
+    height: 25px;
+    padding: 10px;
+    font-size: 16px;
+}
+
+.dept-dropdown {
+    width: 80%;
+    height: 50px;
+    padding: 10px;
+    font-size: 16px;
+}
+
 .major-box {
     visibility : hidden;
 }
