@@ -18,8 +18,11 @@
                         <a href="{% url 'MajorHelp:university-detail' slug=favorite.university.slug %}">
                             <strong>{{ favorite.university.name }}</strong>  
                         </a>
+                        <!-- fix recently added filter by adding a machine read time-->
                         <p>📍 <strong>Located at</strong> {{ favorite.university.location }}</p>
-                        <p>⭐ <strong>Added</strong> {{ favorite.created_at|timesince }} ago</p>
+                        <p data-created="{{ favorite.created_at|date:'Y-m-d H:i:s' }}">
+                            ⭐ <strong>Added</strong> {{ favorite.created_at|timesince }} ago
+                        </p>
                     </li>
                     {% empty %}
                     <li class="no-favorites">You haven't favorited any universities yet.</li>
@@ -36,7 +39,10 @@
                             <strong>{{ favorite.major.major_name }}</strong> at {{ favorite.major.university.name }}
                         </a>
                         <p>🏫 <strong>Department</strong> {{ favorite.major.department }}</p>
-                        <p>⭐ <strong>Added</strong> {{ favorite.created_at|timesince }} ago</p>
+
+                        <p data-created="{{ favorite.created_at|date:'Y-m-d H:i:s' }}">
+                            ⭐ <strong>Added</strong> {{ favorite.created_at|timesince }} ago
+                        </p>
                     </li>
                     {% empty %}
                     <li class="no-favorites">You haven't favorited any majors yet.</li>
@@ -64,93 +70,121 @@
                 </div>
             </div>
         </div>
+        
+        <div class="filter-card">
+            <span class="filter-header">Sort <span class="highlight-the">By</span></span>
+            <div class="filter-options-group">
+                <div class="filter-option">
+                    <input type="radio" name="sort-order" id="sort-recent-desc" checked>
+                    <label for="sort-recent-desc">Recently Added (New → Old)</label>
+                </div>
+                <div class="filter-option">
+                    <input type="radio" name="sort-order" id="sort-recent-asc">
+                    <label for="sort-recent-asc">Recently Added (Old → New)</label>
+                </div>
+                <div class="filter-option">
+                    <input type="radio" name="sort-order" id="sort-alpha-asc">
+                    <label for="sort-alpha-asc">Alphabetical (A → Z)</label>
+                </div>
+                <div class="filter-option">
+                    <input type="radio" name="sort-order" id="sort-alpha-desc">
+                    <label for="sort-alpha-desc">Alphabetical (Z → A)</label>
+                </div>
+            </div>
+        </div>
+        
     </div>
 </div>
 
+<!-- 
+Rewrote the whole script so that the original filter (Majors, Universities, Both) works in combination with the new sorting options:
+- Recently Added (New → Old and Old → New)
+- Alphabetical (A → Z and Z → A)
+
+The sorting uses a hidden 'data-created' attribute with a machine-readable datetime format (Y-m-d H:i:s) to accurately sort by date added.
+Filtering and sorting are applied together and update the DOM dynamically without a full page reload.
+-->
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const bothCheckbox = document.getElementById('show-both');
-        const universitiesCheckbox = document.getElementById('show-universities');
-        const majorsCheckbox = document.getElementById('show-majors');
-        const universityItems = document.querySelectorAll('.university-item');
-        const majorItems = document.querySelectorAll('.major-item');
-        const universitySection = document.getElementById('universities-section');
-        const majorSection = document.getElementById('majors-section');
-        const noUniversityMessage = universitySection.querySelector('.no-favorites');
-        const noMajorMessage = majorSection.querySelector('.no-favorites');
+    document.addEventListener('DOMContentLoaded', function () {
+    const bothCheckbox = document.getElementById('show-both');
+    const universitiesCheckbox = document.getElementById('show-universities');
+    const majorsCheckbox = document.getElementById('show-majors');
+    const universitySection = document.getElementById('universities-section');
+    const majorSection = document.getElementById('majors-section');
 
-        function updateVisibility() {
-            // Handle "Both" checkbox
-            if (bothCheckbox.checked) {
-                universitiesCheckbox.checked = true;
-                majorsCheckbox.checked = true;
-            }
+    function sortItems(container, type) {
+        const items = Array.from(container.querySelectorAll('.favorite-item'));
+        items.sort((a, b) => {
+            const aName = a.querySelector('a').textContent.trim().toLowerCase();
+            const bName = b.querySelector('a').textContent.trim().toLowerCase();
+            //using the data-created attribute for date-based sorting
+            const aTime = new Date(a.querySelector('p[data-created]').getAttribute('data-created'));
+            const bTime = new Date(b.querySelector('p[data-created]').getAttribute('data-created'));
 
-            // Show/hide university items
-            const showUniversities = universitiesCheckbox.checked;
-            universitySection.style.display = showUniversities ? 'block' : 'none';
-            
-            // Show/hide major items
-            const showMajors = majorsCheckbox.checked;
-            majorSection.style.display = showMajors ? 'block' : 'none';
-
-            // Update "Both" checkbox state
-            bothCheckbox.checked = universitiesCheckbox.checked && majorsCheckbox.checked;
-
-            // Handle empty state messages
-            if (noUniversityMessage) {
-                noUniversityMessage.style.display = showUniversities ? 'block' : 'none';
-            }
-            if (noMajorMessage) {
-                noMajorMessage.style.display = showMajors ? 'block' : 'none';
-            }
-        }
-
-        // Initialize visibility
-        updateVisibility();
-
-        // Event listeners
-        bothCheckbox.addEventListener('change', function() {
-            universitiesCheckbox.checked = this.checked;
-            majorsCheckbox.checked = this.checked;
-            updateVisibility();
+            if (type === 'recent-asc') return aTime - bTime;
+            if (type === 'recent-desc') return bTime - aTime;
+            if (type === 'alpha-asc') return aName.localeCompare(bName);
+            if (type === 'alpha-desc') return bName.localeCompare(aName);
         });
+        items.forEach(item => container.appendChild(item));
+    }
 
-        universitiesCheckbox.addEventListener('change', function() {
-            if (!this.checked) {
-                bothCheckbox.checked = false;
-            } else if (majorsCheckbox.checked) {
-                bothCheckbox.checked = true;
-            }
-            updateVisibility();
-        });
+    function updateUI() {
+        const showUniversities = universitiesCheckbox.checked;
+        const showMajors = majorsCheckbox.checked;
+        const sortOrder = document.querySelector('input[name="sort-order"]:checked').id;
 
-        majorsCheckbox.addEventListener('change', function() {
-            if (!this.checked) {
-                bothCheckbox.checked = false;
-            } else if (universitiesCheckbox.checked) {
-                bothCheckbox.checked = true;
-            }
-            updateVisibility();
-        });
+        universitySection.style.display = showUniversities ? 'block' : 'none';
+        majorSection.style.display = showMajors ? 'block' : 'none';
+        bothCheckbox.checked = showUniversities && showMajors;
+
+        const sortType = sortOrder.includes('recent')
+            ? (sortOrder.endsWith('asc') ? 'recent-asc' : 'recent-desc')
+            : (sortOrder.endsWith('asc') ? 'alpha-asc' : 'alpha-desc');
+
+        if (showUniversities) sortItems(universitySection.querySelector('.favorites-list'), sortType);
+        if (showMajors) sortItems(majorSection.querySelector('.favorites-list'), sortType);
+    }
+
+    // Event bindings
+    bothCheckbox.addEventListener('change', () => {
+        universitiesCheckbox.checked = majorsCheckbox.checked = bothCheckbox.checked;
+        updateUI();
     });
 
-    // Polling for updates
-    function checkForUpdates() {
-        fetch(window.location.href)
-            .then(response => response.text())
-            .then(html => {
-                const parser = new DOMParser();
-                const newDoc = parser.parseFromString(html, 'text/html');
-                const oldCount = document.querySelectorAll('.favorite-item').length;
-                const newCount = newDoc.querySelectorAll('.favorite-item').length;
-                
-                if (oldCount !== newCount) {
-                    location.reload();
-                }
-            });
-    }
-    setInterval(checkForUpdates, 3000); // runs checkForUpdates ever 3 seconds
+    universitiesCheckbox.addEventListener('change', () => {
+        bothCheckbox.checked = universitiesCheckbox.checked && majorsCheckbox.checked;
+        updateUI();
+    });
+
+    majorsCheckbox.addEventListener('change', () => {
+        bothCheckbox.checked = universitiesCheckbox.checked && majorsCheckbox.checked;
+        updateUI();
+    });
+
+    document.querySelectorAll('input[name="sort-order"]').forEach(radio =>
+        radio.addEventListener('change', updateUI)
+    );
+
+    updateUI(); // Initial
+});
+
+// polling refresh logic
+function checkForUpdates() {
+    fetch(window.location.href)
+        .then(response => response.text())
+        .then(html => {
+            const parser = new DOMParser();
+            const newDoc = parser.parseFromString(html, 'text/html');
+            const oldCount = document.querySelectorAll('.favorite-item').length;
+            const newCount = newDoc.querySelectorAll('.favorite-item').length;
+            if (oldCount !== newCount) {
+                location.reload();
+            }
+        });
+}
+setInterval(checkForUpdates, 3000);
+
 </script>
 <!-- adds space at the bottom of the page-->
 <br>  <br>
