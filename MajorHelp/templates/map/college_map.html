@@ -4,9 +4,10 @@
 
 {% block content %}
 <link rel="stylesheet" href="{% static 'css/map/college_map.css' %}">
+
 <h1 style="text-align: center;">
     <span style="color: #4FC7CF;">Explore</span> Colleges
-  </h1>  
+</h1>
 <p style="text-align: center; font-size: 1.2rem; color: #555; margin-top: 10px;">
     A map showcasing all the universities currently in our database.
 </p>
@@ -15,14 +16,21 @@
 
 <!-- Leaflet CSS -->
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-<!-- Awesome Markers + Font Awesome -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.awesome-markers/2.0.4/leaflet.awesome-markers.css" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.css" />
 
 <!-- Leaflet JS -->
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.awesome-markers/2.0.4/leaflet.awesome-markers.js"></script>
+<script src="https://unpkg.com/leaflet.markercluster/dist/leaflet.markercluster.js"></script>
 
-<!-- Your Custom JS -->
+<!-- Inject university data directly -->
+<script>
+    const universities = {{ universities_json|safe }};
+</script>
+
+<!-- Custom Map Logic -->
 <script src="{% static 'js/map.js' %}"></script>
+
 {% endblock %}

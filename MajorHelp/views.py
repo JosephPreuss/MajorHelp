@@ -59,12 +59,26 @@ from django.views.decorators.http import require_POST # used for favorite featur
 from django.utils.datastructures import MultiValueDictKeyError
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.shortcuts import render
+from django.core.serializers.json import DjangoJSONEncoder
 
 
 # views.py
 
 def college_map(request):
-    return render(request, 'map/college_map.html')
+    universities = University.objects.exclude(latitude__isnull=True).exclude(longitude__isnull=True)
+    data = [
+        {
+            'name': u.name,
+            'lat': float(u.latitude),
+            'lng': float(u.longitude),
+            'color': u.primary_color or "#268f95",
+            'url': f"/UniversityOverview/{u.slug}/"
+        }
+        for u in universities
+    ]
+    return render(request, 'map/college_map.html', {
+        'universities_json': json.dumps(data, cls=DjangoJSONEncoder)
+    })
 
 @login_required
 def major_chat(request):
@@ -1167,4 +1181,22 @@ def favorites_list(request):
         'university_favorites': university_favorites,
         'major_favorites': major_favorites
     })
+
+
+def university_map_data(request):
+    universities = University.objects.exclude(latitude__isnull=True).exclude(longitude__isnull=True)
+    data = []
+
+    for uni in universities:
+        data.append({
+            'name': uni.name,
+            'lat': float(uni.latitude),
+            'lng': float(uni.longitude),
+            'color': uni.primary_color or "#268f95",
+            'url': f"/UniversityOverview/{uni.slug}/"
+        })
+    print(data)  # <- Just for debug
+
+
+    return JsonResponse({'universities': data})
 

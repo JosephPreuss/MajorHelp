@@ -94,4 +94,5 @@ urlpatterns = [
 
     # majorhelp map url
     path('map/', views.college_map, name='college_map'),
+    path('api/universities/mapdata/', views.university_map_data, name='university_map_data'),
 ]
