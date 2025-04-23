@@ -25,6 +25,7 @@ class UniversityRatingInline(admin.TabularInline):
 
 class UniversityAdmin(admin.ModelAdmin):
     inlines = [UniversityRatingInline]  # Display ratings inline
+    search_fields = ['name'] 
 
 class UniversityRatingAdmin(admin.ModelAdmin):
     list_display = ('university', 'category', 'rating')
