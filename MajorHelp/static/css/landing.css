@@ -1,0 +1,146 @@
+html, body {
+    height: 100%;
+    scroll-behavior: smooth;
+    overflow-y: scroll;
+    scroll-snap-type: y mandatory;
+}
+
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000; /* ensures it's above everything else */
+    background-color: white; 
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+.section {
+    height: 100vh;
+    scroll-snap-align: start;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+    text-align: center;
+    flex-direction: column;
+}
+
+.section h1 {
+    font-size: 3rem;
+    margin-bottom: 20px;
+}
+
+.section p {
+    font-size: 1.2rem;
+    max-width: 700px;
+}
+
+.dots-nav {
+    position: fixed;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    z-index: 999;
+}
+
+.dots-nav a {
+    width: 12px;
+    height: 12px;
+    background: #ccc;
+    border-radius: 50%;
+    display: block;
+    transition: background 0.3s;
+}
+
+.dots-nav a.active,
+.dots-nav a:hover {
+    background: #4fc7cf;
+}
+
+.scroll-down {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 60px;
+    height: 60px;
+    border: 2px solid #4fc7cf;
+    border-radius: 50%;
+    margin-top: 40px;
+    animation: bounce 1.5s infinite;
+    transition: background-color 0.3s ease;
+}
+
+.scroll-down svg {
+    stroke: #4fc7cf;
+    width: 24px;
+    height: 24px;
+    fill: none;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.scroll-down:hover {
+    background-color: rgba(79, 199, 207, 0.1);
+}
+
+
+@keyframes bounce {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(10px);
+    }
+}
+
+.swiper-container {
+    width: 100%;
+    padding-bottom: 40px;
+}
+
+.swiper-slide {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.team-card {
+    text-align: center;
+    width: 160px;
+    padding: 15px;
+    border-radius: 12px;
+    background-color: white;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.team-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+    border: 1px solid #4fc7cf;
+}
+
+.team-card .avatar {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 50%;
+    margin-bottom: 10px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.3s ease;
+}
+
+.team-card a {
+    color: #4fc7cf;
+    text-decoration: none;
+    font-size: 0.95rem;
+    font-weight: 500;
+}
+
+.team-card a:hover {
+    text-decoration: underline;
+}

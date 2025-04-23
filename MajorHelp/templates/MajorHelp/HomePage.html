@@ -1,88 +1,282 @@
 {% extends "base.html" %}
 {% load static %}
-
 {% block title %}MajorHelp{% endblock %}
 
 {% block content %}
-<style>
-    .hero-wrapper {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding-top: 100px;
-    padding: 100px 20px;
-    min-height: 60vh;  /* ← full screen height */
+<link rel="stylesheet" href="{% static 'css/landing.css' %}">
 
-    /* ↓ Shift image down by changing background-position */
-    background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url("{% static 'images/home/home2.png' %}");
-    background-size: cover;
-    background-repeat: no-repeat;
-    background-position: center top 30%;  /* Move image down by 30% */
 
-    color: white;
-    text-align: center;
-    position: relative;
-}
+<!-- Dot Navigation -->
+<div class="dots-nav">
+    <a href="#section1" data-section="section1" class="active"></a>
+    <a href="#section2" data-section="section2"></a>
+    <a href="#section3" data-section="section3"></a>
+    <a href="#section4" data-section="section4"></a>
+    <a href="#section5" data-section="section5"></a>
+</div>
 
-    .hero-wrapper h1 {
-        font-size: 3rem;
-        font-weight: 700;
-        margin-bottom: 20px;
-    }
 
-    .hero-wrapper p {
-        max-width: 800px;
-        font-size: 1.1rem;
+<!-- 1. Video Section with Text and Arrow -->
+<section id="section1" class="section" style="
+    background: linear-gradient(to bottom, #f7f7f7, #e9f8f8);
+">
+<h1>Welcome to Major<span style="color: #4fc7cf;">Help</span></h1>
+    <p style="font-size: 1.1rem; color: #555; margin-bottom: 30px;">
+        See how MajorHelp guides you from confusion to clarity — faster.
+    </p>
+    
+
+    <div style="
+        position: relative;
+        width: 100%;
+        max-width: 560px;
+        height: 315px;
         margin-bottom: 30px;
-        line-height: 1.7;
-    }
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    ">
+        <iframe 
+            src="https://www.youtube.com/embed/wI00QO2A2j4"
+            frameborder="0"
+            allowfullscreen
+            style="width: 100%; height: 100%; border: none;">
+        </iframe>
+    </div>
 
-    .hero-wrapper .btn {
-        padding: 12px 30px;
-        font-size: 1rem;
-        font-weight: bold;
-        color: #fff;
-        background-color: #4fc7cf;
-        border: none;
-        border-radius: 30px;
-        text-decoration: none;
-        transition: background-color 0.3s ease;
-    }
+    <a class="scroll-down" href="#section2">
+        <svg viewBox="0 0 24 24">
+            <line x1="12" y1="5" x2="12" y2="19" />
+            <polyline points="19 12 12 19 5 12" />
+        </svg>
+    </a>
+</section>
 
-    .hero-wrapper .btn:hover {
-        background-color: #3bb2ba;
-    }
 
-    .signup-link {
-        margin-top: 15px;
-        font-size: 0.95rem;
-    }
+    <!-- 2. Marketing Pitch -->
+    <section id="section2" class="section" style="background-color: #ffffff; padding: 60px 20px;">
+        <h1 style="font-size: 2.5rem; margin-bottom: 20px;">Find Your <span style="color: #4fc7cf;">Perfect</span> School Match</h1>
+        
+        <p style="font-size: 1.15rem; max-width: 750px; color: #555; line-height: 1.6;">
+            Tired of endless tabs and confusing stats? <strong>MajorHelp</strong> makes your college search simple. 
+            Discover schools, compare tuition, and get real insights from students — all in one clean, personalized dashboard.
+        </p>
+    
+        <p style="font-size: 1.15rem; max-width: 750px; color: #555; margin-top: 20px;">
+            Whether you're just starting out or narrowing things down, we're here to help you find the right path — faster.
+        </p>
 
-    .signup-link a {
-        color: #4fc7cf;
-        text-decoration: underline;
-    }
-</style>
+        <a class="scroll-down" href="#section3">
+            <svg viewBox="0 0 24 24">
+                <line x1="12" y1="5" x2="12" y2="19" />
+                <polyline points="19 12 12 19 5 12" />
+            </svg>
+        </a>
+    </section>
 
-<div class="hero-wrapper">
-    {% if user.is_authenticated %}
-        <h1>Welcome back, {{ user.username }}!</h1>
-    {% else %}
-        <h1>We're here to help.</h1>
-    {% endif %}
-
-    <p>
-        MajorHelp is your personalized guide to finding the best colleges that align with your goals and budget. Whether you're exploring campuses, comparing tuition, or just starting your search, we’re here to support you every step of the way.
+<!-- 3. Screenshots Carousel (No Swiper) -->
+<section id="section3" class="section" style="background-color: #eef6f6;">
+    <h1>Taste of Major<span style="color: #4fc7cf;">Help</span></h1>
+    <p style="color: #555; margin-bottom: 30px; font-size: 1.1rem;">
+        Preview different parts of the platform — search, map, discussion, and much more.
     </p>
 
-    {% if user.is_authenticated %}
-        <a href="{% url 'MajorHelp:calc' %}" class="btn">Get Started</a>
-    {% else %}
-        <a href="{% url 'MajorHelp:login' %}" class="btn">Log In</a>
-        <div class="signup-link">
-            Don’t have an account? <a href="{% url 'MajorHelp:signup' %}">Sign up here</a>
+    <div style="position: relative; display: flex; align-items: center; justify-content: center; max-width: 700px; margin: 0 auto;">
+    
+        <!-- Left Arrow Outside -->
+        <button onclick="prevImage()" style="
+            background: none;
+            border: none;
+            font-size: 2rem;
+            color: #4fc7cf;
+            cursor: pointer;
+            margin-right: 15px;
+            transform: translateY(-10px);
+        ">&#10094;</button>
+    
+        <!-- Image Container -->
+        <div style="
+            width: 100%;
+            max-width: 560px;
+            height: auto;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: opacity 0.5s ease;
+        ">
+            <img id="carousel-image"
+            src="{% static 'images/screenshots/search.png' %}"
+            alt="Screenshot"
+            style="width: 100%; display: block; transition: opacity 0.3s ease; opacity: 1;">
+       
         </div>
-    {% endif %}
-</div>
+    
+        <!-- Right Arrow Outside -->
+        <button onclick="nextImage()" style="
+            background: none;
+            border: none;
+            font-size: 2rem;
+            color: #4fc7cf;
+            cursor: pointer;
+            margin-left: 15px;
+            transform: translateY(-10px);
+        ">&#10095;</button>
+    </div>
+    
+
+    <a class="scroll-down" href="#section4">
+        <svg viewBox="0 0 24 24">
+            <line x1="12" y1="5" x2="12" y2="19" />
+            <polyline points="19 12 12 19 5 12" />
+        </svg>
+    </a>
+</section>
+
+
+<!-- 4. About the Team -->
+<!-- 4. About the Team -->
+<section id="section4" class="section" style="background-color: #fdfdfd;">
+    <h1>Meet the <span style="color: #4fc7cf;">Team</span></h1>
+    <p style="font-size: 1.1rem; color: #555;">Meet the team behind <strong style="color: #4fc7cf;">MajorHelp</strong> — passionate students building tools to help others succeed.</p>
+
+    <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 30px; margin-top: 40px;">
+        <!-- Team Member Card -->
+        <div class="team-card">
+            <img src="{% static 'images/team/alex.png' %}" alt="Alex Phakdy" class="avatar">
+            <p><strong>Alex Phakdy</strong></p>
+            <a href="https://www.linkedin.com/in/akphak/" target="_blank">LinkedIn</a>
+        </div>
+
+        <div class="team-card">
+            <img src="{% static 'images/team/corey.png' %}" alt="Corey Reed" class="avatar">
+            <p><strong>Corey Reed</strong></p>
+            <a href="https://www.linkedin.com/in/corey-reed-a1ab08304/" target="_blank">LinkedIn</a>
+        </div>
+
+        <div class="team-card">
+            <img src="{% static 'images/team/brandon.png' %}" alt="Brandon Riley" class="avatar">
+            <p><strong>Brandon Riley</strong></p>
+            <a href="https://www.linkedin.com/in/brandon-riley-26b470263/" target="_blank">LinkedIn</a>
+        </div>
+
+        <div class="team-card">
+            <img src="{% static 'images/team/druv.png' %}" alt="Druv Patel" class="avatar">
+            <p><strong>Druv Patel</strong></p>
+            <a href="https://www.linkedin.com/in/druvpatel/" target="_blank">LinkedIn</a>
+        </div>
+
+        <div class="team-card">
+            <img src="{% static 'images/team/joseph.png' %}" alt="Joseph Preuss" class="avatar">
+            <p><strong>Joseph Preuss</strong></p>
+            <a href="https://www.linkedin.com/in/josephpreuss/" target="_blank">LinkedIn</a>
+        </div>
+    </div>
+
+    <a class="scroll-down" href="#section5" style="margin-top: 40px;">
+        <svg viewBox="0 0 24 24">
+            <line x1="12" y1="5" x2="12" y2="19" />
+            <polyline points="19 12 12 19 5 12" />
+        </svg>
+    </a>
+</section>
+
+
+
+<!-- 5. GitHub Repo -->
+<section id="section5" class="section" style="background-color: #f7f7f7;">
+    <h1>Check the <span style="color: #4fc7cf;">Code</span></h1>
+    <p style="color: #555; margin-bottom: 30px; font-size: 1.1rem;">
+        Dive into our GitHub repo to see how MajorHelp was built — from line to line.
+    </p>
+
+    <div style="
+        display: inline-flex;
+        align-items: center;
+        gap: 12px;
+        background-color: white;
+        padding: 20px 30px;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        border: 1px solid #e0e0e0;
+    ">
+        <img src="https://cdn-icons-png.flaticon.com/512/25/25231.png" alt="GitHub Logo" width="32" height="32">
+        <a href="https://github.com/SCCapstone/pestopanini" target="_blank" style="
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: #4fc7cf;
+            text-decoration: none;
+        ">
+            github.com/SCCapstone/pestopanini
+        </a>
+    </div>
+
+    <p style="font-size: 0.95rem; color: #888; margin-top: 10px;">
+        (Ask for access if it's private)
+    </p>
+    <a class="scroll-down" href="#section1" style="margin-top: 40px;">
+        <svg viewBox="0 0 24 24">
+            <line x1="12" y1="5" x2="12" y2="19" />
+            <polyline points="5 12 12 5 19 12" />
+        </svg>
+    </a>
+    
+</section>
+
+
+<script>
+    const dots = document.querySelectorAll('.dots-nav a');
+    const sections = document.querySelectorAll('.section');
+
+    const observerOptions = {
+        root: null,
+        threshold: 0.6 // Trigger when 60% of a section is visible
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const id = entry.target.id;
+
+                dots.forEach(dot => {
+                    dot.classList.toggle('active', dot.dataset.section === id);
+                });
+            }
+        });
+    }, observerOptions);
+
+    sections.forEach(section => observer.observe(section));
+</script>
+
+<script>
+    const images = [
+        "{% static 'images/screenshots/search.png' %}",
+        "{% static 'images/screenshots/map.png' %}",
+        "{% static 'images/screenshots/discussion.png' %}",
+        "{% static 'images/screenshots/about.png' %}"
+    ];
+
+    let currentIndex = 0;
+    const imgElement = document.getElementById('carousel-image');
+
+    function showImage(index) {
+        imgElement.style.opacity = 0;
+
+        setTimeout(() => {
+            imgElement.src = images[index];
+            imgElement.style.opacity = 1;
+        }, 300); // delay to match CSS transition
+    }
+
+    function prevImage() {
+        currentIndex = (currentIndex - 1 + images.length) % images.length;
+        showImage(currentIndex);
+    }
+
+    function nextImage() {
+        currentIndex = (currentIndex + 1) % images.length;
+        showImage(currentIndex);
+    }
+</script>
+
+
 {% endblock %}
