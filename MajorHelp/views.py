@@ -1195,7 +1195,6 @@ def university_map_data(request):
             'color': uni.primary_color or "#268f95",
             'url': f"/UniversityOverview/{uni.slug}/"
         })
-    print(data)  # <- Just for debug
 
 
     return JsonResponse({'universities': data})

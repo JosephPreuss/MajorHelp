@@ -3,7 +3,7 @@ body {
     background-repeat: no-repeat;
     background-attachment: fixed;
     background-position: center;
-    background-color: #41cab9;
+    background-image: url("{% static 'images/whiteBackground.jpg' %}");
 }
 
 .map-header {
