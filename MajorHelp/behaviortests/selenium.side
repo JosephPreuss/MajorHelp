@@ -850,31 +850,18 @@
       ],
       "value": ""
     }, {
+      "id": "647ceafe-2ea9-4308-aeea-51637aa7365d",
+      "comment": "",
+      "command": "waitForElementVisible",
+      "target": "css=#section2 > .scroll-down",
+      "targets": [],
+      "value": "30000"
+    }, {
       "id": "60a630ea-bf60-40f2-939d-8cdab4bc9782",
       "comment": "",
-      "command": "mouseDown",
-      "target": "css=#section2 svg",
-      "targets": [
-        ["css=#section2 svg", "css:finder"]
-      ],
-      "value": ""
-    }, {
-      "id": "bfb418f7-b289-4e9e-a440-d79eab0d06a3",
-      "comment": "",
-      "command": "mouseUp",
-      "target": "css=#section2 polyline",
-      "targets": [
-        ["css=#section2 polyline", "css:finder"]
-      ],
-      "value": ""
-    }, {
-      "id": "ee983056-6c3c-4c59-9b46-fce129fd7bf1",
-      "comment": "",
       "command": "click",
-      "target": "css=#section2 svg",
-      "targets": [
-        ["css=#section2 svg", "css:finder"]
-      ],
+      "target": "css=#section2 > .scroll-down",
+      "targets": [],
       "value": ""
     }, {
       "id": "9ce19cdb-133b-4064-8d96-0f0ec8088556",
@@ -954,14 +941,12 @@
       ],
       "value": ""
     }, {
-      "id": "7baa12f9-6d29-4454-9bc2-54a36a0f0ee5",
+      "id": "7ef115d1-0cb8-4715-88bb-1dddecef5c41",
       "comment": "",
-      "command": "click",
-      "target": "css=#section4 svg",
-      "targets": [
-        ["css=#section4 svg", "css:finder"]
-      ],
-      "value": ""
+      "command": "waitForElementVisible",
+      "target": "css=.scroll-down:nth-child(5)",
+      "targets": [],
+      "value": "30000"
     }, {
       "id": "6adf45c4-cc36-437b-a49c-d0ffbc0e3773",
       "comment": "",
