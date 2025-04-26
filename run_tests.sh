@@ -187,6 +187,7 @@ activate_venv
 echo "Applying migrations to set up the test database..."
 python manage.py migrate --settings=pestopanini.test_settings &&
 
+sleep 2
 
 
 # Start the server in the background, suppressing output
