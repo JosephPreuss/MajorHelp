@@ -543,7 +543,7 @@
       "id": "9a2859b0-722c-4535-ac5e-afa68196102e",
       "comment": "",
       "command": "click",
-      "target": "linkText=Log In",
+      "target": "linkText=Sign In",
       "targets": [
         ["linkText=Log In", "linkText"],
         ["css=.btn", "css:finder"],
