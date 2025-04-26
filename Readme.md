@@ -372,19 +372,12 @@ For deployment, choose a hosting provider like Heroku, AWS, or DigitalOcean. Set
 See issue #190.
 </details>
 
-> [!NOTE]
-> The following methods rely on ``pytest`` to handle the behavioral tests, however, pytest can occasionally return a false negative for a test in a non-deterministic way. As a fallback, tests are also stored in ``MajorHelp/behaviortests/selenium.side`` and can be run with the [Selenium IDE](https://www.selenium.dev/selenium-ide/)
-
-<details>
-See issue #191
-</details>
-
 
 ## Linux
 <details>
 <summary> Linux Guide </summary>
 
-### Method 1 - Helper Script (Bash)
+### Helper Script (bash)
 
 A helper script has been provided for running the unit and behavioral tests for MajorHelp.
 Tests will be run in a test database.
@@ -395,7 +388,7 @@ Tests will be run in a test database.
 The script can also accept a path argument to source tests from, by default it uses the working directory.
 
 ```bash copy
-./run_tests.sh ./path/to/tests.py
+./run_tests.sh ./path/to/tests.py ./path/to/tests.side
 ```
 
 
@@ -408,44 +401,6 @@ When you are finished, run the script run with the ``-c`` flag or ``--clean`` to
 ```bash copy
 ./run_test --clean
 ```
-
-### Method 2 - Manual
-<details>
-
-#### Prerequisites
-
-First, start by activating the virtual environment if you haven't already
-
-```bash copy
-source venv/bin/activate
-```
-
-Then, set up the test environment
-```bash copy
-python manage.py migrate --settings=pestopanini.test_settings
-```
-
-Next, make sure you have a local instance of the server running, preferably in another terminal
-(Make sure you're activated)
-
-```bash copy
-python manage.py runserver --settings=pestopanini.test_settings
-```
-
-
-#### Running the tests
-
-While the server is running, simply run 
-
-```bash copy
-pytest
-```
-
-and both the unit and behavioral tests will run.
-</details>
-
-
-
 </details>
 
 <br>
@@ -463,4 +418,4 @@ and both the unit and behavioral tests will run.
 - Joseph jpreuss@email.sc.edu
 
 This project uses [Django](https://www.djangoproject.com/). <br>
-Placeholder data and descriptions are acquired from usnews.com
+Placeholder data and descriptions are acquired from IPEDS
