@@ -110,225 +110,6 @@
       "value": ""
     }]
   }, {
-    "id": "405e75e3-3b9f-45e2-81ac-3eb82d971493",
-    "name": "test_calcCaseInsensitive",
-    "commands": [{
-      "id": "2a685780-a33d-470f-b13c-250cbd3d1daa",
-      "comment": "",
-      "command": "open",
-      "target": "/",
-      "targets": [],
-      "value": ""
-    }, {
-      "id": "aac3395a-422a-4df8-aa12-7e98530edab9",
-      "comment": "",
-      "command": "setWindowSize",
-      "target": "1529x1265",
-      "targets": [],
-      "value": ""
-    }, {
-      "id": "45128a38-22c0-4aad-8233-26446a7de80d",
-      "comment": "",
-      "command": "click",
-      "target": "linkText=Tuition Calculator",
-      "targets": [
-        ["linkText=Tuition Calculator", "linkText"],
-        ["css=li:nth-child(2) > a", "css:finder"],
-        ["xpath=//a[contains(text(),'Tuition Calculator')]", "xpath:link"],
-        ["xpath=//a[contains(@href, '/calc/')]", "xpath:href"],
-        ["xpath=//li[2]/a", "xpath:position"],
-        ["xpath=//a[contains(.,'Tuition Calculator')]", "xpath:innerText"]
-      ],
-      "value": ""
-    }, {
-      "id": "02f154df-4308-4ca8-9690-570f21c541ad",
-      "comment": "",
-      "command": "click",
-      "target": "id=uni-search-0",
-      "targets": [
-        ["id=uni-search-0", "id"],
-        ["css=#uni-search-0", "css:finder"],
-        ["xpath=//input[@id='uni-search-0']", "xpath:attributes"],
-        ["xpath=//div[@id='input-0']/input", "xpath:idRelative"],
-        ["xpath=//input", "xpath:position"]
-      ],
-      "value": ""
-    }, {
-      "id": "7c78d462-93b4-4483-8cd1-aa3a09e9b5b7",
-      "comment": "",
-      "command": "type",
-      "target": "id=uni-search-0",
-      "targets": [
-        ["id=uni-search-0", "id"],
-        ["css=#uni-search-0", "css:finder"],
-        ["xpath=//input[@id='uni-search-0']", "xpath:attributes"],
-        ["xpath=//div[@id='input-0']/input", "xpath:idRelative"],
-        ["xpath=//input", "xpath:position"]
-      ],
-      "value": "exampleUni"
-    }, {
-      "id": "98882c42-fe61-43a6-861e-23cc679e2218",
-      "comment": "",
-      "command": "click",
-      "target": "css=.result-item",
-      "targets": [
-        ["css=.result-item", "css:finder"],
-        ["xpath=//div[@id='uni-results-0']/div", "xpath:idRelative"],
-        ["xpath=//div[2]/div/div/div/div", "xpath:position"]
-      ],
-      "value": ""
-    }, {
-      "id": "d7000263-6161-433e-bff5-68f47b91685f",
-      "comment": "",
-      "command": "click",
-      "target": "css=#uni-box-0 > .reselect-btn",
-      "targets": [
-        ["css=#uni-box-0 > .reselect-btn", "css:finder"],
-        ["xpath=//span[@onclick='clearUniversity(0)']", "xpath:attributes"],
-        ["xpath=//h3[@id='uni-box-0']/span[2]", "xpath:idRelative"],
-        ["xpath=//span[2]", "xpath:position"],
-        ["xpath=//span[contains(.,'✖')]", "xpath:innerText"]
-      ],
-      "value": ""
-    }, {
-      "id": "bdc48fa5-7eaa-437b-99d5-05495005a27e",
-      "comment": "",
-      "command": "click",
-      "target": "id=uni-search-0",
-      "targets": [
-        ["id=uni-search-0", "id"],
-        ["css=#uni-search-0", "css:finder"],
-        ["xpath=//input[@id='uni-search-0']", "xpath:attributes"],
-        ["xpath=//div[@id='input-0']/input", "xpath:idRelative"],
-        ["xpath=//input", "xpath:position"]
-      ],
-      "value": ""
-    }, {
-      "id": "267f9b35-eefa-48f3-a7c1-71aceff8dce0",
-      "comment": "",
-      "command": "type",
-      "target": "id=uni-search-0",
-      "targets": [
-        ["id=uni-search-0", "id"],
-        ["css=#uni-search-0", "css:finder"],
-        ["xpath=//input[@id='uni-search-0']", "xpath:attributes"],
-        ["xpath=//div[@id='input-0']/input", "xpath:idRelative"],
-        ["xpath=//input", "xpath:position"]
-      ],
-      "value": "EXAMPLEUNI"
-    }, {
-      "id": "b6608aa4-e611-4a2a-8730-93c661673ffb",
-      "comment": "",
-      "command": "click",
-      "target": "css=.result-item",
-      "targets": [
-        ["css=.result-item", "css:finder"],
-        ["xpath=//div[@id='uni-results-0']/div", "xpath:idRelative"],
-        ["xpath=//div[2]/div/div/div/div", "xpath:position"]
-      ],
-      "value": ""
-    }, {
-      "id": "10e5e960-2fc3-4584-a448-a22957424e7e",
-      "comment": "",
-      "command": "click",
-      "target": "css=#uni-box-0 > .reselect-btn",
-      "targets": [
-        ["css=#uni-box-0 > .reselect-btn", "css:finder"],
-        ["xpath=//span[@onclick='clearUniversity(0)']", "xpath:attributes"],
-        ["xpath=//h3[@id='uni-box-0']/span[2]", "xpath:idRelative"],
-        ["xpath=//span[2]", "xpath:position"],
-        ["xpath=//span[contains(.,'✖')]", "xpath:innerText"]
-      ],
-      "value": ""
-    }, {
-      "id": "7efc1dd1-d775-4994-b537-8c1af8291ca3",
-      "comment": "",
-      "command": "click",
-      "target": "id=uni-search-0",
-      "targets": [
-        ["id=uni-search-0", "id"],
-        ["css=#uni-search-0", "css:finder"],
-        ["xpath=//input[@id='uni-search-0']", "xpath:attributes"],
-        ["xpath=//div[@id='input-0']/input", "xpath:idRelative"],
-        ["xpath=//input", "xpath:position"]
-      ],
-      "value": ""
-    }, {
-      "id": "612393c9-5404-430e-949e-e523590b6c54",
-      "comment": "",
-      "command": "type",
-      "target": "id=uni-search-0",
-      "targets": [
-        ["id=uni-search-0", "id"],
-        ["css=#uni-search-0", "css:finder"],
-        ["xpath=//input[@id='uni-search-0']", "xpath:attributes"],
-        ["xpath=//div[@id='input-0']/input", "xpath:idRelative"],
-        ["xpath=//input", "xpath:position"]
-      ],
-      "value": "exampleuni"
-    }, {
-      "id": "6a14c19d-f32a-401d-af5a-b3be53b50a3b",
-      "comment": "",
-      "command": "click",
-      "target": "css=.result-item",
-      "targets": [
-        ["css=.result-item", "css:finder"],
-        ["xpath=//div[@id='uni-results-0']/div", "xpath:idRelative"],
-        ["xpath=//div[2]/div/div/div/div", "xpath:position"]
-      ],
-      "value": ""
-    }, {
-      "id": "6ba8725c-44bf-4b45-b223-012b740298fe",
-      "comment": "",
-      "command": "click",
-      "target": "css=#uni-box-0 > .reselect-btn",
-      "targets": [
-        ["css=#uni-box-0 > .reselect-btn", "css:finder"],
-        ["xpath=//span[@onclick='clearUniversity(0)']", "xpath:attributes"],
-        ["xpath=//h3[@id='uni-box-0']/span[2]", "xpath:idRelative"],
-        ["xpath=//span[2]", "xpath:position"],
-        ["xpath=//span[contains(.,'✖')]", "xpath:innerText"]
-      ],
-      "value": ""
-    }, {
-      "id": "8f2b68d3-2c88-46fe-89e2-c139bbef667e",
-      "comment": "",
-      "command": "click",
-      "target": "id=uni-search-0",
-      "targets": [
-        ["id=uni-search-0", "id"],
-        ["css=#uni-search-0", "css:finder"],
-        ["xpath=//input[@id='uni-search-0']", "xpath:attributes"],
-        ["xpath=//div[@id='input-0']/input", "xpath:idRelative"],
-        ["xpath=//input", "xpath:position"]
-      ],
-      "value": ""
-    }, {
-      "id": "df0c1d3f-aeaf-4031-8cb6-e48947f9c6c5",
-      "comment": "",
-      "command": "type",
-      "target": "id=uni-search-0",
-      "targets": [
-        ["id=uni-search-0", "id"],
-        ["css=#uni-search-0", "css:finder"],
-        ["xpath=//input[@id='uni-search-0']", "xpath:attributes"],
-        ["xpath=//div[@id='input-0']/input", "xpath:idRelative"],
-        ["xpath=//input", "xpath:position"]
-      ],
-      "value": "ExAmPlEuNi"
-    }, {
-      "id": "5b5e2048-e858-40de-bfbf-a9f580b20e5b",
-      "comment": "",
-      "command": "click",
-      "target": "css=.result-item",
-      "targets": [
-        ["css=.result-item", "css:finder"],
-        ["xpath=//div[@id='uni-results-0']/div", "xpath:idRelative"],
-        ["xpath=//div[2]/div/div/div/div", "xpath:position"]
-      ],
-      "value": ""
-    }]
-  }, {
     "id": "c71987e8-675c-42ef-ad0e-7fe870a13b3f",
     "name": "submitUniversityRequest",
     "commands": [{
@@ -947,6 +728,201 @@
         ["xpath=//button[@type='submit']", "xpath:attributes"],
         ["xpath=//button", "xpath:position"],
         ["xpath=//button[contains(.,'Logout')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }]
+  }, {
+    "id": "6fcba1e8-caeb-44ab-854d-0dd9851c273c",
+    "name": "test_calcCaseInsensitive",
+    "commands": [{
+      "id": "fb57ea2c-c3ee-4265-a9a6-0f0de362d9b2",
+      "comment": "",
+      "command": "open",
+      "target": "/",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "778ca951-6dcc-490b-a7f4-b5d9adea76a4",
+      "comment": "",
+      "command": "click",
+      "target": "linkText=Tuition Calculator",
+      "targets": [
+        ["linkText=Tuition Calculator", "linkText"],
+        ["css=li:nth-child(2) > a", "css:finder"],
+        ["xpath=//a[contains(text(),'Tuition Calculator')]", "xpath:link"],
+        ["xpath=//a[contains(@href, '/calc/')]", "xpath:href"],
+        ["xpath=//li[2]/a", "xpath:position"],
+        ["xpath=//a[contains(.,'Tuition Calculator')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "36cb2b3e-9378-4ec4-a848-cf289f546425",
+      "comment": "",
+      "command": "click",
+      "target": "id=uni-search-0",
+      "targets": [
+        ["id=uni-search-0", "id"],
+        ["css=#uni-search-0", "css:finder"],
+        ["xpath=//input[@id='uni-search-0']", "xpath:attributes"],
+        ["xpath=//div[@id='input-0']/input", "xpath:idRelative"],
+        ["xpath=//input", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "5088a626-79db-4df9-927e-a15dc3baa291",
+      "comment": "",
+      "command": "type",
+      "target": "id=uni-search-0",
+      "targets": [
+        ["id=uni-search-0", "id"],
+        ["css=#uni-search-0", "css:finder"],
+        ["xpath=//input[@id='uni-search-0']", "xpath:attributes"],
+        ["xpath=//div[@id='input-0']/input", "xpath:idRelative"],
+        ["xpath=//input", "xpath:position"]
+      ],
+      "value": "exampleUni"
+    }, {
+      "id": "956a85ca-26f1-47d3-8efc-822a8848151b",
+      "comment": "",
+      "command": "click",
+      "target": "css=#input-0 > .submit-btn",
+      "targets": [
+        ["css=#input-0 > .submit-btn", "css:finder"],
+        ["xpath=//div[@id='input-0']/div", "xpath:idRelative"],
+        ["xpath=//div[2]/div/div/div", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "295fef6d-a78b-4be9-a10c-b9c9cc16da2c",
+      "comment": "",
+      "command": "click",
+      "target": "css=.result-item:nth-child(1)",
+      "targets": [
+        ["css=.result-item:nth-child(1)", "css:finder"],
+        ["xpath=//div[@id='uni-results-0']/div", "xpath:idRelative"],
+        ["xpath=//div/div/div[2]/div", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "5cbd131f-c799-4391-a469-2fac9d2749b7",
+      "comment": "",
+      "command": "click",
+      "target": "css=#uni-box-0 > .re-uni",
+      "targets": [
+        ["css=#uni-box-0 > .re-uni", "css:finder"],
+        ["xpath=//span[@onclick='clearUniversity(0)']", "xpath:attributes"],
+        ["xpath=//h3[@id='uni-box-0']/span[2]", "xpath:idRelative"],
+        ["xpath=//span[2]", "xpath:position"],
+        ["xpath=//span[contains(.,'✖')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "09847a14-de56-43af-acdd-76aa5097ce3b",
+      "comment": "",
+      "command": "click",
+      "target": "id=uni-search-0",
+      "targets": [
+        ["id=uni-search-0", "id"],
+        ["css=#uni-search-0", "css:finder"],
+        ["xpath=//input[@id='uni-search-0']", "xpath:attributes"],
+        ["xpath=//div[@id='input-0']/input", "xpath:idRelative"],
+        ["xpath=//input", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "4958fed2-113c-4946-8cc7-2f307c56e0be",
+      "comment": "",
+      "command": "type",
+      "target": "id=uni-search-0",
+      "targets": [
+        ["id=uni-search-0", "id"],
+        ["css=#uni-search-0", "css:finder"],
+        ["xpath=//input[@id='uni-search-0']", "xpath:attributes"],
+        ["xpath=//div[@id='input-0']/input", "xpath:idRelative"],
+        ["xpath=//input", "xpath:position"]
+      ],
+      "value": "EXAMPLEUNI"
+    }, {
+      "id": "88b3bc10-4f1f-47a5-8d7d-92ebbaa22cf4",
+      "comment": "",
+      "command": "click",
+      "target": "css=#input-0 > .submit-btn",
+      "targets": [
+        ["css=#input-0 > .submit-btn", "css:finder"],
+        ["xpath=//div[@id='input-0']/div", "xpath:idRelative"],
+        ["xpath=//div[2]/div/div/div", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "464503ae-9821-4b05-949b-6b9c797b8a64",
+      "comment": "",
+      "command": "click",
+      "target": "css=.result-item:nth-child(1)",
+      "targets": [
+        ["css=.result-item:nth-child(1)", "css:finder"],
+        ["xpath=//div[@id='uni-results-0']/div", "xpath:idRelative"],
+        ["xpath=//div/div/div[2]/div", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "6bcd8b20-72bb-40eb-a810-ebe3ff4ad537",
+      "comment": "",
+      "command": "click",
+      "target": "css=#uni-box-0 > .re-uni",
+      "targets": [
+        ["css=#uni-box-0 > .re-uni", "css:finder"],
+        ["xpath=//span[@onclick='clearUniversity(0)']", "xpath:attributes"],
+        ["xpath=//h3[@id='uni-box-0']/span[2]", "xpath:idRelative"],
+        ["xpath=//span[2]", "xpath:position"],
+        ["xpath=//span[contains(.,'✖')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "1dfba729-01f4-447a-934c-5dcca39114bf",
+      "comment": "",
+      "command": "click",
+      "target": "id=uni-search-0",
+      "targets": [
+        ["id=uni-search-0", "id"],
+        ["css=#uni-search-0", "css:finder"],
+        ["xpath=//input[@id='uni-search-0']", "xpath:attributes"],
+        ["xpath=//div[@id='input-0']/input", "xpath:idRelative"],
+        ["xpath=//input", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "113fc682-642a-4e3b-bf3c-fd870fa118d7",
+      "comment": "",
+      "command": "type",
+      "target": "id=uni-search-0",
+      "targets": [
+        ["id=uni-search-0", "id"],
+        ["css=#uni-search-0", "css:finder"],
+        ["xpath=//input[@id='uni-search-0']", "xpath:attributes"],
+        ["xpath=//div[@id='input-0']/input", "xpath:idRelative"],
+        ["xpath=//input", "xpath:position"]
+      ],
+      "value": "ExAmPlEuNi"
+    }, {
+      "id": "6d729cd0-daae-45d7-ab06-76dd1dcbe55c",
+      "comment": "",
+      "command": "click",
+      "target": "css=#input-0 > .submit-btn",
+      "targets": [
+        ["css=#input-0 > .submit-btn", "css:finder"],
+        ["xpath=//div[@id='input-0']/div", "xpath:idRelative"],
+        ["xpath=//div[2]/div/div/div", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "81dac285-aa11-4776-8f97-e2609a04c590",
+      "comment": "",
+      "command": "click",
+      "target": "css=.result-item:nth-child(1)",
+      "targets": [
+        ["css=.result-item:nth-child(1)", "css:finder"],
+        ["xpath=//div[@id='uni-results-0']/div", "xpath:idRelative"],
+        ["xpath=//div/div/div[2]/div", "xpath:position"]
       ],
       "value": ""
     }]
