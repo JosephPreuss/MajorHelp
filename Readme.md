@@ -8,10 +8,11 @@ MajorHelp is a web application that helps students find universities, majors, an
 > It is highly recommended to run MajorHelp with a [Python Virtual Environment](https://docs.python.org/3/library/venv.html), or **venv** so that dependencies for this project are kept local and not system wide. 
 > This guide was written with virtual environments in mind, so some commands may have to be run while venv is activated.
 
-Git LFS Requirement
-Important: This project uses Git Large File Storage (Git LFS) to handle large files such as the db.sqlite3 database.
-You must install Git LFS before cloning or pulling the repository. Otherwise, large files like the database will fail to download properly.
+> [!Important]
+> This project uses Git Large File Storage (Git LFS) to handle large files such as the db.sqlite3 database.
+> You must install Git LFS before cloning or pulling the repository. Otherwise, large files like the database will fail to download properly.
 
+<!--
 Step 1: Install Git LFS
 Install Git LFS on your system:
 
@@ -53,10 +54,33 @@ bash
 Copy
 Edit
 git lfs pull
+-->
 
 ## Windows
 <details>
 <summary>Windows Installation Guide</summary>
+
+### Setting up Git LFS
+
+Windows (via Chocolatey):
+
+```powershell copy
+choco install git-lfs
+```
+
+After installing, run this once to enable Git LFS globally:
+
+```powershell copy
+git lfs install
+```
+
+#### Already Cloned It?
+
+If you cloned the repo before installing Git LFS, make sure to fetch large files manually:
+
+```bash Copy
+git lfs pull
+```
 
 ### Setting up venv and installing dependencies
 To set up the virtual environment and install dependencies, run this code in powershell
@@ -156,6 +180,30 @@ deactivate
 <details>
 <summary>Linux Installation Guide</summary>
 
+### Setting up Git LFS
+
+Linux (Debian/Ubuntu):
+
+```bash copy
+sudo apt-get install git-lfs
+```
+
+After installing, run this once to enable Git LFS globally:
+
+```
+git lfs install
+```
+
+#### Already Cloned It?
+
+If you cloned the repo before installing Git LFS, make sure to fetch large files manually:
+
+```bash Copy
+git lfs pull
+```
+
+
+
 ### Setting up venv and installing dependencies
 To set up the virtual environment and install dependencies, run this code in your shell
 
@@ -228,6 +276,8 @@ python -m pip install -r requirements.txt
 
 
 </details>
+
+
 
 
 ### Running a local instance of MajorHelp
