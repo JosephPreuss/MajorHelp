@@ -33,7 +33,7 @@ class FinancialAid(models.Model):
 
 # Model for university
 class University(models.Model):
-    name = models.TextField()
+    name = models.CharField(max_length=255, db_index=True)
     location = models.CharField(default="", max_length=255)  # City and State
     is_public = models.BooleanField(default=True, help_text="Check if the university is public; leave unchecked for private")
     aboutText = models.TextField(default= "")
@@ -189,7 +189,7 @@ class Major(models.Model):
         on_delete=models.CASCADE,
         related_name="majors"
     )
-    major_name = models.CharField(max_length=255)
+    major_name = models.CharField(max_length=255, db_index=True)
     major_description = models.TextField(blank=True)
     slug = models.SlugField(editable=False, null=False, unique=True)
     department = models.CharField(max_length=50, choices=DEPARTMENT_CHOICES)
