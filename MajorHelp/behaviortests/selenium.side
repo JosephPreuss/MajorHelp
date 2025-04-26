@@ -14,13 +14,6 @@
       "targets": [],
       "value": ""
     }, {
-      "id": "8024c9b9-7a6f-473d-b710-9679a8a5564e",
-      "comment": "",
-      "command": "setWindowSize",
-      "target": "1920x1080",
-      "targets": [],
-      "value": ""
-    }, {
       "id": "09d228a1-b2be-440f-8f61-ac691010965f",
       "comment": "",
       "command": "click",
@@ -208,13 +201,6 @@
       "targets": [],
       "value": ""
     }, {
-      "id": "b710e703-caa8-49dd-aa37-33b987bd8960",
-      "comment": "",
-      "command": "setWindowSize",
-      "target": "1908x2036",
-      "targets": [],
-      "value": ""
-    }, {
       "id": "9a2859b0-722c-4535-ac5e-afa68196102e",
       "comment": "",
       "command": "click",
@@ -320,13 +306,6 @@
       "comment": "",
       "command": "open",
       "target": "/",
-      "targets": [],
-      "value": ""
-    }, {
-      "id": "d9445566-1f34-4244-894f-393c9be9114c",
-      "comment": "",
-      "command": "setWindowSize",
-      "target": "3876x2088",
       "targets": [],
       "value": ""
     }, {
@@ -831,13 +810,6 @@
       "targets": [],
       "value": ""
     }, {
-      "id": "1d05a0a3-e7fc-441c-a94b-4c123a736b65",
-      "comment": "",
-      "command": "setWindowSize",
-      "target": "1960x2064",
-      "targets": [],
-      "value": ""
-    }, {
       "id": "1a6b70d8-e77b-46b9-a9a9-084c6ed968de",
       "comment": "",
       "command": "click",
@@ -1047,13 +1019,6 @@
       "targets": [],
       "value": ""
     }, {
-      "id": "f775ddca-7a25-4953-bc9b-0799a6a66657",
-      "comment": "",
-      "command": "setWindowSize",
-      "target": "1372x989",
-      "targets": [],
-      "value": ""
-    }, {
       "id": "5c86f3dc-d17e-43bf-baed-4e214432c783",
       "comment": "",
       "command": "click",
@@ -1177,13 +1142,6 @@
       "targets": [],
       "value": ""
     }, {
-      "id": "c6caf9d7-f33b-4589-9195-2a977fa6a83e",
-      "comment": "",
-      "command": "setWindowSize",
-      "target": "1372x989",
-      "targets": [],
-      "value": ""
-    }, {
       "id": "896321bf-3794-422e-a689-175561f43217",
       "comment": "",
       "command": "click",
@@ -1303,13 +1261,6 @@
       "comment": "",
       "command": "open",
       "target": "/",
-      "targets": [],
-      "value": ""
-    }, {
-      "id": "b1706da0-1f61-4d3c-b109-eb83c45ac364",
-      "comment": "",
-      "command": "setWindowSize",
-      "target": "1372x989",
       "targets": [],
       "value": ""
     }, {
