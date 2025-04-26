@@ -960,6 +960,341 @@
       ],
       "value": ""
     }]
+  }, {
+    "id": "ccc5bb1e-3e01-44d6-80dc-7f4142a2c432",
+    "name": "search_concentration",
+    "commands": [{
+      "id": "762a5ba0-0a23-4e82-aa47-d887eef587b2",
+      "comment": "",
+      "command": "open",
+      "target": "/",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "fb6cc7bd-0d9d-4c98-836c-05b1d8e602ed",
+      "comment": "",
+      "command": "click",
+      "target": "linkText=Search",
+      "targets": [
+        ["linkText=Search", "linkText"],
+        ["css=li:nth-child(1) > a", "css:finder"],
+        ["xpath=//a[contains(text(),'Search')]", "xpath:link"],
+        ["xpath=//a[contains(@href, '/search/')]", "xpath:href"],
+        ["xpath=//li/a", "xpath:position"],
+        ["xpath=//a[contains(.,'Search')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "6f77a338-bd3c-4e1d-8391-a43945efd411",
+      "comment": "",
+      "command": "click",
+      "target": "id=search-query",
+      "targets": [
+        ["id=search-query", "id"],
+        ["name=query", "name"],
+        ["css=#search-query", "css:finder"],
+        ["xpath=//select[@id='search-query']", "xpath:attributes"],
+        ["xpath=//div[@id='search-field-container']/select", "xpath:idRelative"],
+        ["xpath=//div[2]/select", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "e015e086-7a7a-4665-80ee-74eae834a3bc",
+      "comment": "",
+      "command": "select",
+      "target": "id=search-query",
+      "targets": [],
+      "value": "label=Business and Economics"
+    }, {
+      "id": "6f03d88d-7c1f-4e7f-ae3f-cea888f9ca41",
+      "comment": "",
+      "command": "click",
+      "target": "css=#search-query > option:nth-child(2)",
+      "targets": [
+        ["css=#search-query > option:nth-child(2)", "css:finder"],
+        ["xpath=//option[@value='Business and Economics']", "xpath:attributes"],
+        ["xpath=//select[@id='search-query']/option[2]", "xpath:idRelative"],
+        ["xpath=//div[2]/select/option[2]", "xpath:position"],
+        ["xpath=//option[contains(.,'Business and Economics')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "49e97ee0-804d-4a1c-ae05-3ddabfed165b",
+      "comment": "",
+      "command": "click",
+      "target": "css=.fas",
+      "targets": [
+        ["css=.fas", "css:finder"],
+        ["xpath=//i", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "bf056d9e-5d16-4183-876a-e87531ffba67",
+      "comment": "",
+      "command": "waitForElementPresent",
+      "target": "xpath=//h1[contains(.,'Search Again')]",
+      "targets": [],
+      "value": "30000"
+    }]
+  }, {
+    "id": "4227dead-9064-4060-baa2-79cadfe8631d",
+    "name": "search_major",
+    "commands": [{
+      "id": "26144abe-16f6-4341-9f1a-23000569552b",
+      "comment": "",
+      "command": "open",
+      "target": "/",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "f775ddca-7a25-4953-bc9b-0799a6a66657",
+      "comment": "",
+      "command": "setWindowSize",
+      "target": "1372x989",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "5c86f3dc-d17e-43bf-baed-4e214432c783",
+      "comment": "",
+      "command": "click",
+      "target": "linkText=Search",
+      "targets": [
+        ["linkText=Search", "linkText"],
+        ["css=li:nth-child(1) > a", "css:finder"],
+        ["xpath=//a[contains(text(),'Search')]", "xpath:link"],
+        ["xpath=//a[contains(@href, '/search/')]", "xpath:href"],
+        ["xpath=//li/a", "xpath:position"],
+        ["xpath=//a[contains(.,'Search')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "a7a9f596-680f-4fff-9d54-4e57eb378e15",
+      "comment": "",
+      "command": "click",
+      "target": "id=filter-dropdown",
+      "targets": [
+        ["id=filter-dropdown", "id"],
+        ["name=filter-dropdown", "name"],
+        ["css=#filter-dropdown", "css:finder"],
+        ["xpath=//select[@id='filter-dropdown']", "xpath:attributes"],
+        ["xpath=//select", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "658fe145-f03e-4a17-b57f-92a8f4e6c6fd",
+      "comment": "",
+      "command": "select",
+      "target": "id=filter-dropdown",
+      "targets": [],
+      "value": "label=Major"
+    }, {
+      "id": "495d39d5-edd5-49f4-8e62-1d9218c15848",
+      "comment": "",
+      "command": "click",
+      "target": "id=major-option",
+      "targets": [
+        ["id=major-option", "id"],
+        ["css=#major-option", "css:finder"],
+        ["xpath=//option[@id='major-option']", "xpath:attributes"],
+        ["xpath=//select[@id='filter-dropdown']/option[3]", "xpath:idRelative"],
+        ["xpath=//option[3]", "xpath:position"],
+        ["xpath=//option[contains(.,'Major')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "547e3d54-fb6e-4044-b33d-acca7cab5fe9",
+      "comment": "",
+      "command": "click",
+      "target": "id=search-query",
+      "targets": [
+        ["id=search-query", "id"],
+        ["name=query", "name"],
+        ["css=#search-query", "css:finder"],
+        ["xpath=//input[@id='search-query']", "xpath:attributes"],
+        ["xpath=//div[@id='search-field-container']/input", "xpath:idRelative"],
+        ["xpath=//input", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "5ba0f0b3-db7d-41a7-bc41-17bbf148af4f",
+      "comment": "",
+      "command": "type",
+      "target": "id=search-query",
+      "targets": [
+        ["id=search-query", "id"],
+        ["name=query", "name"],
+        ["css=#search-query", "css:finder"],
+        ["xpath=//input[@id='search-query']", "xpath:attributes"],
+        ["xpath=//div[@id='search-field-container']/input", "xpath:idRelative"],
+        ["xpath=//input", "xpath:position"]
+      ],
+      "value": "example"
+    }, {
+      "id": "64f7d504-52ee-4ddf-8dc0-9b8a3b088621",
+      "comment": "",
+      "command": "click",
+      "target": "css=button",
+      "targets": [
+        ["css=button", "css:finder"],
+        ["xpath=//button[@type='submit']", "xpath:attributes"],
+        ["xpath=//button", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "1747bf51-97b5-4144-a0db-a655ebf2593b",
+      "comment": "",
+      "command": "waitForElementPresent",
+      "target": "xpath=//h1[contains(.,'Search Again')]",
+      "targets": [
+        ["css=h1", "css:finder"],
+        ["xpath=//h1", "xpath:position"],
+        ["xpath=//h1[contains(.,'Search Again')]", "xpath:innerText"]
+      ],
+      "value": "30000"
+    }, {
+      "id": "6dab541d-3fb9-4214-a38e-e2c0d6bf3ad2",
+      "comment": "",
+      "command": "click",
+      "target": "linkText=exampleUni",
+      "targets": [
+        ["linkText=exampleUni", "linkText"],
+        ["css=.result-link", "css:finder"],
+        ["xpath=//a[contains(text(),'exampleUni')]", "xpath:link"],
+        ["xpath=//a[contains(@href, '/UniversityOverview/exampleUni/')]", "xpath:href"],
+        ["xpath=//h3/a", "xpath:position"],
+        ["xpath=//a[contains(.,'exampleUni')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }]
+  }, {
+    "id": "1c684ce2-1a42-4234-9d95-6e1a59cbdcb5",
+    "name": "search_university",
+    "commands": [{
+      "id": "8d390745-a5e1-494f-bd54-479c10819e47",
+      "comment": "",
+      "command": "open",
+      "target": "/",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "c6caf9d7-f33b-4589-9195-2a977fa6a83e",
+      "comment": "",
+      "command": "setWindowSize",
+      "target": "1372x989",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "896321bf-3794-422e-a689-175561f43217",
+      "comment": "",
+      "command": "click",
+      "target": "linkText=Search",
+      "targets": [
+        ["linkText=Search", "linkText"],
+        ["css=li:nth-child(1) > a", "css:finder"],
+        ["xpath=//a[contains(text(),'Search')]", "xpath:link"],
+        ["xpath=//a[contains(@href, '/search/')]", "xpath:href"],
+        ["xpath=//li/a", "xpath:position"],
+        ["xpath=//a[contains(.,'Search')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "111a1c42-5f83-4a00-aad4-1d6b374c5118",
+      "comment": "",
+      "command": "click",
+      "target": "id=filter-dropdown",
+      "targets": [
+        ["id=filter-dropdown", "id"],
+        ["name=filter-dropdown", "name"],
+        ["css=#filter-dropdown", "css:finder"],
+        ["xpath=//select[@id='filter-dropdown']", "xpath:attributes"],
+        ["xpath=//select", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "f99a723b-aee6-4afc-9681-be45d96e94d1",
+      "comment": "",
+      "command": "select",
+      "target": "id=filter-dropdown",
+      "targets": [],
+      "value": "label=School"
+    }, {
+      "id": "d0c8516e-c17a-4531-9391-0ef6472a2d15",
+      "comment": "",
+      "command": "click",
+      "target": "id=school-option",
+      "targets": [
+        ["id=school-option", "id"],
+        ["css=#school-option", "css:finder"],
+        ["xpath=//option[@id='school-option']", "xpath:attributes"],
+        ["xpath=//select[@id='filter-dropdown']/option[2]", "xpath:idRelative"],
+        ["xpath=//option[2]", "xpath:position"],
+        ["xpath=//option[contains(.,'School')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "c25af97a-c7c4-4502-8e5e-3247c431e7c6",
+      "comment": "",
+      "command": "click",
+      "target": "id=search-query",
+      "targets": [
+        ["id=search-query", "id"],
+        ["name=query", "name"],
+        ["css=#search-query", "css:finder"],
+        ["xpath=//input[@id='search-query']", "xpath:attributes"],
+        ["xpath=//div[@id='search-field-container']/input", "xpath:idRelative"],
+        ["xpath=//input", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "e2cd1231-dbf5-4d78-9e67-04de8884ab20",
+      "comment": "",
+      "command": "type",
+      "target": "id=search-query",
+      "targets": [
+        ["id=search-query", "id"],
+        ["name=query", "name"],
+        ["css=#search-query", "css:finder"],
+        ["xpath=//input[@id='search-query']", "xpath:attributes"],
+        ["xpath=//div[@id='search-field-container']/input", "xpath:idRelative"],
+        ["xpath=//input", "xpath:position"]
+      ],
+      "value": "exampleU"
+    }, {
+      "id": "2dae1b67-78d2-41ba-9c68-4e578781e685",
+      "comment": "",
+      "command": "click",
+      "target": "css=.fas",
+      "targets": [
+        ["css=.fas", "css:finder"],
+        ["xpath=//i", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "a049bb0b-9b61-4e5b-b0c3-5472f6dd3529",
+      "comment": "",
+      "command": "waitForElementPresent",
+      "target": "xpath=//h1[contains(.,'Search Again')]",
+      "targets": [
+        ["css=h1", "css:finder"],
+        ["xpath=//h1", "xpath:position"],
+        ["xpath=//h1[contains(.,'Search Again')]", "xpath:innerText"]
+      ],
+      "value": "30000"
+    }, {
+      "id": "98d03079-1900-4bb3-874f-3383b953e751",
+      "comment": "",
+      "command": "click",
+      "target": "linkText=exampleUni",
+      "targets": [
+        ["linkText=exampleUni", "linkText"],
+        ["css=.result-link", "css:finder"],
+        ["xpath=//a[contains(text(),'exampleUni')]", "xpath:link"],
+        ["xpath=//a[contains(@href, '/UniversityOverview/exampleUni/')]", "xpath:href"],
+        ["xpath=//h3/a", "xpath:position"],
+        ["xpath=//a[contains(.,'exampleUni')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }]
   }],
   "suites": [{
     "id": "57100e8b-40be-4e85-a66f-7a189c165fb2",
