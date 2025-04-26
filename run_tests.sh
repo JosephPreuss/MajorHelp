@@ -199,7 +199,7 @@ SERVER_PID=$!
 # in case of unexpected exit
 trap "kill $SERVER_PID; unset DJANGO_TEST_ENV; deactivate" EXIT
 
-
+sleep 2
 
 # Run the unit tests
 echo "Running unit tests..."
