@@ -838,24 +838,6 @@
       "targets": [],
       "value": ""
     }, {
-      "id": "5e3efff2-cbb4-487a-8822-1f44ab08fa9e",
-      "comment": "",
-      "command": "selectFrame",
-      "target": "relative=parent",
-      "targets": [
-        ["relative=parent"]
-      ],
-      "value": ""
-    }, {
-      "id": "fbd3c02f-f1f7-40f1-a6f3-528779d24954",
-      "comment": "",
-      "command": "selectFrame",
-      "target": "relative=parent",
-      "targets": [
-        ["relative=parent"]
-      ],
-      "value": ""
-    }, {
       "id": "1a6b70d8-e77b-46b9-a9a9-084c6ed968de",
       "comment": "",
       "command": "click",
