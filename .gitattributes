@@ -1,2 +1,2 @@
-db.sqlite3 filter=lfs diff=lfs merge=lfs -text
 db.sqlite3.zip filter=lfs diff=lfs merge=lfs -text
+*.sqlite3 filter=lfs diff=lfs merge=lfs -text
