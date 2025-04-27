@@ -14,15 +14,6 @@ from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 
 
-class ChatMessage(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    channel = models.CharField(max_length=50)
-    content = models.TextField()
-    timestamp = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return f"{self.user.username} in #{self.channel}: {self.content}"
-
 class FinancialAid(models.Model):
     name = models.CharField(max_length=256)
     location = models.CharField(max_length=256)
