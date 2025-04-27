@@ -478,20 +478,21 @@ class SearchView(View):
         # Default behavior (in case of other filter types)
         return render(request, 'search/search.html', {'query': query, 'filter_type': filter_type})
 
+from django.db.models import Prefetch, F
+
 class SchoolResultsView(View):
     def get(self, request, query):
-        # Get filter from the request
         school_type = request.GET.get('school_type', 'both')
 
-        # Filter universities based on query and school_type
-        universities_list = University.objects.filter(name__startswith=pattern)
+        universities_list = University.objects.filter(name__istartswith=query).only(
+            'name', 'location', 'is_public', 'slug'
+        )
 
         if school_type == 'public':
             universities_list = universities_list.filter(is_public=True)
         elif school_type == 'private':
             universities_list = universities_list.filter(is_public=False)
 
-        # Apply pagination (10 per page)
         paginator = Paginator(universities_list, 10)
         page = request.GET.get('page')
 
@@ -502,31 +503,40 @@ class SchoolResultsView(View):
         except EmptyPage:
             universities = paginator.page(paginator.num_pages)
 
-        # Prepare results structure
-        results = {}
-        for university in universities:
-            majors = university.majors.values(
+        # 💥 Super lightweight prefetch using only needed fields
+        majors_prefetch = Prefetch(
+            'majors',
+            queryset=Major.objects.only(
                 'major_name', 'slug', 'department',
                 'in_state_min_tuition', 'in_state_max_tuition',
                 'out_of_state_min_tuition', 'out_of_state_max_tuition'
-            )
+            ).order_by('department', 'major_name')
+        )
+        universities.object_list = universities.object_list.prefetch_related(majors_prefetch)
 
-            if not majors:
-                continue
+
+        results = {}
+        for university in universities:
+            majors = university.majors.all()
 
             departments = {}
             for major in majors:
-                dept = major['department']
-                if dept not in departments:
-                    departments[dept] = []
-                departments[dept].append(major)
+                departments.setdefault(major.department, []).append({
+                    'major_name': major.major_name,
+                    'slug': major.slug,
+                    'in_state_min_tuition': major.in_state_min_tuition,
+                    'in_state_max_tuition': major.in_state_max_tuition,
+                    'out_of_state_min_tuition': major.out_of_state_min_tuition,
+                    'out_of_state_max_tuition': major.out_of_state_max_tuition,
+                })
 
-            results[university.slug] = {
-                'name': university.name,
-                'location': university.location,
-                'type': 'Public' if university.is_public else 'Private',
-                'departments': departments,
-            }
+            if departments:
+                results[university.slug] = {
+                    'name': university.name,
+                    'location': university.location,
+                    'type': 'Public' if university.is_public else 'Private',
+                    'departments': departments,
+                }
 
         return render(request, 'search/school_results.html', {
             'query': query,
@@ -535,8 +545,8 @@ class SchoolResultsView(View):
             'filter_type': 'school',
             'page_obj': universities,
             'is_paginated': universities.has_other_pages(),
-            
         })
+
 
 
 
@@ -549,7 +559,7 @@ import string
 class DepartmentResultsView(View):
     def get(self, request, query):
         school_type = request.GET.get('school_type', 'both')
-        letter = request.GET.get('letter', 'A').upper()  # ✅ Default to 'A'
+        letter = request.GET.get('letter', 'A').upper()
         page = request.GET.get('page')
 
         # Step 1: Filter majors by department
@@ -565,8 +575,8 @@ class DepartmentResultsView(View):
         if letter:
             majors_list = majors_list.filter(university__name__istartswith=letter)
 
-        # Step 4: Optimize loaded fields
-        majors_list = majors_list.select_related('university').only(
+        # Step 4: Use .values() for lighter query
+        majors_list = majors_list.values(
             'major_name', 'slug', 'department',
             'in_state_min_tuition', 'in_state_max_tuition',
             'out_of_state_min_tuition', 'out_of_state_max_tuition',
@@ -576,24 +586,23 @@ class DepartmentResultsView(View):
         # Step 5: Group majors by university
         grouped_results = {}
         for major in majors_list:
-            uni = major.university
-            uni_slug = uni.slug
+            uni_slug = major['university__slug']
             if uni_slug not in grouped_results:
                 grouped_results[uni_slug] = {
-                    'name': uni.name,
-                    'location': uni.location,
-                    'type': 'Public' if uni.is_public else 'Private',
+                    'name': major['university__name'],
+                    'location': major['university__location'],
+                    'type': 'Public' if major['university__is_public'] else 'Private',
                     'departments': {}
                 }
 
-            dept = major.department
+            dept = major['department']
             grouped_results[uni_slug]['departments'].setdefault(dept, []).append({
-                'major_name': major.major_name,
-                'slug': major.slug,
-                'in_state_min_tuition': major.in_state_min_tuition,
-                'in_state_max_tuition': major.in_state_max_tuition,
-                'out_of_state_min_tuition': major.out_of_state_min_tuition,
-                'out_of_state_max_tuition': major.out_of_state_max_tuition,
+                'major_name': major['major_name'],
+                'slug': major['slug'],
+                'in_state_min_tuition': major['in_state_min_tuition'],
+                'in_state_max_tuition': major['in_state_max_tuition'],
+                'out_of_state_min_tuition': major['out_of_state_min_tuition'],
+                'out_of_state_max_tuition': major['out_of_state_max_tuition'],
             })
 
         # Step 6: Paginate
@@ -634,7 +643,7 @@ class MajorResultsView(View):
     def get(self, request, query):
         school_type = request.GET.get('school_type', 'both')
         page = request.GET.get('page')
-        letter = request.GET.get('letter', 'A').upper()  # ✅ Default to A if not specified
+        letter = request.GET.get('letter', 'A').upper()
 
         # Step 1: Filter majors by major name
         majors_qs = Major.objects.filter(major_name__istartswith=query)
@@ -649,8 +658,8 @@ class MajorResultsView(View):
         if letter:
             majors_qs = majors_qs.filter(university__name__istartswith=letter)
 
-        # Step 4: Optimize fields pulled
-        majors_qs = majors_qs.select_related('university').only(
+        # Step 4: Use .values() instead of .only()
+        majors_qs = majors_qs.values(
             'major_name', 'slug', 'department',
             'in_state_min_tuition', 'in_state_max_tuition',
             'out_of_state_min_tuition', 'out_of_state_max_tuition',
@@ -660,24 +669,23 @@ class MajorResultsView(View):
         # Step 5: Group majors by university and department
         results = {}
         for major in majors_qs:
-            uni = major.university
-            uni_slug = uni.slug
+            uni_slug = major['university__slug']
             if uni_slug not in results:
                 results[uni_slug] = {
-                    'name': uni.name,
-                    'location': uni.location,
-                    'type': 'Public' if uni.is_public else 'Private',
+                    'name': major['university__name'],
+                    'location': major['university__location'],
+                    'type': 'Public' if major['university__is_public'] else 'Private',
                     'departments': {}
                 }
 
-            dept = major.department
+            dept = major['department']
             results[uni_slug]['departments'].setdefault(dept, []).append({
-                'major_name': major.major_name,
-                'slug': major.slug,
-                'in_state_min_tuition': major.in_state_min_tuition,
-                'in_state_max_tuition': major.in_state_max_tuition,
-                'out_of_state_min_tuition': major.out_of_state_min_tuition,
-                'out_of_state_max_tuition': major.out_of_state_max_tuition,
+                'major_name': major['major_name'],
+                'slug': major['slug'],
+                'in_state_min_tuition': major['in_state_min_tuition'],
+                'in_state_max_tuition': major['in_state_max_tuition'],
+                'out_of_state_min_tuition': major['out_of_state_min_tuition'],
+                'out_of_state_max_tuition': major['out_of_state_max_tuition'],
             })
 
         # Step 6: Paginate universities (5 per page)

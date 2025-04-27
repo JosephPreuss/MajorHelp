@@ -192,7 +192,7 @@ class Major(models.Model):
     major_name = models.CharField(max_length=255, db_index=True)
     major_description = models.TextField(blank=True)
     slug = models.SlugField(editable=False, null=False, unique=True)
-    department = models.CharField(max_length=50, choices=DEPARTMENT_CHOICES)
+    department = models.CharField(max_length=50, choices=DEPARTMENT_CHOICES, db_index=True)
     in_state_min_tuition = models.IntegerField(
         validators=[MinValueValidator(0)],
         default=0,
