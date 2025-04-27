@@ -251,27 +251,27 @@ function newCalc(values=null, load=false) {
     if (values)
         updateCalc(calc);
 
-    if (values && values.uni) {
-    // Set the checkbox state BEFORE rendering output
-    const outstateCheckbox = document.getElementById(`outstate-${calc}`);
-    if (outstateCheckbox) {
-        outstateCheckbox.checked = values.outstate === true;
-    }
+        if (values && values.uni) {
+        // Set the checkbox state BEFORE rendering output
+        const outstateCheckbox = document.getElementById(`outstate-${calc}`);
+        if (outstateCheckbox) {
+            outstateCheckbox.checked = values.outstate === true;
+        }
 
-    if (values.major && values.major !== "None") {
-        displayOutput(calc, values.uni, values.outstate, values.major, values.aid || null);
-    } else {
-        // Show "Missing Major" fallback
-        const majorSpan = document.getElementById(`major-name-${calc}`);
-        if (majorSpan) majorSpan.textContent = "Missing Major";
-        const majorBox = document.getElementById(`major-box-${calc}`);
-        if (majorBox) majorBox.style.visibility = "visible";
+        if (values.major && values.major !== "None") {
+            displayOutput(calc, values.uni, values.outstate, values.major, values.aid || null);
+        } else {
+            // Show "Missing Major" fallback
+            const majorSpan = document.getElementById(`major-name-${calc}`);
+            if (majorSpan) majorSpan.textContent = "Missing Major";
+            const majorBox = document.getElementById(`major-box-${calc}`);
+            if (majorBox) majorBox.style.visibility = "visible";
 
-        // Optionally hide output
-        const output = document.getElementById(`output-${calc}`);
-        if (output) output.style.display = "none";
+            // Optionally hide output
+            const output = document.getElementById(`output-${calc}`);
+            if (output) output.style.display = "none";
+        }
     }
-}
 
     
 
@@ -280,10 +280,11 @@ function newCalc(values=null, load=false) {
     if (load) {
         const panel = document.getElementById(`entry-${calc}`);
         const deleteBtn = panel.querySelector(".delete-save");
-        if (deleteBtn) {
+        //if (deleteBtn) {
             deleteBtn.style.display = "inline";
             deleteBtn.onclick = () => deleteSave(values.calcName.toLowerCase());
-        }
+            console.log("HI")
+        //}
     }
     const outstateCheckbox = document.getElementById(`outstate-${calc}`);
     if (outstateCheckbox) {
@@ -826,7 +827,7 @@ async function displayOutput(calc, university, outstate, major, aid=null) {
         const deleteBtn = panel.querySelector(".delete-save");
         if (deleteBtn) {
             //deleteBtn.style.display = "none";
-            deleteBtn.onclick = null;
+            //deleteBtn.onclick = null;
         
             const newName = calcInput[calc]['calcName'].toLowerCase();
 

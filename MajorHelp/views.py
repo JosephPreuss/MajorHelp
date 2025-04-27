@@ -484,16 +484,15 @@ class SchoolResultsView(View):
         school_type = request.GET.get('school_type', 'both')
 
         # Filter universities based on query and school_type
-        pattern = r'^' + re.escape(query)
-        universities_list = University.objects.filter(name__iregex=pattern)
+        universities_list = University.objects.filter(name__startswith=pattern)
 
         if school_type == 'public':
             universities_list = universities_list.filter(is_public=True)
         elif school_type == 'private':
             universities_list = universities_list.filter(is_public=False)
 
-        # Apply pagination (50 per page)
-        paginator = Paginator(universities_list, 20)
+        # Apply pagination (10 per page)
+        paginator = Paginator(universities_list, 10)
         page = request.GET.get('page')
 
         try:
@@ -550,26 +549,31 @@ import string
 class DepartmentResultsView(View):
     def get(self, request, query):
         school_type = request.GET.get('school_type', 'both')
-        letter = request.GET.get('letter', '').upper()
+        letter = request.GET.get('letter', 'A').upper()  # ✅ Default to 'A'
         page = request.GET.get('page')
 
-        # Step 1: Filter majors by department name
+        # Step 1: Filter majors by department
         majors_list = Major.objects.filter(department__icontains=query)
 
-        # Step 2: Filter by school type
+        # Step 2: Filter by public/private
         if school_type == 'public':
             majors_list = majors_list.filter(university__is_public=True)
         elif school_type == 'private':
             majors_list = majors_list.filter(university__is_public=False)
 
-        # Step 3: Filter by starting letter of university name (if given)
+        # Step 3: Filter by university first letter
         if letter:
             majors_list = majors_list.filter(university__name__istartswith=letter)
 
-        # Step 4: Optimize query and order by university name
-        majors_list = majors_list.select_related('university').order_by('university__name')
+        # Step 4: Optimize loaded fields
+        majors_list = majors_list.select_related('university').only(
+            'major_name', 'slug', 'department',
+            'in_state_min_tuition', 'in_state_max_tuition',
+            'out_of_state_min_tuition', 'out_of_state_max_tuition',
+            'university__name', 'university__location', 'university__slug', 'university__is_public'
+        ).order_by('university__name')
 
-        # Step 5: Group majors by university and department
+        # Step 5: Group majors by university
         grouped_results = {}
         for major in majors_list:
             uni = major.university
@@ -592,7 +596,7 @@ class DepartmentResultsView(View):
                 'out_of_state_max_tuition': major.out_of_state_max_tuition,
             })
 
-        # Step 6: Paginate universities (5 per page)
+        # Step 6: Paginate
         university_items = list(grouped_results.items())
         paginator = Paginator(university_items, 5)
 
@@ -605,7 +609,7 @@ class DepartmentResultsView(View):
 
         results_page_dict = dict(paginated_results.object_list)
 
-        # Step 7: Render with alphabet filter and pagination
+        # Step 7: Render
         return render(request, 'search/department_results.html', {
             'query': query,
             'results': results_page_dict,
@@ -619,22 +623,21 @@ class DepartmentResultsView(View):
 
 
 
+
 from django.views import View
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.shortcuts import render
 from .models import Major
 import string
-import re
 
 class MajorResultsView(View):
     def get(self, request, query):
         school_type = request.GET.get('school_type', 'both')
         page = request.GET.get('page')
-        letter = request.GET.get('letter', '').upper()
+        letter = request.GET.get('letter', 'A').upper()  # ✅ Default to A if not specified
 
-        # Step 1: Filter by major name (prefix match)
-        pattern = r'^' + re.escape(query)
-        majors_qs = Major.objects.filter(major_name__iregex=pattern)
+        # Step 1: Filter majors by major name
+        majors_qs = Major.objects.filter(major_name__istartswith=query)
 
         # Step 2: Filter by school type
         if school_type == 'public':
@@ -646,10 +649,15 @@ class MajorResultsView(View):
         if letter:
             majors_qs = majors_qs.filter(university__name__istartswith=letter)
 
-        # Step 4: Optimize and order
-        majors_qs = majors_qs.select_related('university').order_by('university__name')
+        # Step 4: Optimize fields pulled
+        majors_qs = majors_qs.select_related('university').only(
+            'major_name', 'slug', 'department',
+            'in_state_min_tuition', 'in_state_max_tuition',
+            'out_of_state_min_tuition', 'out_of_state_max_tuition',
+            'university__name', 'university__location', 'university__slug', 'university__is_public'
+        ).order_by('university__name')
 
-        # Step 5: Group by university → department → majors
+        # Step 5: Group majors by university and department
         results = {}
         for major in majors_qs:
             uni = major.university
@@ -672,9 +680,9 @@ class MajorResultsView(View):
                 'out_of_state_max_tuition': major.out_of_state_max_tuition,
             })
 
-        # Step 6: Paginate
+        # Step 6: Paginate universities (5 per page)
         university_items = list(results.items())
-        paginator = Paginator(university_items, 10)
+        paginator = Paginator(university_items, 5)
 
         try:
             page_obj = paginator.page(page)
@@ -683,19 +691,20 @@ class MajorResultsView(View):
         except EmptyPage:
             page_obj = paginator.page(paginator.num_pages)
 
-        # Step 7: Slice current page's result data
         paginated_results = dict(page_obj.object_list)
 
+        # Step 7: Render
         return render(request, 'search/major_results.html', {
             'query': query,
             'results': paginated_results,
             'school_type': school_type,
             'filter_type': 'major',
             'page_obj': page_obj,
-            'is_paginated': paginator.num_pages > 1,
+            'is_paginated': page_obj.has_other_pages(),
             'alphabet': list(string.ascii_uppercase),
             'current_letter': letter,
         })
+
 
 
     
@@ -807,32 +816,26 @@ def university_search(request):
     query = request.GET.get('query', '').strip()
 
     if not query:
-        return HttpResponse("Error - No search query provided", status=400)
+        return JsonResponse({"universities": []}, status=400)
 
-    query_words = query.lower().split()
-    universities = University.objects.all()
+    universities = University.objects.filter(
+        name__istartswith=query
+    ).only('name', 'location').order_by('name')
 
-    def ordered_match(name, words):
-        name_words = name.lower().split()
-        for i in range(len(name_words) - len(words) + 1):
-            if all(name_words[i + j].startswith(words[j]) for j in range(len(words))):
-                return True
-        return False
-
-    matched_unis = [uni for uni in universities if ordered_match(uni.name, query_words)]
-
-    if not matched_unis:
-        return HttpResponse("Error - No university found", status=404)
+    if not universities.exists():
+        return JsonResponse({"universities": []}, status=404)
 
     data = {"universities": []}
-    for uni in matched_unis:
+    for uni in universities:
         data["universities"].append({
             "name": uni.name,
             "location": uni.location,
-            "departments": list(uni.majors.values_list("department", flat=True).distinct()),
+            # departments can still be included if you want, but it adds query cost
+            # "departments": list(uni.majors.values_list("department", flat=True).distinct())
         })
 
     return JsonResponse(data)
+
 
 
 def calc_list(request):

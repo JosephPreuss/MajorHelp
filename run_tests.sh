@@ -187,6 +187,7 @@ activate_venv
 echo "Applying migrations to set up the test database..."
 python manage.py migrate --settings=pestopanini.test_settings &&
 
+sleep 2
 
 
 # Start the server in the background, suppressing output
@@ -199,7 +200,7 @@ SERVER_PID=$!
 # in case of unexpected exit
 trap "kill $SERVER_PID; unset DJANGO_TEST_ENV; deactivate" EXIT
 
-
+sleep 2
 
 # Run the unit tests
 echo "Running unit tests..."
