@@ -291,3 +291,41 @@ z-index: 10000;
     margin-top: 10px;
   }
   
+  .letter-pagination-container {
+    display: flex;
+    justify-content: center;
+    padding: 1rem 0;
+  }
+  
+  .letter-pagination {
+    background: white;
+    border-radius: 40px;
+    display: grid;
+    grid-template-columns: repeat(26, auto);
+    gap: 1rem;
+    padding: 1rem 2rem;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  }
+  
+  .letter-link,
+  .active-letter {
+    background-color: #e7f9fa;
+    padding: 0.5rem 0.9rem;
+    border-radius: 50%;
+    font-weight: bold;
+    text-align: center;
+    color: #333;
+    text-decoration: none;
+    transition: background-color 0.2s;
+  }
+  
+  .letter-link:hover {
+    background-color: #3cc;
+    color: white;
+  }
+  
+  .active-letter {
+    background-color: #3cc;
+    color: white;
+  }
+  
