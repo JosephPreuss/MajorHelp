@@ -10,15 +10,18 @@
 {% block content %}
 {% include 'search/_search_bar.html' with query=query filter_type=filter_type school_type=school_type %}
 
-<div class="letter-pagination">
-  {% for l in alphabet %}
-      {% if l == current_letter %}
-          <strong style="color: white;">{{ l }}</strong>
-      {% else %}
-          <a href="?query={{ query }}&letter={{ l }}{% if school_type %}&school_type={{ school_type }}{% endif %}" style="color: #ccc; margin-right: 8px;">{{ l }}</a>
-      {% endif %}
-  {% endfor %}
-</div>
+<div class="letter-pagination-container">
+    <div class="letter-pagination">
+      {% for l in alphabet %}
+        {% if l == current_letter %}
+          <span class="active-letter">{{ l }}</span>
+        {% else %}
+          <a class="letter-link" href="?query={{ query }}&letter={{ l }}{% if school_type %}&school_type={{ school_type }}{% endif %}">{{ l }}</a>
+        {% endif %}
+      {% endfor %}
+    </div>
+  </div>
+  
 
   
 

@@ -556,16 +556,21 @@ from django.shortcuts import render
 from .models import Major
 import string
 
+from django.views import View
+from django.shortcuts import render
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
+import string
+
 class DepartmentResultsView(View):
     def get(self, request, query):
         school_type = request.GET.get('school_type', 'both')
         letter = request.GET.get('letter', 'A').upper()
-        page = request.GET.get('page')
+        page = request.GET.get('page', 1)
 
         # Step 1: Filter majors by department
         majors_list = Major.objects.filter(department__icontains=query)
 
-        # Step 2: Filter by public/private
+        # Step 2: Filter by school type (public/private)
         if school_type == 'public':
             majors_list = majors_list.filter(university__is_public=True)
         elif school_type == 'private':
@@ -594,7 +599,6 @@ class DepartmentResultsView(View):
                     'type': 'Public' if major['university__is_public'] else 'Private',
                     'departments': {}
                 }
-
             dept = major['department']
             grouped_results[uni_slug]['departments'].setdefault(dept, []).append({
                 'major_name': major['major_name'],
@@ -605,9 +609,9 @@ class DepartmentResultsView(View):
                 'out_of_state_max_tuition': major['out_of_state_max_tuition'],
             })
 
-        # Step 6: Paginate
+        # Step 6: Paginate universities (only 5 at a time to save memory)
         university_items = list(grouped_results.items())
-        paginator = Paginator(university_items, 5)
+        paginator = Paginator(university_items, 5)  # <-- Only load 5 universities per page!!
 
         try:
             paginated_results = paginator.page(page)
@@ -616,19 +620,18 @@ class DepartmentResultsView(View):
         except EmptyPage:
             paginated_results = paginator.page(paginator.num_pages)
 
-        results_page_dict = dict(paginated_results.object_list)
-
-        # Step 7: Render
+        # Step 7: Send to template
         return render(request, 'search/department_results.html', {
             'query': query,
-            'results': results_page_dict,
+            'results': dict(paginated_results.object_list),
             'school_type': school_type,
             'filter_type': 'department',
             'page_obj': paginated_results,
-            'is_paginated': paginated_results.has_other_pages(),
+            'is_paginated': paginator.num_pages > 1,
             'alphabet': list(string.ascii_uppercase),
             'current_letter': letter,
         })
+
 
 
 
