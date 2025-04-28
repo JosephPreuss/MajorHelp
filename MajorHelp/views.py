@@ -1236,7 +1236,6 @@ class SubmitOverallRatingView(View):
 
         university = get_object_or_404(University, pk=pk)
 
-        # ✅ Now you are guaranteed the user is authenticated
         
         if request.user.role not in ['alumni', 'current_student']:
             messages.error(request, 'You must be a Current Student or Alumni to submit a university rating.')
