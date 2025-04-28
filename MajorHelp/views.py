@@ -1225,17 +1225,30 @@ def university_map_data(request):
 
 
     return JsonResponse({'universities': data})
+from django.contrib.auth.views import redirect_to_login  # If not already imported
+from django.urls import reverse
+
 class SubmitOverallRatingView(View):
     def post(self, request, pk):
+        if not request.user.is_authenticated:
+            university = get_object_or_404(University, pk=pk)
+            return redirect_to_login(next=reverse('MajorHelp:university-detail', kwargs={'slug': university.slug}))
+
         university = get_object_or_404(University, pk=pk)
+
+        # ✅ Now you are guaranteed the user is authenticated
+        
+        if request.user.role not in ['alumni', 'current_student']:
+            messages.error(request, 'You must be a Current Student or Alumni to submit a university rating.')
+            return redirect('MajorHelp:university-detail', slug=university.slug)
 
         CATEGORY_MAP = {
             'campus': 'campus',
             'athletics': 'athletics',
             'safety': 'safety',
-            'social-life': 'social',  # map correctly
-            'professors': 'professor',  # map correctly
-            'dorms': 'dorm',  # map correctly
+            'social-life': 'social',
+            'professors': 'professor',
+            'dorms': 'dorm',
             'dining': 'dining',
         }
 
@@ -1253,6 +1266,7 @@ class SubmitOverallRatingView(View):
 
         messages.success(request, 'Your ratings have been saved successfully!')
         return redirect('MajorHelp:university-detail', slug=university.slug)
+
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 
