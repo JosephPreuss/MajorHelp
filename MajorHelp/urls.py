@@ -95,4 +95,7 @@ urlpatterns = [
     # majorhelp map url
     path('map/', views.college_map, name='college_map'),
     path('api/universities/mapdata/', views.university_map_data, name='university_map_data'),
+    path('university/<int:pk>/submit-overall-rating/', SubmitOverallRatingView.as_view(), name='submit-overall-rating'),
+    path('university/<int:pk>/delete-review/', DeleteReviewView.as_view(), name='delete-review'),
+
 ]

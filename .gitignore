@@ -54,7 +54,4 @@ Thumbs.db
 TODO
 LINKS
 
-db.sqlite3
 
-*.sqlite3
-!db.sqlite3.zip  # exception so the zip gets tracked

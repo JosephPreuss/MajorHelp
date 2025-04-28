@@ -236,6 +236,7 @@ class UniversityOverviewView(DetailView):
     model = University
     template_name = "MajorHelp/UniOverviewPage.html"
     context_object_name = "university"
+    
 
     # Use slug as the lookup field
     slug_field = 'slug'
@@ -264,13 +265,25 @@ class UniversityOverviewView(DetailView):
         else:
             context['is_favorite'] = False
 
-        # ✅ Add this line to include latest posts
+        
         context['latest_post_list'] = UniversityReview.objects.filter(
             university=university
         ).order_by('-pub_date')
 
         context['primary_color'] = university.primary_color if university.primary_color else '#ffffff'
         context['secondary_color'] = university.secondary_color if university.secondary_color else '#ffffff'
+        context['rating_categories'] = ['Campus', 'Athletics', 'Safety', 'Social Life', 'Professors', 'Dorms', 'Dining']
+        # Fetch user's existing ratings for this university
+        user_ratings = {}
+
+        if self.request.user.is_authenticated:
+            ratings = UniversityRating.objects.filter(user=self.request.user, university=self.object)
+            for rating in ratings:
+                user_ratings[slugify(rating.category)] = int(rating.rating)
+
+        context['user_ratings'] = user_ratings
+
+
         
         return context
         
@@ -1212,4 +1225,46 @@ def university_map_data(request):
 
 
     return JsonResponse({'universities': data})
+class SubmitOverallRatingView(View):
+    def post(self, request, pk):
+        university = get_object_or_404(University, pk=pk)
 
+        CATEGORY_MAP = {
+            'campus': 'campus',
+            'athletics': 'athletics',
+            'safety': 'safety',
+            'social-life': 'social',  # map correctly
+            'professors': 'professor',  # map correctly
+            'dorms': 'dorm',  # map correctly
+            'dining': 'dining',
+        }
+
+        for category_key in CATEGORY_MAP.keys():
+            rating = request.POST.get(f'{category_key}_rating')
+
+            if rating:
+                true_category = CATEGORY_MAP[category_key]
+                UniversityRating.objects.update_or_create(
+                    university=university,
+                    category=true_category,
+                    user=request.user,
+                    defaults={'rating': int(rating)}
+                )
+
+        messages.success(request, 'Your ratings have been saved successfully!')
+        return redirect('MajorHelp:university-detail', slug=university.slug)
+from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
+
+@method_decorator(login_required, name='dispatch')
+class DeleteReviewView(View):
+    def post(self, request, pk):
+        university = get_object_or_404(University, pk=pk)
+        try:
+            review = UniversityReview.objects.get(username=request.user.username, university=university)
+            review.delete()
+            messages.success(request, "Your review has been deleted.")
+        except UniversityReview.DoesNotExist:
+            messages.error(request, "Review not found.")
+        
+        return redirect('MajorHelp:university-detail', slug=university.slug)
