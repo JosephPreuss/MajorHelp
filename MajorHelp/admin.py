@@ -110,9 +110,23 @@ class FavoriteAdmin(admin.ModelAdmin):
         return f"Major: {obj.major.major_name} ({obj.major.university.name})"
     display_favorite.short_description = 'Favorite Item'
 
-class UserAdmin(admin.ModelAdmin):
+class CustomUserAdmin(BaseUserAdmin):
     list_display = ('username', 'email', 'role', 'clear_saved_calcs_link')
     list_filter = ('role',)
+
+    fieldsets = (
+        (None, {'fields': ('username', 'password')}),
+        ('Personal info', {'fields': ('email', 'role')}),
+        ('Permissions', {'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions')}),
+        ('Important dates', {'fields': ('last_login', 'date_joined')}),
+    )
+
+    add_fieldsets = (
+        (None, {
+            'classes': ('wide',),
+            'fields': ('username', 'email', 'role', 'password1', 'password2'),
+        }),
+    )
 
     def get_urls(self):
         urls = super().get_urls()
@@ -127,7 +141,6 @@ class UserAdmin(admin.ModelAdmin):
             f'clear-saved-calcs/{obj.id}'
         )
     clear_saved_calcs_link.short_description = 'Saved Calcs'
-    clear_saved_calcs_link.allow_tags = True
 
     def clear_saved_calcs(self, request, user_id):
         user = CustomUser.objects.get(id=user_id)
@@ -136,13 +149,14 @@ class UserAdmin(admin.ModelAdmin):
         self.message_user(request, f"All saved calculators cleared for {user.username}.", messages.SUCCESS)
         return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
+
 # Registering models
 admin.site.register(University, UniversityAdmin)
 admin.site.register(UniversityRating, UniversityRatingAdmin)
 admin.site.register(UniversityReview, UniversityReviewAdmin)
 admin.site.register(Major, MajorAdmin)
 admin.site.register(MajorReview, MajorReviewAdmin)
-admin.site.register(CustomUser, UserAdmin)
+admin.site.register(CustomUser, CustomUserAdmin)
 admin.site.register(FinancialAid)
 admin.site.register(UniversityRequest, UniversityRequestAdmin)
 admin.site.register(Course)

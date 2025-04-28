@@ -312,7 +312,7 @@ class CustomUser(AbstractUser):
     objects = CustomUserManager()
 
 
-    savedCalcs = models.JSONField(default=dict) # passing a callable nstead of {} to make sure everyone gets a independent json
+    savedCalcs = models.JSONField(default=dict, blank=True) # passing a callable nstead of {} to make sure everyone gets a independent json
 
     # Format
 
