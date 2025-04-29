@@ -13,6 +13,17 @@ const DEPARTMENT_CHOICES = [
     "Law and Criminal Justice"
 ];
 
+let savedCalcsData = {};
+
+const savedCalcsElement = document.getElementById('saved-calcs-data');
+if (savedCalcsElement) {
+    savedCalcsData = JSON.parse(savedCalcsElement.textContent);
+}
+
+//Define savedCalcs ONE TIME at the top
+let savedCalcs = Object.keys(savedCalcsData || {});
+
+
 // Both for the calculator to handle two or more input fields at once and also
 // to enable calc saving in the future.
 const calcInput = [
@@ -324,6 +335,22 @@ async function saveCalc(calc) {
         // Show error notification
         showNotification("Failed to save calculation. Please try again.", true);
         return;
+    }
+
+    if(response.ok) {
+        // Add to frontend memory
+        savedCalcsData[calcInput[calc]['calcName'].toLowerCase()] = {
+            calcName: calcInput[calc]['calcName'],
+            uni: calcInput[calc]['uni'],
+            outstate: calcInput[calc]['outstate'],
+            dept: calcInput[calc]['dept'],
+            major: calcInput[calc]['major'],
+            aid: calcInput[calc]['aid']
+        };
+
+        // Refresh list of saved keys
+        savedCalcs = Object.keys(savedCalcsData || {});
+
     }
 
     // Show success notification
@@ -679,6 +706,22 @@ async function selectMajor(calc, major) {
     // Update the JSON
     calcInput[calc]['outstate'] = outstate;
     calcInput[calc]['major'] = major;
+
+    // Check if this calculator is still saved
+    const currentName = calcInput[calc]['calcName'].toLowerCase();
+    if (!savedCalcs.includes(currentName)) {
+        // 🔥 Only now hide the Delete Save button
+        const panel = document.getElementById(`entry-${calc}`);
+        if (panel) {
+            const deleteBtn = panel.querySelector(".delete-save");
+            if (deleteBtn && deleteBtn.style.display !== "none") {
+                deleteBtn.style.display = "none";
+                const newBtn = deleteBtn.cloneNode(true);
+                deleteBtn.parentNode.replaceChild(newBtn, deleteBtn);
+            }
+        }
+    }
+
 
 
     // Check if financial aid applies
