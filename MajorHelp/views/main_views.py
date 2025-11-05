@@ -18,7 +18,7 @@ from django import forms
 from django.contrib.auth.models import User
 from django.views.generic import *
 from django.contrib import messages
-from .models import *
+from ..models import *
 from django.shortcuts import render
 from django.utils.decorators import method_decorator
 from django.contrib.auth import get_user_model
@@ -43,7 +43,7 @@ from django.urls import reverse
 from django.core.signing import TimestampSigner, BadSignature, SignatureExpired
 from .forms import CustomUserCreationForm
 from django.contrib.auth import get_user_model
-from .discussion_models import DiscussionCategory, DiscussionThread, ThreadReply
+from ..discussion_models import DiscussionCategory, DiscussionThread, ThreadReply
 from django.shortcuts import render, get_object_or_404, redirect
 from .forms import NewThreadForm
 from .forms import ThreadReplyForm  
@@ -53,13 +53,29 @@ import re
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
-from .models import DiscussionThread
+from ..models import DiscussionThread
 from django.views.decorators.http import require_POST # used for favorite feature
 # Used to catch an exception if GET tries to get a value that isn't defined.
 from django.utils.datastructures import MultiValueDictKeyError
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.shortcuts import render
 from django.core.serializers.json import DjangoJSONEncoder
+from django.views import View
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
+from django.shortcuts import render
+from ..models import Major
+import string
+
+from django.views import View
+from django.shortcuts import render
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
+import string
+
+
+from django.views import View
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
+from django.shortcuts import render
+import string
 
 
 # views.py
@@ -562,18 +578,6 @@ class SchoolResultsView(View):
 
 
 
-
-from django.views import View
-from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
-from django.shortcuts import render
-from .models import Major
-import string
-
-from django.views import View
-from django.shortcuts import render
-from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
-import string
-
 class DepartmentResultsView(View):
     def get(self, request, query):
         school_type = request.GET.get('school_type', 'both')
@@ -645,15 +649,6 @@ class DepartmentResultsView(View):
             'current_letter': letter,
         })
 
-
-
-
-
-from django.views import View
-from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
-from django.shortcuts import render
-from .models import Major
-import string
 
 class MajorResultsView(View):
     def get(self, request, query):
