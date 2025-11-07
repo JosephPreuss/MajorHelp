@@ -6,22 +6,9 @@ from django.contrib.auth import views as auth_views
 from django.urls.converters import register_converter
 from django.contrib.auth.views import LogoutView
 from MajorHelp.views import main_views as main_views
+from MajorHelp.views import calc as calc_views
 #from MajorHelp.views.main_views import * # about,contact, SearchView, SchoolResultsView, DepartmentResultsView, LeaveReview
 from MajorHelp.views.forms import CustomAuthenticationForm
-
-"""from MajorHelp.views.main_views import (
-    about,
-    contact,
-    SearchView,
-    SchoolResultsView,
-    DepartmentResultsView,
-#    LeaveReview,
-    LoginView,
-    LeaveUniversityReview,
-    DiscussionCategoryListView,
-    DiscussionThreadListView,
-    DiscussionThreadDetailView,
-)"""
 
 app_name = "MajorHelp"
 
@@ -73,13 +60,13 @@ urlpatterns = [
     
 
     # URLS for the Tuition Calculator
-    path('calc/', main_views.CalcView.as_view(), name='calc'),
-    path("api/university_search/", main_views.university_search, name="university_search"),
-    path("api/aid/", main_views.aid_list, name="aid_list"),
-    path("api/majors/", main_views.major_list, name="major_list"),
-    path("api/calculate/", main_views.calculate, name="calculate"),
-    path("api/calcs/", main_views.calc_list, name="calc_list"),
-    path("api/save_calc/", main_views.save_calc, name="save_calc"),
+    path('calc/', calc_views.CalcView.as_view(), name='calc'),
+    path("api/university_search/", calc_views.university_search, name="university_search"),
+    path("api/aid/", calc_views.aid_list, name="aid_list"),
+    path("api/majors/", calc_views.major_list, name="major_list"),
+    path("api/calculate/", calc_views.calculate, name="calculate"),
+    path("api/calcs/", calc_views.calc_list, name="calc_list"),
+    path("api/save_calc/", calc_views.save_calc, name="save_calc"),
 
     # dicussions URLs
     path('discussion/', main_views.discussion_board, name='discussion_board'),

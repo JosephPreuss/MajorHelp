@@ -23,7 +23,6 @@ from django.shortcuts import render
 from django.utils.decorators import method_decorator
 from django.contrib.auth import get_user_model
 import re
-from django.views.decorators.csrf import csrf_exempt
 from django.db.models import F, Value
 from django.db.models.functions import Cast
 from django.db.models import Min
@@ -765,18 +764,6 @@ class MajorOverviewView(DetailView):
         return context
 
 
-class CalcView(View):
-    def get(self, request):
-        saved_calcs = {}
-        if request.user.is_authenticated:
-            request.user.refresh_from_db()  # Make sure we get the latest data
-            saved_calcs = request.user.savedCalcs
-
-        return render(request, 'calc/calc_page.html', {
-            'saved_calcs': saved_calcs
-        })
-
-
 # LeaveMajorReview View - Exclusive for leaving reviews for a major at a specific school
 # changed to be like LeaveUnivserityReview 
 
@@ -830,105 +817,8 @@ class UniversityRequestView(View):
             return render(request, 'search/universityRequest.html')
     
 
-@csrf_exempt
-def university_search(request):
-    query = request.GET.get('query', '').strip()
-
-    if not query:
-        return JsonResponse({"universities": []}, status=400)
-
-    universities = University.objects.filter(
-        name__istartswith=query
-    ).only('name', 'location').order_by('name')
-
-    if not universities.exists():
-        return JsonResponse({"universities": []}, status=404)
-
-    data = {"universities": []}
-    for uni in universities:
-        data["universities"].append({
-            "name": uni.name,
-            "location": uni.location,
-            # departments can still be included if you want, but it adds query cost
-            # "departments": list(uni.majors.values_list("department", flat=True).distinct())
-        })
-
-    return JsonResponse(data)
 
 
-
-def calc_list(request):
-    if not request.user.is_authenticated:
-        # 401 - Unauthorized
-        # https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/401
-        return HttpResponse("Error - You must be logged in", status=401)
-    
-    user = request.user
-    user.refresh_from_db()
-
-
-    query = request.GET.get('query')
-
-    # #if not query:
-    # #    return HttpResponse("Error - No query provided", status=400)
-    #
-    # Above is commented out due to Vedal wanting all calcs to show when the
-    # user clicks on the search bar.
-
-    # lower the query so that the filtering can be case insensitive
-    query = query.lower()
-
-    # dict_you_want = {key: old_dict[key] for key in your_keys}
-
-    # # Returns the values of the calculators matching the filtered_keys
-    # filtered_keys = ["Calculator 1", "Calculator 2"]
-    # calculators = {key: user.savedCalcs[key] for key in filtered_keys}
-    # 
-    # # Might be useful later
-
-    # >>> lst = ['a', 'ab', 'abc', 'bac']
-    # >>> [k for k in lst if 'ab' in k]
-    # ['ab', 'abc']
-
-
-    # Grab the saved calculators from the user:
-    savedCalcs = list(user.savedCalcs.keys())
-    # This converts a dict_keys to a list of strings
-
-
-    # Filter by the given query:
-    applicableKeys = [key for key in savedCalcs if query in key]
-
-    data = {"calculators" : []}
-
-    # Create a dictionary of the mix-case names to their corresponding keys
-    for key in applicableKeys:
-        data['calculators'].append(
-            user.savedCalcs[key]
-        )
-
-    # Return the data
-
-    # Example return data:
-    #
-    #   {'calculators'  :   [
-    #       {
-    #           'calcName'  :   'UofSC',
-    #           'uni'       :   'UofSC',
-    #           'outstate'  :    False,
-    #           'dept'      :   'Engineering and Technology',
-    #           'major'     :   'CIS',
-    #           'aid'       :   'Palmetto Fellows'
-    #       },
-    #       {
-    #           'calcName'  :   'Custom Name',
-    #            ...
-    #       },
-    #       ...
-    #   ]}
-    #
-
-    return JsonResponse(data)
 
 def save_calc(request):
     if not request.user.is_authenticated:
@@ -1021,30 +911,6 @@ def save_calc(request):
     response['Allow'] = allowed_methods
    
     return response
-
-
-
-def aid_list(request):
-    uniQuery = request.GET.get('university')
-    uniObj = None
-
-    if not uniQuery:
-        return HttpResponse("Error - No university provided.", status=400)
-
-    try:
-        uniObj = University.objects.get(name__iexact=uniQuery)
-    except University.DoesNotExist as error:
-        return HttpResponse("Error - No university found.", status=404)
-    
-    data = {"aids" : []}
-    for aid in uniObj.applicableAids.all():
-        data["aids"].append({
-            'name'      : aid.name,
-            'location'  : aid.location,
-            'amount'    : aid.amount,
-        })
-    
-    return JsonResponse(data)
 
 
 def major_list(request):
