@@ -10,7 +10,17 @@
     
     <ul class="nav-links">
         <li><a href="{% url 'MajorHelp:search' %}">Search</a></li>
-        <li><a href="{% url 'MajorHelp:calc' %}">Tuition Calculator</a></li>
+        <li>
+            <div id="calc-dropdown-container">
+                <a id="calc-dropdown" href="{% url 'MajorHelp:calc' %}">
+                Tuition Calculator
+                </a>
+                <div id="calc-dropdown-content"><ul>
+                    <li>Calculate and compare Tuition</li>
+                    <li>Find a university in my budget</li>
+                </ul></div> 
+            </div>
+        </li>
         <li><a href="{% url 'MajorHelp:college_map' %}">College Map</a></li>
         {% if user.is_authenticated %}
             <li><a href="{% url 'MajorHelp:discussion_board' %}">Discussion</a></li>

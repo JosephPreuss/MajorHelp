@@ -1,3 +1,6 @@
+/* Extend css changes from the main stylesheet */
+@import url("/static/css/common/styles.css");
+
 /* NAVBAR STYLES - FIXED ACROSS ALL PAGES */
 .navbar {
     display: flex;
@@ -12,8 +15,22 @@
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05) !important;
     box-sizing: border-box !important;
     /* Ensures padding doesn't cause extra width */
-    overflow-x: hidden !important;
+    /*overflow-x: hidden !important;*/
 }
+
+
+/* Navbar container */
+/*
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: #fff;
+    border-bottom: 1px solid #ddd;
+}
+*/
+
 
 .logo .brand {
     font-size: 22px !important;
@@ -135,16 +152,6 @@ body {
     font-family: Arial, sans-serif;
 }
 
-/* Navbar container */
-.navbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 20px;
-    background-color: #fff;
-    border-bottom: 1px solid #ddd;
-}
-
 /* Logo section */
 .logo {
     display: flex;
@@ -166,22 +173,6 @@ body {
 .highlight {
     color: #40c4c6;
     /* Highlight color */
-}
-
-/* Navigation links */
-.nav-links {
-    display: flex;
-    /* Aligns the items in a row */
-    gap: 15px;
-    /* Spacing between each list item */
-    list-style: none;
-    /* Removes default bullet points */
-    margin: 0;
-    /* Removes default margin */
-    padding: 0;
-    /* Removes default padding */
-    margin-left: auto;
-    /* Pushes the links to the right */
 }
 
 .nav-links li a {
@@ -267,4 +258,25 @@ body {
     /* Adjust size as needed */
     height: auto;
     /* Keeps the aspect ratio */
+}
+
+/* calc dropdown */
+
+/* Container setup */
+#calc-dropdown-container {
+  position: relative;
+  display: inline-block;
+}
+
+/* Dropdown hidden by default */
+#calc-dropdown-content {
+  display: block;
+  position: absolute;
+  top: 100%; /* directly below the button */
+  left: 0;
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 0.5em;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  z-index: 10;
 }
