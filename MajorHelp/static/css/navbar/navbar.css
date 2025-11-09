@@ -1,132 +1,270 @@
+/* NAVBAR STYLES - FIXED ACROSS ALL PAGES */
+.navbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: white !important;
+    padding: 10px 15px !important;
+    /* Reduced padding */
+    width: 100% !important;
+    max-width: 100vw !important;
+    /* Prevents overflow */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05) !important;
+    box-sizing: border-box !important;
+    /* Ensures padding doesn't cause extra width */
+    overflow-x: hidden !important;
+}
+
+.logo .brand {
+    font-size: 22px !important;
+    font-weight: bold !important;
+    text-decoration: none !important;
+    color: black !important;
+}
+
+.highlight {
+    color: linear-gradient(to right, #6dcbc4 0%, #6dcbc4 100%) !important;
+}
+
+.nav-links {
+    display: flex !important;
+    gap: 25px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    list-style: none !important;
+    margin-left: auto !important;
+}
+
+.nav-links a {
+    text-decoration: none !important;
+    color: linear-gradient(to right, #6dcbc4 0%, #6dcbc4 100%);
+    font-size: 16px !important;
+    font-weight: normal !important;
+}
+
+.auth-buttons {
+    display: flex !important;
+    gap: 10px !important;
+    align-items: center !important;
+    margin-left: auto !important;
+    color: linear-gradient(to right, #6dcbc4 0%, #6dcbc4 100%);
+}
+
+.logout-form {
+    display: inline-block !important;
+}
+
+/* BUTTONS (FIXED SIZE & STYLE) */
+.logout-button,
+.settings-button,
+.sign-in,
+.register {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 6px 18px !important;
+    font-size: 14px !important;
+    font-weight: bold !important;
+    text-decoration: none !important;
+    border: 2px solid #6dcbc4 !important;
+    border-radius: 20px !important;
+    color: #6dcbc4 !important;
+    background: transparent !important;
+    cursor: pointer !important;
+    transition: all 0.3s ease-in-out !important;
+    min-width: 80px !important;
+    text-align: center !important;
+    margin-left: 10px !important;
+}
+
+/* HOVER EFFECT */
+.logout-button:hover,
+.settings-button:hover,
+.sign-in:hover,
+.register:hover {
+    background: #E6F7FF !important;
+}
+
+/* ENSURE FIXED HEIGHT & STYLE */
+.logout-button,
+.settings-button,
+.sign-in,
+.register {
+    height: 36px !important;
+    line-height: 36px !important;
+    border-radius: 20px !important;
+    background: transparent !important;
+    border: 2px solid #6dcbc4 !important;
+    color: #6dcbc4 !important;
+    font-weight: bold !important;
+}
+
+/* Prevents any style overrides from other pages */
+.logout-button,
+.settings-button {
+    all: unset !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    border: 2px solid #6dcbc4 !important;
+    border-radius: 20px !important;
+    padding: 6px 20px !important;
+    font-size: 14px !important;
+    font-weight: bold !important;
+    text-decoration: none !important;
+    color: #6dcbc4 !important;
+    cursor: pointer !important;
+    transition: all 0.3s ease-in-out !important;
+}
+
 /* Reset styling */
-    
-    body, ul, li, a, form, button {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-        text-decoration: none;
-        list-style: none;
-    }
+body,
+ul,
+li,
+a,
+form,
+button {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    text-decoration: none;
+    list-style: none;
+}
 
-    body {
-        font-family: Arial, sans-serif;
-    }
+body {
+    font-family: Arial, sans-serif;
+}
 
-    /* Navbar container */
-    .navbar {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 10px 20px;
-        background-color: #fff;
-        border-bottom: 1px solid #ddd;
-    }
+/* Navbar container */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: #fff;
+    border-bottom: 1px solid #ddd;
+}
 
-    /* Logo section */
-    .logo {
-        display: flex;
-        align-items: center;
-    }
+/* Logo section */
+.logo {
+    display: flex;
+    align-items: center;
+}
 
-    .logo-image {
-        width: 40px;
-        height: 40px;
-        margin-right: 10px;
-    }
+.logo-image {
+    width: 40px;
+    height: 40px;
+    margin-right: 10px;
+}
 
-    .brand {
-        font-size: 24px;
-        font-weight: bold;
-        color: #333;
-    }
+.brand {
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+}
 
-    .highlight {
-        color: #40c4c6; /* Highlight color */
-    }
+.highlight {
+    color: #40c4c6;
+    /* Highlight color */
+}
 
-    /* Navigation links */
-    .nav-links {
-        display: flex; /* Aligns the items in a row */
-        gap: 15px; /* Spacing between each list item */
-        list-style: none; /* Removes default bullet points */
-        margin: 0; /* Removes default margin */
-        padding: 0; /* Removes default padding */
-        margin-left: auto; /* Pushes the links to the right */
+/* Navigation links */
+.nav-links {
+    display: flex;
+    /* Aligns the items in a row */
+    gap: 15px;
+    /* Spacing between each list item */
+    list-style: none;
+    /* Removes default bullet points */
+    margin: 0;
+    /* Removes default margin */
+    padding: 0;
+    /* Removes default padding */
+    margin-left: auto;
+    /* Pushes the links to the right */
+}
 
-    }
+.nav-links li a {
+    font-size: 16px;
+    text-decoration: underline !important;
+    color: #40c4c6;
+    transition: color 0.3s;
+}
 
-    .nav-links li a {
-        font-size: 16px;
-        text-decoration: underline !important;
-        color: #40c4c6;
-        transition: color 0.3s;
-    }
+.nav-links li a:hover {
+    color: #246d6e;
+}
 
-    .nav-links li a:hover {
-        color: #246d6e;
-    }
+/* Auth buttons */
+.auth-buttons {
+    display: flex;
+    gap: 10px;
+}
 
-    /* Auth buttons */
-    .auth-buttons {
-        display: flex;
-        gap: 10px;
-    }
+.sign-in,
+.register,
+.logout-button,
+.settings-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    white-space: nowrap;
+    /* Prevent text wrapping */
+    min-width: 100px;
+    /* Ensure enough space for text */
+    padding: 6px 18px;
+    /* Maintain consistent padding */
+    font-size: 14px;
+    /* Keep font size consistent */
+    border-radius: 20px;
+    border: 2px solid #40c4c6;
+    transition: all 0.3s;
+}
 
-    .sign-in, .register, .logout-button, .settings-button {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        white-space: nowrap; /* Prevent text wrapping */
-        min-width: 100px; /* Ensure enough space for text */
-        padding: 6px 18px; /* Maintain consistent padding */
-        font-size: 14px; /* Keep font size consistent */
-        border-radius: 20px;
-        border: 2px solid #40c4c6;
-        transition: all 0.3s;
-    }
+.sign-in {
+    background-color: #fff;
+    color: #40c4c6;
+}
 
-    .sign-in {
-        background-color: #fff;
-        color: #40c4c6;
-    }
+.sign-in:hover {
+    background-color: #e8f8f8;
+}
 
-    .sign-in:hover {
-        background-color: #e8f8f8;
-    }
+.register {
+    background-color: #40c4c6;
+    color: #fff;
+}
 
-    .register {
-        background-color: #40c4c6;
-        color: #fff;
-    }
+.register:hover {
+    background-color: #2da2a3;
+}
 
-    .register:hover {
-        background-color: #2da2a3;
-    }
+.logout-button {
+    background-color: #fff;
+    color: #40c4c6;
+    border: 2px solid #40c4c6;
+    cursor: pointer;
+}
 
-    .logout-button {
-        background-color: #fff;
-        color: #40c4c6;
-        border: 2px solid #40c4c6;
-        cursor: pointer;
-    }
+.logout-button:hover {
+    background-color: #e8f8f8;
+}
 
-    .logout-button:hover {
-        background-color: #e8f8f8;
-    }
+.settings-button {
+    color: #40c4c6;
+    background-color: #fff;
+    color: #40c4c6;
+    border: 2px solid #40c4c6;
+    cursor: pointer;
+}
 
-    .settings-button {    color: #40c4c6;
+.settings-button:hover {
+    background-color: #e8f8f8;
+}
 
-        background-color: #fff;
-        color: #40c4c6;
-        border: 2px solid #40c4c6;
-        cursor: pointer;
-    }
-
-    .settings-button:hover {
-        background-color: #e8f8f8;
-    }
-
-    .logo-image {
-        width: 150px; /* Adjust size as needed */
-        height: auto; /* Keeps the aspect ratio */
-    }
+.logo-image {
+    width: 150px;
+    /* Adjust size as needed */
+    height: auto;
+    /* Keeps the aspect ratio */
+}
