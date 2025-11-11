@@ -6,6 +6,7 @@ from django.contrib.auth import views as auth_views
 from django.urls.converters import register_converter
 from django.contrib.auth.views import LogoutView
 from MajorHelp.views import main_views as main_views
+from MajorHelp.views import college_scorecard as scorecard_views
 #from MajorHelp.views.main_views import * # about,contact, SearchView, SchoolResultsView, DepartmentResultsView, LeaveReview
 from MajorHelp.views.forms import CustomAuthenticationForm
 
@@ -80,6 +81,7 @@ urlpatterns = [
     path("api/calculate/", main_views.calculate, name="calculate"),
     path("api/calcs/", main_views.calc_list, name="calc_list"),
     path("api/save_calc/", main_views.save_calc, name="save_calc"),
+    path('api/college-scorecard/<str:school_name>/', scorecard_views.college_scorecard_api, name='college-scorecard-api'),
 
     # dicussions URLs
     path('discussion/', main_views.discussion_board, name='discussion_board'),
