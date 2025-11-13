@@ -422,27 +422,26 @@ document.addEventListener('DOMContentLoaded', function() {
             } else {
                 container.innerHTML = `
                     <h4>Admissions & Enrollment</h4>
-                    <p><strong>Admission Rate:</strong> ${data.admission_rate ? (data.admission_rate * 100).toFixed(2) + '%' : 'N/A'}</p>
+                    <p><strong>Admission Rate:</strong> ${data.admission_rate_percentage ? data.admission_rate_percentage + '%' : 'N/A'}</p>
                     <p><strong>Average SAT Score:</strong> ${data.sat_average || 'N/A'}</p>
                     <p><strong>Average ACT Score:</strong> ${data.act_midpoint || 'N/A'}</p>
                     <p><strong>Student Size:</strong> ${data.student_size ? data.student_size.toLocaleString() : 'N/A'}</p>
-                    <p><strong>First Generation Students:</strong> ${data.first_generation_students ? (data.first_generation_students * 100).toFixed(2) + '%' : 'N/A'}</p>
+                    <p><strong>First Generation Students:</strong> ${data.first_generation_students_percentage ? data.first_generation_students_percentage + '%' : 'N/A'}</p>
                     
                     <h4>Cost & Financial Aid</h4>
                     <p><strong>In-State Tuition:</strong> $${data.tuition_in_state ? data.tuition_in_state.toLocaleString() : 'N/A'}</p>
                     <p><strong>Out-of-State Tuition:</strong> $${data.tuition_out_of_state ? data.tuition_out_of_state.toLocaleString() : 'N/A'}</p>
-                    <p><strong>Pell Grant Rate:</strong> ${data.pell_grant_rate ? (data.pell_grant_rate * 100).toFixed(2) + '%' : 'N/A'}</p>
+                    <p><strong>Pell Grant Rate:</strong> ${data.pell_grant_rate_percentage ? data.pell_grant_rate_percentage + '%' : 'N/A'}</p>
                     <p><strong>Median Debt (Completers):</strong> $${data.median_debt_completers ? data.median_debt_completers.toLocaleString() : 'N/A'}</p>
                     <p><strong>Median Debt (Non-Completers):</strong> $${data.median_debt_noncompleters ? data.median_debt_noncompleters.toLocaleString() : 'N/A'}</p>
 
                     <h4>Outcomes</h4>
-                    <p><strong>4-Year Completion Rate:</strong> ${data.completion_rate ? (data.completion_rate * 100).toFixed(2) + '%' : 'N/A'}</p>
-                    <p><strong>Repayment Rate (3 years):</strong> ${data.repayment_rate_3_yr ? (data.repayment_rate_3_yr * 100).toFixed(2) + '%' : 'N/A'}</p>
-                    <p><strong>Mean Earnings (6 years after entry):</strong> $${data.mean_earnings_6_yrs_after_entry ? data.mean_earnings_6_yrs_after_entry.toLocaleString() : 'N/A'}</p>
+                    <p><strong>4-Year Completion Rate:</strong> ${data.completion_rate_percentage ? data.completion_rate_percentage + '%' : 'N/A'}</p>
+                    <p><strong>Median Earnings (6 years after entry):</strong> $${data.median_earnings_6_yrs_after_entry ? data.median_earnings_6_yrs_after_entry.toLocaleString() : 'N/A'}</p>
                     <p><strong>Median Earnings (8 years after entry):</strong> $${data.median_earnings_8_yrs_after_entry ? data.median_earnings_8_yrs_after_entry.toLocaleString() : 'N/A'}</p>
                     <p><strong>Median Earnings (10 years after entry):</strong> $${data.median_earnings_10_yrs_after_entry ? data.median_earnings_10_yrs_after_entry.toLocaleString() : 'N/A'}</p>
                     
-                    ${data.school_url ? `<p><a href="${data.school_url}" target="_blank" rel="noopener noreferrer">Visit School Website</a></p>` : ''}
+                    ${data.school_url ? `<p><a href="https://${data.school_url}" target="_blank" rel="noopener noreferrer">Visit School Website</a></p>` : ''}
                 `;
             }
         })
