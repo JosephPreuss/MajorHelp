@@ -1,6 +1,7 @@
 import os
 import requests
 from django.http import JsonResponse
+from django.core.cache import cache
 from difflib import SequenceMatcher
 
 # Retrieve the College Scorecard API key from environment variables.
@@ -9,6 +10,10 @@ API_KEY = os.environ.get('COLLEGE_SCORECARD_API_KEY')
 
 # The base URL for the College Scorecard API.
 API_BASE_URL = 'https://api.data.gov/ed/collegescorecard/v1/schools'
+
+# Cache timeout: 24 hours (in seconds)
+# This reduces API calls from 1 per pageview to 1 per day per school
+CACHE_TIMEOUT = 60 * 60 * 24
 
 def find_best_school_match(search_name, results):
     """
@@ -64,11 +69,24 @@ def college_scorecard_api(request, school_name):
     Uses a two-step process:
     1. Search by name to find potential matches
     2. Select best match and fetch detailed data by ID
+
+    Implements caching to reduce API calls and avoid rate limits.
     """
     # If the API key is not configured, we can't proceed.
     # This is a server-side issue, so we return a 500 error.
     if not API_KEY:
         return JsonResponse({'error': 'API key for College Scorecard not set.'}, status=500)
+
+    # Create a cache key based on the normalized school name
+    # This ensures consistent caching regardless of URL encoding or case
+    cache_key = f'scorecard_data_{school_name.lower().strip().replace(" ", "_")}'
+
+    # Try to get cached data first
+    cached_data = cache.get(cache_key)
+    if cached_data:
+        # Add metadata to indicate this is cached data
+        cached_data['_cached'] = True
+        return JsonResponse(cached_data)
 
     try:
         # STEP 1: Search for the school by name to get potential matches
@@ -222,8 +240,12 @@ def college_scorecard_api(request, school_name):
             # Metadata for debugging
             'searched_for': school_name,
             'total_search_results': len(search_data['results']),
-            'match_quality': 'exact' if best_match.get('school.name', '').lower() == school_name.lower() else 'fuzzy'
+            'match_quality': 'exact' if best_match.get('school.name', '').lower() == school_name.lower() else 'fuzzy',
+            '_cached': False  # Indicate this is fresh data
         }
+
+        # Cache the successful response for 24 hours
+        cache.set(cache_key, clean_data, CACHE_TIMEOUT)
 
         return JsonResponse(clean_data)
 
