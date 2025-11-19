@@ -296,3 +296,21 @@ body {
     margin-top: 10px; /* small spacing only when shown */
 }
 
+
+/* reverse calculator =========================================== */
+
+.budget-input {
+	width: 20%;
+	height: 100%;
+	padding: .5%;
+	font-size: 1.5em;
+	padding-left: 3%;
+}
+
+.budget-label {
+	font-size: 1.5em;
+	margin:  0 -3% 0 3%;
+	z-index: 1;
+	position: relative;
+	font-weight: bold;
+}
