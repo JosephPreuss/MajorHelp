@@ -68,6 +68,9 @@ urlpatterns = [
     path("api/calcs/", calc_views.calc_list, name="calc_list"),
     path("api/save_calc/", calc_views.save_calc, name="save_calc"),
 
+    # URLS for the Reverse Calculator
+    path('reverse_calc/', calc_views.ReverseCalcView.as_view(), name='reverse_calc'),
+
     # dicussions URLs
     path('discussion/', main_views.discussion_board, name='discussion_board'),
     path('discussion/categories/', main_views.DiscussionCategoryListView.as_view(), name='discussion_categories'),
