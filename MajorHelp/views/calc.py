@@ -1,10 +1,11 @@
 from django.views import View
 from django.shortcuts import render
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest
 from django.views.decorators.csrf import csrf_exempt
 
 from ..models import University, Major
 
+import json
 
 # /calc/
 class CalcView(View):
@@ -183,6 +184,26 @@ def calculate(request):
 
     }
 
+    # Example return data
+    #  {
+    #     "minTui": 30576,
+    #     "maxTui": 42748,
+    #     "uni": {
+    #         "name": "University of South Carolina-Columbia",
+    #         "baseMinTui": 12288,
+    #         "baseMaxTui": 13374,
+    #         "fees": 0
+    #     },
+    #     "major": {
+    #         "name": "Computer Engineering.",
+    #         "baseMinTui": 17288,
+    #         "baseMaxTui": 28374,
+    #         "fees": 1000
+    #     },
+    #     "aid": {}
+    # }
+
+
     return JsonResponse(data) 
 
 
@@ -287,6 +308,7 @@ def save_calc(request):
                 return HttpResponse("Key not found", status=404)
 
         except Exception as e:
+            print(e)
             return HttpResponseBadRequest("Invalid delete request: " + str(e))
 
     if request.method == 'POST':
@@ -335,6 +357,7 @@ def save_calc(request):
             return HttpResponse("Saved", status=201) # Created, preferred for new resources
 
         except Exception as e:
+            print(e)
             return HttpResponseBadRequest("Error saving calculator: " + str(e))
 
 
@@ -353,3 +376,92 @@ def save_calc(request):
     response['Allow'] = allowed_methods
    
     return response
+
+
+# /reverse_calc/
+class ReverseCalcView(View):
+    def get(self, request):
+        saved_calcs = {}
+        if request.user.is_authenticated:
+            request.user.refresh_from_db()  # Make sure we get the latest data
+            saved_calcs = request.user.savedCalcs
+
+        return render(request, 'calc/reverse_calc_page.html') #, {
+        #    'saved_calcs': saved_calcs
+        #})
+
+
+# /api/reverse_calculate
+def reverse_calculate(request):
+
+    # idiot checking
+
+    # Due to the nature of the data, this endpoint is a post request.
+    if request.method != 'POST':
+        response = HttpResponse("Method Not Allowed", status=405)
+
+        response['Allow'] = "POST"
+
+        return response
+    
+
+    # Example post data
+    # {
+    #   "budget_min" : 10000,
+    #   "budget_max" : 20000,
+    #   "locations"  : [
+    #    {"lat" : 34.0, "long" : -81.0, "outstate" : false},
+    #    {"lat" : 32.8, "long" : -79.9, "outstate" : false}
+    #   ],
+    #   "range" : 50,
+    #   "major" : "Computer Science"
+    # }
+
+    # budget_min and budget_max are mandatory.
+    # Lat and long are rounded to the nearest .0°
+    # Range is in miles. This is a US db, Euros put a man on the moon first
+    #   before you complain.
+
+    data = None
+
+    try:
+        data = json.loads(request.body.decode())
+    except JSONDecodeError as e:
+        print(e)
+        return HttpResponseBadRequest("Error - Could not decode data sent to server.")
+    
+
+    # budget_min and budget_max are mandatory.
+    if not (data['budget_max'] and data['budget_min']):
+        return HttpResponseBadRequest("Error - No tuition range provided. What's your budget?")
+
+
+    # If range isn't specified, but a location is, then assume 200 miles.
+    if (data['locations'] and not data['range']):
+        data['range'] = 200
+    
+
+    # Might need to add code here to take an average price for each major
+    #   if no major is specified.
+
+
+
+
+    
+    # Example return data:
+    # {
+    #     "unis": [
+    #         {
+    #             "name": "Citadel Military College of South Carolina",
+    #             "minTui": 22712,
+    #             "maxTui": 41080,
+    #             "distance" : 101
+    #         },
+    #         {
+    #             "name": "College of Charleston",
+    #             "minTui": 31036,
+    #             "maxTui": 43540,
+    #             "distance": 103
+    #         }
+    #     ]
+    # }
