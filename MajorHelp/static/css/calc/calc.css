@@ -147,6 +147,7 @@ body {
     visibility : hidden;
 }
 
+.major-search,
 .uni-search {
     width: 80%;
     height: 34px;
