@@ -14,8 +14,6 @@
     /* Prevents overflow */
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05) !important;
     box-sizing: border-box !important;
-    /* Ensures padding doesn't cause extra width */
-    /*overflow-x: hidden !important;*/
 }
 
 
@@ -260,23 +258,67 @@ body {
     /* Keeps the aspect ratio */
 }
 
-/* calc dropdown */
+/* nav dropdown */
 
-/* Container setup */
-#calc-dropdown-container {
-  position: relative;
-  display: inline-block;
+/*
+.nav-dropdown-container:hover .nav-dropdown-content {
+	display: block;
+    position: absolute;
 }
 
-/* Dropdown hidden by default */
-#calc-dropdown-content {
-  display: block;
+/* nav-dropdown hidden by default */
+/*
+.nav-dropdown-content {
+  display: none;
   position: absolute;
-  top: 100%; /* directly below the button */
+  top: 100%; 
   left: 0;
   background-color: white;
   border: 1px solid #ccc;
   border-radius: 0.5em;
   box-shadow: 0 4px 8px rgba(0,0,0,0.1);
   z-index: 10;
+}*/
+
+/* Adjust for the dropdown gap*/
+:root { --gap: 25% }
+
+/* dropdown menu itself */
+.nav-dropdown-container { position: relative; }
+
+.nav-dropdown-content {
+	position: absolute;
+	top: 100%;
+	left: 0;
+	display: none;
+	transform: translateY(var(--gap));
+	box-sizing: border-box;
+	z-index: 9999;
+	background: white;
+	border: 1px solid #ccc;
+	border-radius: 0.5em;
+	box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+	text-align: left;
+	font-size: 0.9em;
+	width: max-content;
+	padding: 10px;
+	line-height: 30px;
+}
+
+/* show on hover/focus */
+.nav-dropdown-container:hover .nav-dropdown-content,
+.nav-dropdown-container:focus-within .nav-dropdown-content {
+  display: block;
+}
+
+/* invisible hover-bridge that extends the dropdown's hit box upward */
+.nav-dropdown-content::before {
+  content: "";
+  position: absolute;
+  top: calc(-1 * var(--gap)); /* reaches up into the trigger area */
+  left: 0;
+  width: 100%;
+  height: var(--gap);
+  background: transparent;     /* fully invisible */
+  pointer-events: auto;        /* IMPORTANT: capture hover so menu stays open */
 }

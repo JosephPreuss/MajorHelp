@@ -11,13 +11,13 @@
     <ul class="nav-links">
         <li><a href="{% url 'MajorHelp:search' %}">Search</a></li>
         <li>
-            <div id="calc-dropdown-container">
-                <a id="calc-dropdown" href="{% url 'MajorHelp:calc' %}">
+            <div class="nav-dropdown-container">
+                <a href="{% url 'MajorHelp:calc' %}">
                 Tuition Calculator
                 </a>
-                <div id="calc-dropdown-content"><ul>
-                    <li>Calculate and compare Tuition</li>
-                    <li>Find a university in my budget</li>
+                <div class="nav-dropdown-content"><ul>
+                    <li><a href="{% url 'MajorHelp:calc' %}">Calculate and Compare Tuition</a></li>
+                    <li><a href="{% url 'MajorHelp:reverse_calc' %}">Find a University in my Budget</a></li>
                 </ul></div> 
             </div>
         </li>
