@@ -58,7 +58,8 @@ const stateAcronyms = {
 	"Virgin Islands" : "VI"
 }
 
-
+// globals
+let majorActive = false;
 
 // "Use my current location" button
 async function fillStateCityFromGeoLoc() {
@@ -104,14 +105,12 @@ async function fillStateCityFromGeoLoc() {
 }
 
 // "Do you have a Major in mind?" Checkbox
-
-
 function toggleMajorInput(){
     if (document.getElementById("major-input-check").checked) {
         // checked, show input field
         document.getElementById("major-input-box")
             .style.display = "inline";
-
+        majorActive = true;
     } else {
         // unchecked, hide.
         document.getElementById("major-input-box")
@@ -119,5 +118,11 @@ function toggleMajorInput(){
 
         // Remember to not submit anything
         // if the major field is hidden
+        majorActive = false;
     }
+}
+
+
+function finalSubmit() {
+    alert("Hello World!");
 }
