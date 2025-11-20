@@ -390,55 +390,96 @@ class ReverseCalcView(View):
         #    'saved_calcs': saved_calcs
         #})
 
-
 # /api/reverse_calculate
 def reverse_calculate(request):
 
     # idiot checking
+    if request.method != 'GET':
+        response = HttpResponse("Method Not Allowed.", status=405)
 
-    # Due to the nature of the data, this endpoint is a post request.
-    if request.method != 'POST':
-        response = HttpResponse("Method Not Allowed", status=405)
-
-        response['Allow'] = "POST"
+        response['Allow'] = 'GET'
 
         return response
+
+    
+    # Get the values
+    budgetMax = request.GET.get('budget-max')
+    budgetMin = request.GET.get('budget-min')
+    city      = request.GET.get('city')
+    state     = request.GET.get('state')
+    major     = request.GET.get('major')  # Optional Value
+
+    if not budgetMax:
+        return HttpResponseBadRequest(
+            "Error - No maximum budget specified.")
+    
+    if not budgetMin:
+        return HttpResponseBadRequest(
+            "Error - No minimum budget specified.")
+    
+    if not city:
+        return HttpResponseBadRequest(
+            "Error - No city provided. Where are you?")
+    
+    if not state:
+        return HttpResponseBadRequest(
+            "Error - No state provided. Where are you?")
+
+    # Major is optional
     
 
-    # Example post data
-    # {
-    #   "budget_min" : 10000,
-    #   "budget_max" : 20000,
-    #   "locations"  : [
-    #    {"lat" : 34.0, "long" : -81.0, "outstate" : false},
-    #    {"lat" : 32.8, "long" : -79.9, "outstate" : false}
-    #   ],
-    #   "range" : 50,
-    #   "major" : "Computer Science"
-    # }
+    data = {"Hello" : "World!"}
 
-    # budget_min and budget_max are mandatory.
-    # Lat and long are rounded to the nearest .0°
-    # Range is in miles. This is a US db, Euros put a man on the moon first
-    #   before you complain.
+    return JsonResponse(data)
 
-    data = None
+# # /api/reverse_calculate
+# def reverse_calculate(request):
 
-    try:
-        data = json.loads(request.body.decode())
-    except JSONDecodeError as e:
-        print(e)
-        return HttpResponseBadRequest("Error - Could not decode data sent to server.")
+#     # idiot checking
+
+#     # Due to the nature of the data, this endpoint is a post request.
+#     if request.method != 'POST':
+#         response = HttpResponse("Method Not Allowed", status=405)
+
+#         response['Allow'] = "POST"
+
+#         return response
     
 
-    # budget_min and budget_max are mandatory.
-    if not (data['budget_max'] and data['budget_min']):
-        return HttpResponseBadRequest("Error - No tuition range provided. What's your budget?")
+#     # Example post data
+#     # {
+#     #   "budget_min" : 10000,
+#     #   "budget_max" : 20000,
+#     #   "locations"  : [
+#     #    {"lat" : 34.0, "long" : -81.0, "outstate" : false},
+#     #    {"lat" : 32.8, "long" : -79.9, "outstate" : false}
+#     #   ],
+#     #   "range" : 50,
+#     #   "major" : "Computer Science"
+#     # }
+
+#     # budget_min and budget_max are mandatory.
+#     # Lat and long are rounded to the nearest .0°
+#     # Range is in miles. This is a US db, Euros put a man on the moon first
+#     #   before you complain.
+
+#     data = None
+
+#     try:
+#         data = json.loads(request.body.decode())
+#     except JSONDecodeError as e:
+#         print(e)
+#         return HttpResponseBadRequest("Error - Could not decode data sent to server.")
+    
+
+#     # budget_min and budget_max are mandatory.
+#     if not (data['budget_max'] and data['budget_min']):
+#         return HttpResponseBadRequest("Error - No tuition range provided. What's your budget?")
 
 
-    # If range isn't specified, but a location is, then assume 200 miles.
-    if (data['locations'] and not data['range']):
-        data['range'] = 200
+#     # If range isn't specified, but a location is, then assume 200 miles.
+#     if (data['locations'] and not data['range']):
+#         data['range'] = 200
     
 
     # Might need to add code here to take an average price for each major
