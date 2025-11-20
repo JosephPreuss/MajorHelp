@@ -70,6 +70,7 @@ urlpatterns = [
 
     # URLS for the Reverse Calculator
     path('reverse_calc/', calc_views.ReverseCalcView.as_view(), name='reverse_calc'),
+    path('api/reverse_calculate/', calc_views.reverse_calculate, name='reverse_calculate'),
 
     # dicussions URLs
     path('discussion/', main_views.discussion_board, name='discussion_board'),
