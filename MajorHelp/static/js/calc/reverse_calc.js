@@ -82,9 +82,25 @@ async function fillStateCityFromGeoLoc() {
     `https://nominatim.openstreetmap.org/reverse?` +
     `format=json&lat=${latitude}&lon=${longitude}`;
 
-    const response = await fetch(url, {
-        headers: { "User-Agent": "MajorHelp/2.0" }
-    });
+    let response;
+
+    try {
+        response = await fetch(url, {
+            headers: { "User-Agent": "MajorHelp/2.0" }
+        });
+    
+    } catch (err) {
+        console.error("Network error:", err);
+        alert("Unable to reach the location service. " +  
+            "Please try again.");
+        return;
+    }
+
+    if (!response.ok) {
+        console.error("Location Service returned an error" + 
+            response.status + "."
+        );
+    }
 
     const data = await response.json();
 
@@ -123,6 +139,46 @@ function toggleMajorInput(){
 }
 
 
-function finalSubmit() {
-    alert("Hello World!");
+async function displayOutput() {
+    // fetch details from inputs and encode
+    const budgetMax = encodeURIComponent(
+        document.getElementById("budget-max").value);
+
+    const budgetMin = encodeURIComponent(
+        document.getElementById("budget-min").value);
+
+    const city      = encodeURIComponent(
+        document.getElementById("city-input").value);
+
+    const state     = encodeURIComponent(
+        document.getElementById("state-input").value);
+
+    // Major is optional
+    const major     = encodeURIComponent(
+        majorActive ? document.getElementById("major-input").value 
+                    : null);
+
+
+    // Submit to backend
+    let response;
+    try {
+        response = await fetch("/api/reverse_calculate/?" +
+            `budget-max=${budgetMax}&budget-min=${budgetMin}` +
+            `&city=${city}&state=${state}&major=${major}`);
+    } catch (err) {
+        console.error("Network error:", err);
+        alert("Unable to reach MajorHelp. Please try again.");
+        return;
+    }
+
+
+    if (!response.ok) {
+        console.error("MajorHelp returned an error" + 
+            response.status + "."
+        );
+    }
+
+    const data = await response.json();
+
+    console.log(data);
 }
