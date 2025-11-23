@@ -10,16 +10,16 @@
     </style>
     <link rel="stylesheet" href="{% static 'css/overview/UniOverview.css' %}">
     <meta charset="UTF-8">
-    
+
 </head>
 
 <body style="--pc: {{ primary_color }}; --sc: {{ secondary_color }};">
-    
+
     <title>{{ university.name }}</title>
-    
+
     <!-- Back button on left -->
     <a href="javascript:history.back()" class="back-button" onclick="location.reload()">Go Back</a>
-            
+
     <!-- Favorite button -->
     <button id="favorite-btn" class="favorite-btn" data-object-type="university" data-object-id="{{ university.id }}">
         {% if is_favorite %}
@@ -33,19 +33,19 @@
     <!-- show up a litte text under favorite button telling users to login or signup if they are not -->
     {% if not user.is_authenticated %}
         <p class="login-link">
-            Want to save favorites? 
-            <a href="{% url 'MajorHelp:login' %}">Log in</a> 
+            Want to save favorites?
+            <a href="{% url 'MajorHelp:login' %}">Log in</a>
             or <a href="{% url 'MajorHelp:signup' %}">Sign up</a>.
         </p>
     {% endif %}
-            
+
     <!-- Title and content below -->
     <h1>{{ university.name }}</h1>
     <h2>{{ university.location }}</h2>
 
-        
+
         <div class="about-container">
-            <h10> About: </h10> 
+            <h10> About: </h10>
             <p1>{{ university.aboutText }}</p1>
         </div>
         <div class="body-section">
@@ -69,7 +69,7 @@
                                 {% endfor %}
                             </div>
                         </li>
-                    
+
                         <li>
                             Athletics: {{ university.athletics_rating }}
                             <div>
@@ -82,7 +82,7 @@
                                 {% endfor %}
                             </div>
                         </li>
-                    
+
                         <li>
                             Safety: {{ university.safety_rating }}
                             <div>
@@ -95,7 +95,7 @@
                                 {% endfor %}
                             </div>
                         </li>
-                    
+
                         <li>
                             Social Life: {{ university.social_rating }}
                             <div>
@@ -108,7 +108,7 @@
                                 {% endfor %}
                             </div>
                         </li>
-                    
+
                         <li>
                             Professors: {{ university.professor_rating }}
                             <div>
@@ -121,7 +121,7 @@
                                 {% endfor %}
                             </div>
                         </li>
-                    
+
                         <li>
                             Dorms: {{ university.dorm_rating }}
                             <div>
@@ -134,7 +134,7 @@
                                 {% endfor %}
                             </div>
                         </li>
-                    
+
                         <li>
                             Dining: {{ university.dining_rating }}
                             <div>
@@ -148,10 +148,9 @@
                             </div>
                         </li>
                     </ul>
-                    
+
                 </div>
-
-
+            </div>
                 <!-- New wrapper around Stats + Rate University -->
                 <div style="display: flex; flex-direction: column; align-items: center; gap: 20px; margin-top: 0px;">
 
@@ -166,7 +165,7 @@
                     <!-- Rate This University Section -->
                     <div class="overall-rating-section" style="background: white; padding: 20px; border-radius: 10px; max-width: 500px; width: 100%; box-shadow: 0 8px 16px rgba(0,0,0,0.1);">
                         <h4 style="text-align: center; font-style: italic; color: #666;">Rate This University</h4>
-                        
+
                         <form action="{% url 'MajorHelp:submit-overall-rating' university.id %}" method="post" id="overall-rating-form">
                             {% csrf_token %}
 
@@ -188,13 +187,22 @@
                                     <input type="hidden" name="{{ category|slugify }}_rating" id="{{ category|slugify }}-rating-input" value="{{ user_ratings.category_slug|default:'' }}">
                                 </div>
                             {% endfor %}
-                        
-                            
+
+
                             <div style="text-align: center; margin-top: 20px;">
                                 <button type="submit" style="padding: 12px 30px; font-size: 18px; background-color: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer;">Submit Ratings</button>
                             </div>
                         </form>
                     </div>
+            </div>
+
+            <!-- College Scorecard Section (full width spanning both columns) -->
+            <div class="scorecard-section" style="max-width: 1530px; margin: 20px auto; width: auto;">
+                <h5>Dept. Education College Scorecard:</h5>
+                <div id="college-scorecard-data" class="scorecard-loading">
+                    <div class="scorecard-spinner"></div>
+                    <p>Loading scorecard data...</p>
+                </div>
             </div>
         </div>
     </div>
@@ -266,14 +274,14 @@
             .space {
                 visibility: hidden !important;
             }
-            
+
         </style>
 
-        <!-- javascript that makes sure that the favorites are 
+        <!-- javascript that makes sure that the favorites are
             marked until they are changed. So favorite pages are marked and
             will show as the current status (added to favorites or not in favorites)
             and be accurate
-        
+
             TLDR: the below javascript shows errors it is just in how it is styled
             that the red squiggly lines are showing for it. It still works with no issues
         -->
@@ -285,11 +293,11 @@
                 {% if is_favorite %}
                     favoriteBtn.classList.add('favorited');
                 {% endif %}
-                
+
                 favoriteBtn.addEventListener('click', function() {
                     const objectType = this.getAttribute('data-object-type');
                     const objectId = this.getAttribute('data-object-id');
-                    
+
                     fetch(`/toggle-favorite/${objectType}/${objectId}/`, {
                         method: 'POST',
                         headers: {
@@ -347,37 +355,37 @@
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const stars = document.querySelectorAll('.category-star');
-    
+
         // Prefill stars based on userRatings
         for (const star of stars) {
             const category = star.getAttribute('data-category');
             const value = parseInt(star.getAttribute('data-value'));
-    
+
             // Map frontend slug to backend database key manually
             let backendCategory = category;
             if (backendCategory === "social-life") backendCategory = "social";
             if (backendCategory === "professors") backendCategory = "professor";
             if (backendCategory === "dorms") backendCategory = "dorm";
-    
+
             const savedRating = userRatings[backendCategory];
-    
+
             if (savedRating && value <= savedRating) {
                 star.style.color = 'gold';
             }
         }
-    
+
         // Your working click to update code
         stars.forEach(star => {
             star.addEventListener('click', function() {
                 const category = this.getAttribute('data-category');
                 const value = this.getAttribute('data-value');
-    
+
                 // Set hidden input for this category
                 const input = document.getElementById(`${category}-rating-input`);
                 if (input) {
                     input.value = value;
                 }
-    
+
                 // Highlight stars properly
                 const categoryStars = document.querySelectorAll(`.category-star[data-category="${category}"]`);
                 categoryStars.forEach(s => {
@@ -391,11 +399,86 @@
         });
     });
     </script>
-    
-        
-        
-        
-    
 
+
+
+
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const universityName = "{{ university.name }}";
+    const url = `/api/college-scorecard/${encodeURIComponent(universityName)}/`;
+
+    fetch(url)
+        .then(response => response.json().then(data => ({status: response.status, data: data})))
+        .then(({status, data}) => {
+            const container = document.getElementById('college-scorecard-data');
+
+            if (status === 404 && data.suggestions) {
+                // Show error with suggestions for similar schools
+                let suggestionsHTML = '<div class="scorecard-suggestions">' +
+                    '<h6>Similar schools found:</h6><ul>';
+
+                data.suggestions.forEach(suggestion => {
+                    suggestionsHTML += `<li>${suggestion.name}, ${suggestion.city}, ${suggestion.state}</li>`;
+                });
+
+                suggestionsHTML += '</ul></div>';
+
+                container.innerHTML = `
+                    <p class="scorecard-error">Could not find exact match for "${data.searched_for}".</p>
+                    ${suggestionsHTML}
+                `;
+            } else if (data.error) {
+                // Generic error message
+                container.innerHTML = `<p class="scorecard-error">${data.error}</p>`;
+            } else {
+                // Success - display the data in a multi-column grid layout
+                container.innerHTML = `
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px;">
+                        <!-- Column 1: Admissions & Enrollment -->
+                        <div>
+                            <p12>Admissions</p12>
+
+                    <p2>Admission Rate: <span style="color: #4fc7cf; font-weight: 800;">${data.admission_rate_percentage ? data.admission_rate_percentage + '%' : 'N/A'}</span><br></p2>
+                    <p3>Average SAT Score: <span style="color: #4fc7cf; font-weight: 800;">${data.sat_average || 'N/A'}</span><br></p3>
+                    <p4>Average ACT Score: <span style="color: #4fc7cf; font-weight: 800;">${data.act_midpoint || 'N/A'}</span><br></p4>
+
+                            <p12 style="margin-top: 25px;">Enrollment</p12>
+                            <p2>Total Student Size: <span style="color: #4fc7cf; font-weight: 800;">${data.student_size ? data.student_size.toLocaleString() : 'N/A'}</span><br></p2>
+                            <p3>First Generation Students: <span style="color: #4fc7cf; font-weight: 800;">${data.first_generation_students_percentage ? data.first_generation_students_percentage + '%' : 'N/A'}</span><br></p3>
+
+                            <p12 style="margin-top: 25px;">Cost</p12>
+                            <p4>In-State Tuition: <span style="color: #4fc7cf; font-weight: 800;">$${data.tuition_in_state ? data.tuition_in_state.toLocaleString() : 'N/A'}</span><br></p4>
+                            <p2>Out-of-State Tuition: <span style="color: #4fc7cf; font-weight: 800;">$${data.tuition_out_of_state ? data.tuition_out_of_state.toLocaleString() : 'N/A'}</span><br></p2>
+                        </div>
+
+                        <!-- Right Column: Financial Aid, Graduation & Earnings -->
+                        <div>
+                            <p12>Financial Aid</p12>
+                            <p3>Pell Grant Rate: <span style="color: #4fc7cf; font-weight: 800;">${data.pell_grant_rate_percentage ? data.pell_grant_rate_percentage + '%' : 'N/A'}</span><br></p3>
+                            <p4>Median Debt (Completers): <span style="color: #4fc7cf; font-weight: 800;">$${data.median_debt_completers ? data.median_debt_completers.toLocaleString() : 'N/A'}</span><br></p4>
+                            <p2>Median Debt (Non-Completers): <span style="color: #4fc7cf; font-weight: 800;">$${data.median_debt_noncompleters ? data.median_debt_noncompleters.toLocaleString() : 'N/A'}</span><br></p2>
+
+                            <p12 style="margin-top: 25px;">Graduation & Outcomes</p12>
+                            <p3>4-Year Completion Rate: <span style="color: #4fc7cf; font-weight: 800;">${data.completion_rate_percentage ? data.completion_rate_percentage + '%' : 'N/A'}</span><br></p3>
+
+                            <p12 style="margin-top: 25px;">Post-Graduation Earnings</p12>
+                            <p4>Median Earnings (6 years after entry): <span style="color: #4fc7cf; font-weight: 800;">$${data.median_earnings_6_yrs_after_entry ? data.median_earnings_6_yrs_after_entry.toLocaleString() : 'N/A'}</span><br></p4>
+                            <p2>Median Earnings (8 years after entry): <span style="color: #4fc7cf; font-weight: 800;">$${data.median_earnings_8_yrs_after_entry ? data.median_earnings_8_yrs_after_entry.toLocaleString() : 'N/A'}</span><br></p2>
+                            <p3>Median Earnings (10 years after entry): <span style="color: #4fc7cf; font-weight: 800;">$${data.median_earnings_10_yrs_after_entry ? data.median_earnings_10_yrs_after_entry.toLocaleString() : 'N/A'}</span><br></p3>
+                        </div>
+                    </div>
+                `;
+            }
+        })
+        .catch(error => {
+            const container = document.getElementById('college-scorecard-data');
+            container.innerHTML = `<p class="scorecard-error">Failed to load College Scorecard data. Please try again later.</p>`;
+            console.error('Error fetching College Scorecard data:', error);
+        });
+});
+</script>
 </body>
 </html>
