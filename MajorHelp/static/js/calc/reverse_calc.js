@@ -226,8 +226,7 @@ function addUniversityMarker(univ) {
 
     const popupHtml = `
         <strong>${escapeHtml(univ.name)}</strong><br>
-        ${escapeHtml(univ.city)}${univ.city && univ.state ? ', ' : ''}
-        ${escapeHtml(univ.state)}<br>
+        ${escapeHtml(univ.location)}<br>
         Tution: ${tuitionText}<br>
         ${univ.distance !== "N/a" ? `Distance: ${univ.distance} mi.<br>` : ''}, 
         <a href="${escapeAttr(univ.url)}" target="_blank" rel="noopener">
