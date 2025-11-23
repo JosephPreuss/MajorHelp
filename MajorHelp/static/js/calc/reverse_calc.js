@@ -1,65 +1,9 @@
-// Constants
-const stateAcronyms = {
-	"Alabama" : "AL",
-	"Alaska" : "AK",
-	"Arizona" : "AZ",
-	"Arkansas" : "AR",
-	"California" : "CA",
-	"Colorado" : "CO",
-	"Connecticut" : "CT",
-	"Delaware" : "DE",
-	"Florida" : "FL",
-	"Georgia" : "GA",
-	"Hawaii" : "HI",
-	"Idaho" : "ID",
-	"Illinois" : "IL",
-	"Indiana" : "IN",
-	"Iowa" : "IA",
-	"Kansas" : "KS",
-	"Kentucky" : "KY",
-	"Louisiana" : "LA",
-	"Maine" : "ME",
-	"Maryland" : "MD",
-	"Massachusetts" : "MA",
-	"Michigan" : "MI",
-	"Minnesota" : "MN",
-	"Mississippi" : "MS",
-	"Missouri" : "MO",
-	"Montana" : "MT",
-	"Nebraska" : "NE",
-	"Nevada" : "NV",
-	"New Hampshire" : "NH",
-	"New Jersey" : "NJ",
-	"New Mexico" : "NM",
-	"New York" : "NY",
-	"North Carolina" : "NC",
-	"North Dakota" : "ND",
-	"Ohio" : "OH",
-	"Oklahoma" : "OK",
-	"Oregon" : "OR",
-	"Pennsylvania" : "PA",
-	"Rhode Island" : "RI",
-	"South Carolina" : "SC",
-	"South Dakota" : "SD",
-	"Tennessee" : "TN",
-	"Texas" : "TX",
-	"Utah" : "UT",
-	"Vermont" : "VT",
-	"Virginia" : "VA",
-	"Washington" : "WA",
-	"West Virginia" : "WV",
-	"Wisconsin" : "WI",
-	"Wyoming" : "WY",
-	"District of Columbia" : "DC",
-	"Guam" : "GU",
-	"Marshall Islands" : "MH",
-	"Northern Mariana Island" : "MP",
-	"Puerto Rico" : "PR",
-	"Virgin Islands" : "VI"
-}
-
 // globals
 let majorActive = false;
+
+let map = null;
+// todo make sure this comment is needed
+let markersLayer = null; // can be a L.LayerGroup or a markerClusterGroup
 
 // "Use my current location" button
 async function fillStateCityFromGeoLoc() {
@@ -76,6 +20,10 @@ async function fillStateCityFromGeoLoc() {
     });
 
     const { latitude, longitude } = coords;
+
+    console.log(coords);
+
+    console.log(latitude, longitude);
 
     // Reverse Geocode city and state
     const url =
@@ -104,6 +52,8 @@ async function fillStateCityFromGeoLoc() {
 
     const data = await response.json();
 
+    console.log(data);
+
     const city = 
         data.address.city ||
         data.address.town ||
@@ -116,7 +66,7 @@ async function fillStateCityFromGeoLoc() {
         .value = city;
     
     const stateInput = document.getElementById("state-input")
-        .value = stateAcronyms[state];
+        .value = state;
     
 }
 
@@ -153,6 +103,9 @@ async function displayOutput() {
     const state     = encodeURIComponent(
         document.getElementById("state-input").value);
 
+    const outstate  = encodeURIComponent(
+        document.getElementById("outstate-checkbox").checked);
+
     // Major is optional
     const major     = encodeURIComponent(
         majorActive ? document.getElementById("major-input").value 
@@ -164,7 +117,8 @@ async function displayOutput() {
     try {
         response = await fetch("/api/reverse_calculate/?" +
             `budget-max=${budgetMax}&budget-min=${budgetMin}` +
-            `&city=${city}&state=${state}&major=${major}`);
+            `&city=${city}&state=${state}&outstate=${outstate}` +
+            `&major=${major}`);
     } catch (err) {
         console.error("Network error:", err);
         alert("Unable to reach MajorHelp. Please try again.");
@@ -178,7 +132,109 @@ async function displayOutput() {
         );
     }
 
-    const data = await response.json();
+    let data;
+    try {
+        data = await response.json()
+    } catch(err) {
+        console.error("Invalid JSON from server:", err);
+        return;
+    }
 
-    console.log(data);
+    showUniversitiesOnMap(data.unis);
+
+}
+
+// Helper: create or reset the map
+function initMap(containerId = "results-map") {
+    if (!map) {
+        map = L.map(containerId, {
+            // disable scroll wheel zoom until user interacts
+            scrollWheelZoom: false
+        });
+
+        // Add OpenStreetMap tiles
+        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+            maxZoom: 19,
+            attribution: '&copy; OpenStreetMap contributors'
+        }).addTo(map);
+
+        // Use a plain layergroup by default
+        markersLayer = L.layerGroup().addTo(map);
+    } else {
+        // clear existing markers
+        markersLayer.clearLayers();
+    }
+}
+
+// Add marker for a single university object and return marker
+function addUniversityMarker(univ) {
+
+    const marker = L.marker([univ.lat, univ.lon]);
+
+    // A little bit overengineered but will handle partial tuition ranges by
+    // only displaying one of the given halves (or N/a for none)
+    const tuitionText = (univ.minTui || univ.maxTui)
+        ? `${univ.minTui ? '$' + Number(univ.minTui).toLocaleString() : ''}` +
+          `${(univ.minTui && univ.maxTui) ? ' - ' : ''}` +
+          `${univ.maxTui ? '$' + Number(univ.maxTui).toLocaleString() : ''}`
+        : 'N/A';
+
+    // todo update
+    const popupHtml = `
+        <strong>${escapeHtml(univ.name)}</strong><br>
+        ${escapeHtml(univ.city)}${univ.city && univ.state ? ', ' : ''}
+        ${escapeHtml(univ.state)}<br>
+        Tution: ${tuitionText}<br>
+        <a href="${escapeAttr(univ.url)}" target="_blank" rel="noopener">
+            View details
+        </a>
+    `;
+
+    marker.bindPopup(popupHtml);
+    marker.addTo(markersLayer);
+    return marker;
+}
+
+
+// Main: show universities on the map. 
+// `universities` is an array of objects with lat/lon
+function showUniversitiesOnMap(universities) {
+    initMap();
+
+    const markersBounds = [];
+
+
+    // Add university markers
+    universities.forEach(univ => {
+        if (typeof univ.lat !== "number" || 
+            typeof univ.lon !== "number") return;
+
+        addUniversityMarker(univ);
+        markersBounds.push([univ.lat, univ.lon]);
+    });
+
+    if(markersBounds.length === 0) {
+        // nothing to show - default to the USA
+        map.setView([39.8283, -98.5795], 4);
+    } else if (markersBounds.length === 1) {
+        map.setView(markersBounds[0], 12);
+    } else {
+        map.fitBounds(markersBounds, { padding: [40, 40] });
+    }
+
+    // enable scroll zoom now that user has content visible
+    map.scrollWheelZoom.enable();
+}
+
+// Minimal html-escaping helpers
+function escapeHtml(s) {
+    if (!s && s !== 0) return "";
+    return String(s)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+}
+function escapeAttr(s) {
+    if (!s && s !== 0) return "";
+    return String(s).replace(/"/g, "&quot;");
 }

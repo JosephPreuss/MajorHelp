@@ -407,6 +407,7 @@ def reverse_calculate(request):
     budgetMin = request.GET.get('budget-min')
     city      = request.GET.get('city')
     state     = request.GET.get('state')
+    outstate  = request.GET.get('outstate')
     major     = request.GET.get('major')  # Optional Value
 
     if not budgetMax:
@@ -425,12 +426,75 @@ def reverse_calculate(request):
         return HttpResponseBadRequest(
             "Error - No state provided. Where are you?")
 
-    # Major is optional
-    
+    if not outstate:
+        return HttpResponseBadRequest(
+            "Error - No outstate provided. Is this college in your home state?")
 
-    data = {"Hello" : "World!"}
+    # Major is optional
+
+    # validate budgets and convert to ints
+    try:
+        budgetMax = int(budgetMax)
+        budgetMin = int(budgetMin)
+    except ValueError:
+        return HttpResponseBadRequest("Invalid budget numbers.")
+
+    # validate outstate and convert to boolean
+    outstate = outstate.lower() in "true"
+
+    # Pick correct tuition fields
+    minField = None;
+    maxField = None;
+
+    if outstate:
+        minField = "out_of_state_base_min_tuition"
+        maxField = "out_of_state_base_max_tuition"
+    else:
+        minField = "in_state_base_min_tuition"
+        maxField = "in_state_base_max_tuition"
+
+    # Get the universities in the state
+    matches = University.objects.filter(
+        location__icontains=f"{city}, {state}",
+        **{f"{minField}__lte" : budgetMax},
+        **{f"{maxField}__gte" : budgetMin},
+    )
+
+    # Serialize response
+    data = {
+        "unis" : [
+            {
+                "name"   : uni.name,
+                "minTui" : getattr(uni, minField),
+                "maxTui" : getattr(uni, maxField),
+                "lat"    : float(uni.latitude),
+                "lon"    : float(uni.longitude),
+                "url"    : f"UniversityOverview/{uni.slug}/", 
+            }
+            for uni in matches
+        ]
+    }
 
     return JsonResponse(data)
+
+    # Example return data:
+    # {
+    #     "unis": [
+    #         {
+    #             "name"  : "Citadel Military College of South Carolina",
+    #             "minTui": 22712,
+    #             "maxTui": 41080,
+    #             "url"   : "UniversityOverview/citadelmilitarycollegeofsouthcarolina/"
+    #         },
+    #         {
+    #             "name"  : "College of Charleston",
+    #             "minTui": 31036,
+    #             "maxTui": 43540,
+    #             "url"   : "UniversityOverview/collegeofcharleston/"
+    #         }
+    #     ]
+    # }
+
 
 # # /api/reverse_calculate
 # def reverse_calculate(request):
@@ -493,16 +557,16 @@ def reverse_calculate(request):
     # {
     #     "unis": [
     #         {
-    #             "name": "Citadel Military College of South Carolina",
+    #             "name"  : "Citadel Military College of South Carolina",
     #             "minTui": 22712,
     #             "maxTui": 41080,
-    #             "distance" : 101
+    #             "url"   : "UniversityOverview/citadelmilitarycollegeofsouthcarolina/"
     #         },
     #         {
-    #             "name": "College of Charleston",
+    #             "name"  : "College of Charleston",
     #             "minTui": 31036,
     #             "maxTui": 43540,
-    #             "distance": 103
+    #             "url"   : "UniversityOverview/collegeofcharleston/"
     #         }
     #     ]
     # }
