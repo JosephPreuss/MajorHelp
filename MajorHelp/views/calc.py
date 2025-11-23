@@ -407,75 +407,83 @@ def reverse_calculate(request):
 
     
     # Get the values
-    try:
-        budgetMax = int(request.GET.get('budget-max', ''))
-        budgetMin = int(request.GET.get('budget-min', ''))
-        lat = float(request.GET.get('lat', ''))
-        lon = float(request.GET.get('lon', ''))
-        radius =  float(request.GET.get('range', '200')) # 200 mi default
-        outstate = request.GET.get('outstate', 'false').lower() == 'true'
-    except ValueError:
-        return HttpResponseBadRequest("Invalid numeric parameters.")
+    budgetMax = request.GET.get("budget-max") or None
+    budgetMin = request.GET.get("budget-min") or None
+    lat       = request.GET.get("lat")
+    lon       = request.GET.get("lon")
+    range_mi  = request.GET.get("range") or 100
+    outstate  = request.GET.get("outstate")
 
-    if budgetMax < -1:
-        return HttpResponseBadRequest(
-            "Error - No maximum budget specified.")
-    
-    if budgetMin < -1:
-        return HttpResponseBadRequest(
-            "Error - No minimum budget specified.")
-    
-    if not lat:
-        return HttpResponseBadRequest(
-            "Error - No latitude provided. Where are you?")
-    
-    if not lon:
-        return HttpResponseBadRequest(
-            "Error - No longitude provided. Where are you?")
 
+    if budgetMin is not None:
+        try:
+            budgetMin = int(budgetMin)
+        except ValueError:
+            return HttpResponseBadRequest("Invalid budget-min")
+
+    if budgetMax is not None:
+        try:
+            budgetMax = int(budgetMax)
+        except ValueError:
+            return HttpResponseBadRequest("Invalid budget-max")
+
+    if lat == "undefined":
+        lat = ""
+    
+    if lon == "undefined":
+        lon = ""
+
+    if outstate:
+        outstate = outstate.lower() == "true"
 
     minField = "out_of_state_base_min_tuition" if outstate else "in_state_base_min_tuition"
     maxField = "out_of_state_base_max_tuition" if outstate else "in_state_base_max_tuition"
 
-
-    # Corsely filter most univiersities via bounding box
-    
-    # Approx 1 degree latitude ≈ 69 miles
-    lat_delta = radius / 69
-    # Longitude delta depends on latitude
-    lon_delta = radius / (69 * math.cos(math.radians(lat)))
-
-    lat_min = lat - lat_delta
-    lat_max = lat + lat_delta
-    lon_min = lon - lon_delta
-    lon_max = lon + lon_delta
-
-    # Filter by bounding box and tuition
-    qs = University.objects.filter(
-        latitude__gte=lat_min,
-        latitude__lte=lat_max,
-        longitude__gte=lon_min,
-        longitude__lte=lon_max,
-        **{f"{minField}__lte": budgetMax},
-        **{f"{maxField}__gte": budgetMin},
-    )
+    filters = {}
 
 
-    # Begin Haversine calculation
+    if budgetMax is not None:
+        filters[f"{maxField}__lte"] = budgetMax
 
-    # Annotate distance
-    qs = qs.annotate(
-        distance=ExpressionWrapper(
-            EARTH_RADIUS_MILES * ACos(
-                Cos(Radians(lat)) *
-                Cos(Radians(F('latitude'))) *
-                Cos(Radians(F('longitude')) - Radians(lon)) +
-                Sin(Radians(lat)) *
-                Sin(Radians(F('latitude')))
-            ),
-            output_field=FloatField()
+    if budgetMin is not None:
+        filters[f"{minField}__gte"] = budgetMin
+
+    # Base queryset
+    qs = University.objects.all()
+
+    # Apply tuition filters (optional)
+    if filters:
+        qs = qs.filter(**filters)
+
+    if lat and lon and range_mi:
+        lat = float(lat)
+        lon = float(lon)
+        range_mi = float(range_mi)
+
+        # crude bounding box
+        lat_delta = range_mi / 69.0
+        lon_delta = range_mi / (69.0 * abs(math.cos(math.radians(lat))) or 0.0001)
+
+        qs = qs.filter(
+            latitude__range=(lat - lat_delta, lat + lat_delta),
+            longitude__range=(lon - lon_delta, lon + lon_delta),
         )
-    ).filter(distance__lte=radius).order_by('distance')
+
+
+        # Begin Haversine calculation
+
+        qs = qs.annotate(
+            distance=ExpressionWrapper(
+                EARTH_RADIUS_MILES * ACos(
+                    Cos(Radians(lat)) *
+                    Cos(Radians(F('latitude'))) *
+                    Cos(Radians(F('longitude')) - Radians(lon)) +
+                    Sin(Radians(lat)) *
+                    Sin(Radians(F('latitude')))
+                ),
+                output_field=FloatField()
+            )
+        ).filter(distance__lte=range_mi).order_by('distance')
 
 
 
@@ -490,8 +498,14 @@ def reverse_calculate(request):
                 "location"  : uni.location,
                 "lat"       : float(uni.latitude),
                 "lon"       : float(uni.longitude),
-                "distance"  : round(float(uni.distance), 2),
-                "url"       : f"UniversityOverview/{uni.slug}/", 
+                "distance": (
+                    # b/c distance could not be included if a location isn't
+                    # specified by the user.
+                    round(float(getattr(uni, "distance")), 2)
+                    if hasattr(uni, "distance") and uni.distance is not None
+                    else "N/a"
+                ),
+                "url"       : f"/UniversityOverview/{uni.slug}/", 
             }
             for uni in qs
         ]
@@ -499,21 +513,4 @@ def reverse_calculate(request):
 
     return JsonResponse(data)
 
-    # Example return data:
-    # {
-    #     "unis": [
-    #         {
-    #             "name"  : "Citadel Military College of South Carolina",
-    #             "minTui": 22712,
-    #             "maxTui": 41080,
-    #             "url"   : "UniversityOverview/citadelmilitarycollegeofsouthcarolina/"
-    #         },
-    #         {
-    #             "name"  : "College of Charleston",
-    #             "minTui": 31036,
-    #             "maxTui": 43540,
-    #             "url"   : "UniversityOverview/collegeofcharleston/"
-    #         }
-    #     ]
-    # }
 

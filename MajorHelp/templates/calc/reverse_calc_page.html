@@ -13,17 +13,6 @@
 
 
 <!--<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />-->
-
-<style>
-    /* Ensure the map has a height so it renders */
-    #results-map {
-        width: 100%;
-        height: 60vh; /* adjust as you like */
-        border: 1px solid #ddd;
-        border-radius: 8px;
-        margin-top: 1rem;
-    }
-</style>
 {% endblock stylesheet %}
 
 {% block script %}
@@ -43,13 +32,17 @@
     <!--1.  What is your budget? -->
     <h2>What's your <span class="color-text">budget</span>?</h2>
     <span class="budget-label color-text">$</span>
-    <input id=budget-min class="budget-input">
+    <input id=budget-min class="budget-input" 
+        oninput="formatLocalizedNumber(this)">
+    <input id="budget-min-raw" type="hidden" name="budget">
 
     <!--Em space and dash-->
     &emsp;—
 
     <span class="budget-label color-text">$</span>
-    <input id=budget-max class="budget-input">
+    <input id=budget-max class="budget-input"
+        oninput="formatLocalizedNumber(this)">
+    <input id="budget-max-raw" type="hidden" name="budget">
 
     <!--2. Where do you want to attend school? -->
     <h2>Where do you want to attend <span class=color-text>school</span>?</h2>
@@ -58,7 +51,7 @@
     <br>
     &emsp14;<input id=city-input placeholder="city">
     <select id=state-input>
-        <option value="" disabled selected>State</option>
+        <option selected>No specific state</option>
         <option>Alabama</option>
         <option>Alaska</option>
         <option>Arizona</option>
@@ -117,7 +110,7 @@
         <option>Virgin Islands</option>
     </select>
 
-    Range: <input type="number" id="range-input">
+    Range (mi): <input type="number" id="range-input" placeholder="100">
     
     <p>Are you attending your school out of state?</p>
     <input id="outstate-checkbox" type=checkbox>

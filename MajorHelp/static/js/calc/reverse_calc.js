@@ -5,6 +5,13 @@ let markersLayer = null;
 let userLatitude;
 let userLongitude;
 
+let userCity;
+let userState;
+
+    initMap(); 
+    map.setView([39.8283, -98.5795], 4);  // Show USA
+
+
 // "Use my current location" button
 async function fillStateCityFromGeoLoc() {
     // Get lat and lon
@@ -51,20 +58,20 @@ async function fillStateCityFromGeoLoc() {
 
     //console.log(data);
 
-    const city = 
+    userCity = 
         data.address.city       ||
         data.address.town       ||
         data.address.village    ||
         data.address.hamlet;
 
-    const state = data.address.state;
+    userState = data.address.state;
 
     // Fill out the inputs
     const cityInput = document.getElementById("city-input")
-        .value = city;
+        .value = userCity;
     
     const stateInput = document.getElementById("state-input")
-        .value = state;
+        .value = userState;
     
 }
 
@@ -72,10 +79,10 @@ async function fillStateCityFromGeoLoc() {
 async function displayOutput() {
     // fetch details from inputs and encode
     const budgetMax = encodeURIComponent(
-        document.getElementById("budget-max").value);
+        document.getElementById("budget-max-raw").value);
 
     const budgetMin = encodeURIComponent(
-        document.getElementById("budget-min").value);
+        document.getElementById("budget-min-raw").value);
 
     // city and state will be encoded later
     const city      = 
@@ -92,18 +99,21 @@ async function displayOutput() {
 
 
     // Determine lat and lon
-    let lat, lon;
+    let lat;
+    let lon;
 
-    if (userLatitude && userLongitude) {
+    if (userLatitude && userLongitude && 
+        userCity === city && userState === state
+    ) {
         // Use previously saved geolocation coordinates
         lat = userLatitude;
         lon = userLongitude;
-    } else {
+    } else if (state !== "No specific state") {
         // Convert city/state → lat/lon via Nominatim
         try {
             const coords = await geocodeCityState(city, state);
-            lat = coords.lat;
-            lon = coords.lon;
+            userLatitude = coords.lat;
+            userLongitude = coords.lon;
         } catch (err) {
             console.error(err);
             alert(err.message);
@@ -117,8 +127,8 @@ async function displayOutput() {
     try {
         response = await fetch("/api/reverse_calculate/?" +
             `budget-max=${budgetMax}&budget-min=${budgetMin}` +
-            `&lat=${lat}&lon=${lon}&range=${range}` +
-            `&outstate=${outstate}`);
+            `&lat=${userLatitude}&lon=${userLongitude}` +
+            `&range=${range}&outstate=${outstate}`);
     } catch (err) {
         console.error("Network error:", err);
         alert("Unable to reach MajorHelp. Please try again.");
@@ -148,7 +158,7 @@ async function displayOutput() {
 // Returns { lat, lon } or throws an error.
 async function geocodeCityState(city, state) {
     const query = encodeURIComponent(`${city}, ${state}`);
-    console.log(query);
+    //console.log(query);
     const url = `https://nominatim.openstreetmap.org/search?` +
                 `q=${query}&format=json&limit=1`;
 
@@ -214,12 +224,12 @@ function addUniversityMarker(univ) {
           `${univ.maxTui ? '$' + Number(univ.maxTui).toLocaleString() : ''}`
         : 'N/A';
 
-    // todo update
     const popupHtml = `
         <strong>${escapeHtml(univ.name)}</strong><br>
         ${escapeHtml(univ.city)}${univ.city && univ.state ? ', ' : ''}
         ${escapeHtml(univ.state)}<br>
         Tution: ${tuitionText}<br>
+        ${univ.distance !== "N/a" ? `Distance: ${univ.distance} mi.<br>` : ''}, 
         <a href="${escapeAttr(univ.url)}" target="_blank" rel="noopener">
             View details
         </a>
@@ -272,4 +282,46 @@ function escapeHtml(s) {
 function escapeAttr(s) {
     if (!s && s !== 0) return "";
     return String(s).replace(/"/g, "&quot;");
+}
+
+
+// To store the actual number without commas and periods,
+// create a hidden input with the input name + "-raw"
+function formatLocalizedNumber(input) {
+    const locale = navigator.language || "en-US";
+
+    // Save the caret position
+    const selectionStart = input.selectionStart;
+
+    // Remove all non-digits
+    const digits = input.value.replace(/\D+/g, "");
+    if (!digits) {
+        input.value = "";
+        return;
+    }
+
+    // Convert to number
+    const number = parseInt(digits, 10);
+
+    // Format with user's locale
+    const formatted = new Intl.NumberFormat(locale).format(number);
+
+    // Update field
+    input.value = formatted;
+
+
+    // Update raw container, if it exists
+    let raw = document.getElementById(input.id + "-raw");
+
+    if (raw)
+        raw.value = number;
+
+
+    // Restore caret position intelligently
+    const newPos = Math.min(
+        input.value.length, selectionStart + 
+        (input.value.length - digits.length)
+    );
+
+    input.setSelectionRange(newPos, newPos);
 }
