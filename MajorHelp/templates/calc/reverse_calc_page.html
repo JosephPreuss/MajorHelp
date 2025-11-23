@@ -116,24 +116,14 @@
         <option>Puerto Rico</option>
         <option>Virgin Islands</option>
     </select>
+
+    Range: <input type="number" id="range-input">
     
     <p>Are you attending your school out of state?</p>
     <input id="outstate-checkbox" type=checkbox>
 
-    <!--3. Do you have a Major in mind? -->
-    <h2>Do you have a <span class=color-text>major</span> in mind?</h2>
-    <input id=major-input-check type="checkbox" 
-        onclick="toggleMajorInput()">
-
-    <div id=major-input-box style="display:none;">
-        <div id=major-input></div>
-        <input id=major-input-search class=major-search 
-            placeholder="(Optional) Enter your major."
-        >
-        <div id=major-input-results></div>
-    </div>
     
-    <!--4. Submission -->
+    <!--3. Submission -->
     <br>
     <div id="final-submit" class="submit-btn result-item"
         type=button onclick="displayOutput()">

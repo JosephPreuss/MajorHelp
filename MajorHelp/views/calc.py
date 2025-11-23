@@ -2,10 +2,13 @@ from django.views import View
 from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest
 from django.views.decorators.csrf import csrf_exempt
+from django.db.models import F, FloatField, ExpressionWrapper
+from django.db.models.functions import ACos, Cos, Radians, Sin
 
 from ..models import University, Major
 
 import json
+import math
 
 # /calc/
 class CalcView(View):
@@ -391,6 +394,7 @@ class ReverseCalcView(View):
         #})
 
 # /api/reverse_calculate
+EARTH_RADIUS_MILES = 3959
 def reverse_calculate(request):
 
     # idiot checking
@@ -403,75 +407,93 @@ def reverse_calculate(request):
 
     
     # Get the values
-    budgetMax = request.GET.get('budget-max')
-    budgetMin = request.GET.get('budget-min')
-    city      = request.GET.get('city')
-    state     = request.GET.get('state')
-    outstate  = request.GET.get('outstate')
-    major     = request.GET.get('major')  # Optional Value
+    try:
+        budgetMax = int(request.GET.get('budget-max', ''))
+        budgetMin = int(request.GET.get('budget-min', ''))
+        lat = float(request.GET.get('lat', ''))
+        lon = float(request.GET.get('lon', ''))
+        radius =  float(request.GET.get('range', '200')) # 200 mi default
+        outstate = request.GET.get('outstate', 'false').lower() == 'true'
+    except ValueError:
+        return HttpResponseBadRequest("Invalid numeric parameters.")
 
-    if not budgetMax:
+    if budgetMax < -1:
         return HttpResponseBadRequest(
             "Error - No maximum budget specified.")
     
-    if not budgetMin:
+    if budgetMin < -1:
         return HttpResponseBadRequest(
             "Error - No minimum budget specified.")
     
-    if not city:
+    if not lat:
         return HttpResponseBadRequest(
-            "Error - No city provided. Where are you?")
+            "Error - No latitude provided. Where are you?")
     
-    if not state:
+    if not lon:
         return HttpResponseBadRequest(
-            "Error - No state provided. Where are you?")
+            "Error - No longitude provided. Where are you?")
 
-    if not outstate:
-        return HttpResponseBadRequest(
-            "Error - No outstate provided. Is this college in your home state?")
 
-    # Major is optional
+    minField = "out_of_state_base_min_tuition" if outstate else "in_state_base_min_tuition"
+    maxField = "out_of_state_base_max_tuition" if outstate else "in_state_base_max_tuition"
 
-    # validate budgets and convert to ints
-    try:
-        budgetMax = int(budgetMax)
-        budgetMin = int(budgetMin)
-    except ValueError:
-        return HttpResponseBadRequest("Invalid budget numbers.")
 
-    # validate outstate and convert to boolean
-    outstate = outstate.lower() in "true"
+    # Corsely filter most univiersities via bounding box
+    
+    # Approx 1 degree latitude ≈ 69 miles
+    lat_delta = radius / 69
+    # Longitude delta depends on latitude
+    lon_delta = radius / (69 * math.cos(math.radians(lat)))
 
-    # Pick correct tuition fields
-    minField = None;
-    maxField = None;
+    lat_min = lat - lat_delta
+    lat_max = lat + lat_delta
+    lon_min = lon - lon_delta
+    lon_max = lon + lon_delta
 
-    if outstate:
-        minField = "out_of_state_base_min_tuition"
-        maxField = "out_of_state_base_max_tuition"
-    else:
-        minField = "in_state_base_min_tuition"
-        maxField = "in_state_base_max_tuition"
-
-    # Get the universities in the state
-    matches = University.objects.filter(
-        location__icontains=f"{city}, {state}",
-        **{f"{minField}__lte" : budgetMax},
-        **{f"{maxField}__gte" : budgetMin},
+    # Filter by bounding box and tuition
+    qs = University.objects.filter(
+        latitude__gte=lat_min,
+        latitude__lte=lat_max,
+        longitude__gte=lon_min,
+        longitude__lte=lon_max,
+        **{f"{minField}__lte": budgetMax},
+        **{f"{maxField}__gte": budgetMin},
     )
+
+
+    # Begin Haversine calculation
+
+    # Annotate distance
+    qs = qs.annotate(
+        distance=ExpressionWrapper(
+            EARTH_RADIUS_MILES * ACos(
+                Cos(Radians(lat)) *
+                Cos(Radians(F('latitude'))) *
+                Cos(Radians(F('longitude')) - Radians(lon)) +
+                Sin(Radians(lat)) *
+                Sin(Radians(F('latitude')))
+            ),
+            output_field=FloatField()
+        )
+    ).filter(distance__lte=radius).order_by('distance')
+
+
+
 
     # Serialize response
     data = {
         "unis" : [
             {
-                "name"   : uni.name,
-                "minTui" : getattr(uni, minField),
-                "maxTui" : getattr(uni, maxField),
-                "lat"    : float(uni.latitude),
-                "lon"    : float(uni.longitude),
-                "url"    : f"UniversityOverview/{uni.slug}/", 
+                "name"      : uni.name,
+                "minTui"    : getattr(uni, minField),
+                "maxTui"    : getattr(uni, maxField),
+                "location"  : uni.location,
+                "lat"       : float(uni.latitude),
+                "lon"       : float(uni.longitude),
+                "distance"  : round(float(uni.distance), 2),
+                "url"       : f"UniversityOverview/{uni.slug}/", 
             }
-            for uni in matches
+            for uni in qs
         ]
     }
 

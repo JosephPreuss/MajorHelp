@@ -1,9 +1,9 @@
 // globals
-let majorActive = false;
-
 let map = null;
-// todo make sure this comment is needed
-let markersLayer = null; // can be a L.LayerGroup or a markerClusterGroup
+let markersLayer = null; 
+
+let userLatitude;
+let userLongitude;
 
 // "Use my current location" button
 async function fillStateCityFromGeoLoc() {
@@ -19,16 +19,13 @@ async function fillStateCityFromGeoLoc() {
         );
     });
 
-    const { latitude, longitude } = coords;
-
-    console.log(coords);
-
-    console.log(latitude, longitude);
+    userLatitude  = coords.latitude;
+    userLongitude = coords.longitude;
 
     // Reverse Geocode city and state
     const url =
     `https://nominatim.openstreetmap.org/reverse?` +
-    `format=json&lat=${latitude}&lon=${longitude}`;
+    `format=json&lat=${userLatitude}&lon=${userLongitude}`;
 
     let response;
 
@@ -52,12 +49,13 @@ async function fillStateCityFromGeoLoc() {
 
     const data = await response.json();
 
-    console.log(data);
+    //console.log(data);
 
     const city = 
-        data.address.city ||
-        data.address.town ||
-        data.address.village;
+        data.address.city       ||
+        data.address.town       ||
+        data.address.village    ||
+        data.address.hamlet;
 
     const state = data.address.state;
 
@@ -70,24 +68,6 @@ async function fillStateCityFromGeoLoc() {
     
 }
 
-// "Do you have a Major in mind?" Checkbox
-function toggleMajorInput(){
-    if (document.getElementById("major-input-check").checked) {
-        // checked, show input field
-        document.getElementById("major-input-box")
-            .style.display = "inline";
-        majorActive = true;
-    } else {
-        // unchecked, hide.
-        document.getElementById("major-input-box")
-            .style.display = "none";
-
-        // Remember to not submit anything
-        // if the major field is hidden
-        majorActive = false;
-    }
-}
-
 
 async function displayOutput() {
     // fetch details from inputs and encode
@@ -97,19 +77,39 @@ async function displayOutput() {
     const budgetMin = encodeURIComponent(
         document.getElementById("budget-min").value);
 
-    const city      = encodeURIComponent(
-        document.getElementById("city-input").value);
+    // city and state will be encoded later
+    const city      = 
+        document.getElementById("city-input").value;
 
-    const state     = encodeURIComponent(
-        document.getElementById("state-input").value);
+    const state     = 
+        document.getElementById("state-input").value;
+
+    const range     = encodeURIComponent(
+        document.getElementById("range-input").value);
 
     const outstate  = encodeURIComponent(
         document.getElementById("outstate-checkbox").checked);
 
-    // Major is optional
-    const major     = encodeURIComponent(
-        majorActive ? document.getElementById("major-input").value 
-                    : null);
+
+    // Determine lat and lon
+    let lat, lon;
+
+    if (userLatitude && userLongitude) {
+        // Use previously saved geolocation coordinates
+        lat = userLatitude;
+        lon = userLongitude;
+    } else {
+        // Convert city/state → lat/lon via Nominatim
+        try {
+            const coords = await geocodeCityState(city, state);
+            lat = coords.lat;
+            lon = coords.lon;
+        } catch (err) {
+            console.error(err);
+            alert(err.message);
+            return;
+        }
+    }
 
 
     // Submit to backend
@@ -117,8 +117,8 @@ async function displayOutput() {
     try {
         response = await fetch("/api/reverse_calculate/?" +
             `budget-max=${budgetMax}&budget-min=${budgetMin}` +
-            `&city=${city}&state=${state}&outstate=${outstate}` +
-            `&major=${major}`);
+            `&lat=${lat}&lon=${lon}&range=${range}` +
+            `&outstate=${outstate}`);
     } catch (err) {
         console.error("Network error:", err);
         alert("Unable to reach MajorHelp. Please try again.");
@@ -127,7 +127,7 @@ async function displayOutput() {
 
 
     if (!response.ok) {
-        console.error("MajorHelp returned an error" + 
+        console.error("MajorHelp returned error " + 
             response.status + "."
         );
     }
@@ -143,6 +143,41 @@ async function displayOutput() {
     showUniversitiesOnMap(data.unis);
 
 }
+
+// Convert user-typed city + state into latitude/longitude using Nominatim.
+// Returns { lat, lon } or throws an error.
+async function geocodeCityState(city, state) {
+    const query = encodeURIComponent(`${city}, ${state}`);
+    console.log(query);
+    const url = `https://nominatim.openstreetmap.org/search?` +
+                `q=${query}&format=json&limit=1`;
+
+    let response;
+    try {
+        response = await fetch(url, {
+            headers: { "User-Agent": "MajorHelp/2.0" }
+        });
+    } catch (err) {
+        throw new Error("Network error contacting geocoder");
+    }
+
+    if (!response.ok) {
+        throw new Error(`Geocoder error: HTTP ${response.status}`);
+    }
+
+    const results = await response.json();
+
+    if (!results || results.length === 0) {
+        throw new Error("Could not find that location. Try another city/state.");
+    }
+
+    return {
+        lat: Number(results[0].lat),
+        lon: Number(results[0].lon)
+    };
+}
+
+
 
 // Helper: create or reset the map
 function initMap(containerId = "results-map") {
