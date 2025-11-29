@@ -147,6 +147,7 @@ body {
     visibility : hidden;
 }
 
+.major-search,
 .uni-search {
     width: 80%;
     height: 34px;
@@ -313,4 +314,12 @@ body {
 	z-index: 1;
 	position: relative;
 	font-weight: bold;
+}
+
+#results-map {
+    width: 100%;
+    height: 60vh;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    margin-top: 1rem;
 }

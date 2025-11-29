@@ -5,79 +5,129 @@
 
 {% block stylesheet %}
 <link rel="stylesheet" href="{% static 'css/calc/calc.css' %}">
+
+<!-- For Leaflet -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+     integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+     crossorigin=""/>
+
+
+<!--<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />-->
 {% endblock stylesheet %}
+
+{% block script %}
+<script src="{% static 'js/calc/reverse_calc.js' %}" defer></script>
+
+ <!-- Make sure you put this AFTER Leaflet's CSS -->
+ <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+     integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+     crossorigin=""></script>
+
+<!--<script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>-->
+{% endblock script %}
+
 
 {% block content %}
 <div class="content-box">
     <!--1.  What is your budget? -->
     <h2>What's your <span class="color-text">budget</span>?</h2>
     <span class="budget-label color-text">$</span>
-    <input id=budget-min class="budget-input">
+    <input id=budget-min class="budget-input" 
+        oninput="formatLocalizedNumber(this)">
+    <input id="budget-min-raw" type="hidden" name="budget">
 
     <!--Em space and dash-->
     &emsp;—
 
     <span class="budget-label color-text">$</span>
-    <input id=budget-max class="budget-input">
+    <input id=budget-max class="budget-input"
+        oninput="formatLocalizedNumber(this)">
+    <input id="budget-max-raw" type="hidden" name="budget">
 
     <!--2. Where do you want to attend school? -->
     <h2>Where do you want to attend <span class=color-text>school</span>?</h2>
-    &emsp14;Use my <span class="color-text">current location</span>.<input type="button">
+    &emsp14;Use my <span class="color-text">current location</span>.
+    <input id="loc-btn" type="button" onclick="fillStateCityFromGeoLoc()">
     <br>
     &emsp14;<input id=city-input placeholder="city">
     <select id=state-input>
-        <option value="" disabled selected>State</option>
-        <option>AL</option>
-        <option>AK</option>
-        <option>AZ</option>
-        <option>AR</option>
-        <option>CA</option>
-        <option>CO</option>
-        <option>CT</option>
-        <option>DE</option>
-        <option>FL</option>
-        <option>GA</option>
-        <option>HI</option>
-        <option>ID</option>
-        <option>IL</option>
-        <option>IN</option>
-        <option>IA</option>
-        <option>KS</option>
-        <option>KY</option>
-        <option>LA</option>
-        <option>ME</option>
-        <option>MD</option>
-        <option>MA</option>
-        <option>MI</option>
-        <option>MN</option>
-        <option>MS</option>
-        <option>MO</option>
-        <option>MT</option>
-        <option>NE</option>
-        <option>NV</option>
-        <option>NH</option>
-        <option>NJ</option>
-        <option>NM</option>
-        <option>NY</option>
-        <option>NC</option>
-        <option>ND</option>
-        <option>OH</option>
-        <option>OK</option>
-        <option>OR</option>
-        <option>PA</option>
-        <option>RI</option>
-        <option>SC</option>
-        <option>SD</option>
-        <option>TN</option>
-        <option>TX</option>
-        <option>UT</option>
-        <option>VT</option>
-        <option>VA</option>
-        <option>WA</option>
-        <option>WV</option>
-        <option>WI</option>
-        <option>WY</option>
+        <option selected>No specific state</option>
+        <option>Alabama</option>
+        <option>Alaska</option>
+        <option>Arizona</option>
+        <option>Arkansas</option>
+        <option>California</option>
+        <option>Colorado</option>
+        <option>Connecticut</option>
+        <option>Delaware</option>
+        <option>Florida</option>
+        <option>Georgia</option>
+        <option>Hawaii</option>
+        <option>Idaho</option>
+        <option>Illinois</option>
+        <option>Indiana</option>
+        <option>Iowa</option>
+        <option>Kansas</option>
+        <option>Kentucky</option>
+        <option>Louisiana</option>
+        <option>Maine</option>
+        <option>Maryland</option>
+        <option>Massachusetts</option>
+        <option>Michigan</option>
+        <option>Minnesota</option>
+        <option>Mississippi</option>
+        <option>Missouri</option>
+        <option>Montana</option>
+        <option>Nebraska</option>
+        <option>Nevada</option>
+        <option>New Hampshire</option>
+        <option>New Jersey</option>
+        <option>New Mexico</option>
+        <option>New York</option>
+        <option>North Carolina</option>
+        <option>North Dakota</option>
+        <option>Ohio</option>
+        <option>Oklahoma</option>
+        <option>Oregon</option>
+        <option>Pennsylvania</option>
+        <option>Rhode Island</option>
+        <option>South Carolina</option>
+        <option>South Dakota</option>
+        <option>Tennessee</option>
+        <option>Texas</option>
+        <option>Utah</option>
+        <option>Vermont</option>
+        <option>Virginia</option>
+        <option>Washington</option>
+        <option>West Virginia</option>
+        <option>Wisconsin</option>
+        <option>Wyoming</option>
+        <option>District of Columbia</option>
+        <option>Guam</option>
+        <option>Marshall Islands</option>
+        <option>Northern Mariana Island</option>
+        <option>Puerto Rico</option>
+        <option>Virgin Islands</option>
     </select>
+
+    Range (mi): <input type="number" id="range-input" placeholder="100">
     
+    <p>Are you attending your school out of state?</p>
+    <input id="outstate-checkbox" type=checkbox>
+
+    
+    <!--3. Submission -->
+    <br>
+    <div id="final-submit" class="submit-btn result-item"
+        type=button onclick="displayOutput()">
+        Find My University
+    </div>
+
+
+    <!-- Results go here -->
+    <div id="map-container">
+        <div id="results-map" aria-label="Map of matching universities"></div>
+    </div>
+
 </div>
 {% endblock content %}

@@ -8,6 +8,17 @@ MajorHelp is a web application that helps students find universities, majors, an
 > It is highly recommended to run MajorHelp with a [Python Virtual Environment](https://docs.python.org/3/library/venv.html), or **venv** so that dependencies for this project are kept local and not system wide. 
 > This guide was written with virtual environments in mind, so some commands may have to be run while venv is activated.
 
+> [!IMPORTANT]
+> This project uses the College Scorecard API to fetch data. You will need to acquire an API key and add it to your `.env` file.
+>
+> 1.  Request an API key from the [College Scorecard API website](https://collegescorecard.ed.gov/data/api).
+> 2.  In the root of the project, create or open the `.env` file.
+> 3.  Add the following line to the `.env` file, replacing `your_api_key` with the key you received:
+>
+>     ```
+>     COLLEGE_SCORECARD_API_KEY=your_api_key
+>     ```
+
 > [!Important]
 > This project uses Git Large File Storage (Git LFS) to handle large files such as the db.sqlite3 database.
 > You must install Git LFS before cloning or pulling the repository. Otherwise, large files like the database will fail to download properly.

@@ -192,6 +192,140 @@ h2 {
     border-radius: 10px; /* Rounded corners */
 }
 
+/* College Scorecard Section */
+.scorecard-section {
+    background-color: #fff; /* White background for the content box */
+    padding: 20px; /* Adds padding inside the box */
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1); /* External shadow for depth */
+    border-radius: 10px; /* Rounded corners */
+}
+
+.scorecard-section h5 {
+    text-align: left;
+    font-size: 2.5rem;
+    color: #666;
+    margin-top: 0;
+    margin-bottom: 10px;
+    margin-left: 25px;
+    font-style: italic;
+    font-weight: 550;
+}
+
+/* Category headers (same style as p12 in ratings section) */
+.scorecard-section p12 {
+    display: block;
+    margin-left: 25px;
+    font-size: 1.1rem;
+    color: #666;
+    margin-top: 10px;
+    margin-bottom: 20px;
+    font-weight: 550;
+    text-decoration: underline;
+}
+
+/* Data items matching stats section */
+.scorecard-section p2 {
+    display: block;
+    max-width: 1430px;
+    margin-left: 35px;
+    margin-right: 35px;
+    margin-top: 10px;
+    line-height: 1.5;
+    font-size: 1.25rem;
+}
+
+.scorecard-section p3 {
+    display: block;
+    max-width: 1430px;
+    margin-left: 35px;
+    margin-right: 35px;
+    margin-top: 10px;
+    line-height: 1.5;
+    font-size: 1.25rem;
+}
+
+.scorecard-section p4 {
+    display: block;
+    max-width: 1430px;
+    margin-left: 35px;
+    margin-right: 35px;
+    margin-top: 10px;
+    line-height: 1.5;
+    font-size: 1.25rem;
+}
+
+.scorecard-section .scorecard-link {
+    display: block;
+    margin-left: 10px;
+    margin-top: 10px;
+    font-size: 1.25rem;
+    color: #0073e6;
+    text-decoration: none;
+}
+
+.scorecard-section .scorecard-link:hover {
+    text-decoration: underline;
+}
+
+.scorecard-section .scorecard-loading {
+    text-align: center;
+    padding: 20px;
+    font-size: 1.25rem;
+    color: #666;
+}
+
+.scorecard-section .scorecard-error {
+    text-align: center;
+    padding: 20px;
+    font-size: 1.25rem;
+    color: #d9534f;
+}
+
+.scorecard-section .scorecard-suggestions {
+    margin-top: 15px;
+    padding: 15px;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+.scorecard-section .scorecard-suggestions h6 {
+    font-size: 1.2rem;
+    color: #666;
+    margin-top: 0;
+    margin-bottom: 10px;
+    text-decoration: none;
+}
+
+.scorecard-section .scorecard-suggestions ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.scorecard-section .scorecard-suggestions li {
+    padding: 8px;
+    margin-bottom: 5px;
+    font-size: 1.1rem;
+    color: #333;
+}
+
+/* Loading spinner animation */
+.scorecard-spinner {
+    display: inline-block;
+    width: 40px;
+    height: 40px;
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #0073e6;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
 /* Statistics */
 .stats-section h5 {
     text-align: left;

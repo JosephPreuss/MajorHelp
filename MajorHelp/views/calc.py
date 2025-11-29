@@ -2,10 +2,13 @@ from django.views import View
 from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest
 from django.views.decorators.csrf import csrf_exempt
+from django.db.models import F, FloatField, ExpressionWrapper
+from django.db.models.functions import ACos, Cos, Radians, Sin
 
 from ..models import University, Major
 
 import json
+import math
 
 # /calc/
 class CalcView(View):
@@ -390,78 +393,124 @@ class ReverseCalcView(View):
         #    'saved_calcs': saved_calcs
         #})
 
-
 # /api/reverse_calculate
+EARTH_RADIUS_MILES = 3959
 def reverse_calculate(request):
 
     # idiot checking
+    if request.method != 'GET':
+        response = HttpResponse("Method Not Allowed.", status=405)
 
-    # Due to the nature of the data, this endpoint is a post request.
-    if request.method != 'POST':
-        response = HttpResponse("Method Not Allowed", status=405)
-
-        response['Allow'] = "POST"
+        response['Allow'] = 'GET'
 
         return response
-    
-
-    # Example post data
-    # {
-    #   "budget_min" : 10000,
-    #   "budget_max" : 20000,
-    #   "locations"  : [
-    #    {"lat" : 34.0, "long" : -81.0, "outstate" : false},
-    #    {"lat" : 32.8, "long" : -79.9, "outstate" : false}
-    #   ],
-    #   "range" : 50,
-    #   "major" : "Computer Science"
-    # }
-
-    # budget_min and budget_max are mandatory.
-    # Lat and long are rounded to the nearest .0°
-    # Range is in miles. This is a US db, Euros put a man on the moon first
-    #   before you complain.
-
-    data = None
-
-    try:
-        data = json.loads(request.body.decode())
-    except JSONDecodeError as e:
-        print(e)
-        return HttpResponseBadRequest("Error - Could not decode data sent to server.")
-    
-
-    # budget_min and budget_max are mandatory.
-    if not (data['budget_max'] and data['budget_min']):
-        return HttpResponseBadRequest("Error - No tuition range provided. What's your budget?")
-
-
-    # If range isn't specified, but a location is, then assume 200 miles.
-    if (data['locations'] and not data['range']):
-        data['range'] = 200
-    
-
-    # Might need to add code here to take an average price for each major
-    #   if no major is specified.
-
-
-
 
     
-    # Example return data:
-    # {
-    #     "unis": [
-    #         {
-    #             "name": "Citadel Military College of South Carolina",
-    #             "minTui": 22712,
-    #             "maxTui": 41080,
-    #             "distance" : 101
-    #         },
-    #         {
-    #             "name": "College of Charleston",
-    #             "minTui": 31036,
-    #             "maxTui": 43540,
-    #             "distance": 103
-    #         }
-    #     ]
-    # }
+    # Get the values
+    budgetMax = request.GET.get("budget-max") or None
+    budgetMin = request.GET.get("budget-min") or None
+    lat       = request.GET.get("lat")
+    lon       = request.GET.get("lon")
+    range_mi  = request.GET.get("range") or 100
+    outstate  = request.GET.get("outstate")
+
+
+    if budgetMin is not None:
+        try:
+            budgetMin = int(budgetMin)
+        except ValueError:
+            return HttpResponseBadRequest("Invalid budget-min")
+
+    if budgetMax is not None:
+        try:
+            budgetMax = int(budgetMax)
+        except ValueError:
+            return HttpResponseBadRequest("Invalid budget-max")
+
+    if lat == "undefined":
+        lat = ""
+    
+    if lon == "undefined":
+        lon = ""
+
+    if outstate:
+        outstate = outstate.lower() == "true"
+
+    minField = "out_of_state_base_min_tuition" if outstate else "in_state_base_min_tuition"
+    maxField = "out_of_state_base_max_tuition" if outstate else "in_state_base_max_tuition"
+
+    filters = {}
+
+
+    if budgetMax is not None:
+        filters[f"{maxField}__lte"] = budgetMax
+
+    if budgetMin is not None:
+        filters[f"{minField}__gte"] = budgetMin
+
+    # Base queryset
+    qs = University.objects.all()
+
+    # Apply tuition filters (optional)
+    if filters:
+        qs = qs.filter(**filters)
+
+    if lat and lon and range_mi:
+        lat = float(lat)
+        lon = float(lon)
+        range_mi = float(range_mi)
+
+        # crude bounding box
+        lat_delta = range_mi / 69.0
+        lon_delta = range_mi / (69.0 * abs(math.cos(math.radians(lat))) or 0.0001)
+
+        qs = qs.filter(
+            latitude__range=(lat - lat_delta, lat + lat_delta),
+            longitude__range=(lon - lon_delta, lon + lon_delta),
+        )
+
+
+        # Begin Haversine calculation
+
+        qs = qs.annotate(
+            distance=ExpressionWrapper(
+                EARTH_RADIUS_MILES * ACos(
+                    Cos(Radians(lat)) *
+                    Cos(Radians(F('latitude'))) *
+                    Cos(Radians(F('longitude')) - Radians(lon)) +
+                    Sin(Radians(lat)) *
+                    Sin(Radians(F('latitude')))
+                ),
+                output_field=FloatField()
+            )
+        ).filter(distance__lte=range_mi).order_by('distance')
+
+
+
+
+    # Serialize response
+    data = {
+        "unis" : [
+            {
+                "name"      : uni.name,
+                "minTui"    : getattr(uni, minField),
+                "maxTui"    : getattr(uni, maxField),
+                "location"  : uni.location,
+                "lat"       : float(uni.latitude),
+                "lon"       : float(uni.longitude),
+                "distance": (
+                    # b/c distance could not be included if a location isn't
+                    # specified by the user.
+                    round(float(getattr(uni, "distance")), 2)
+                    if hasattr(uni, "distance") and uni.distance is not None
+                    else "N/a"
+                ),
+                "url"       : f"/UniversityOverview/{uni.slug}/", 
+            }
+            for uni in qs
+        ]
+    }
+
+    return JsonResponse(data)
+
+

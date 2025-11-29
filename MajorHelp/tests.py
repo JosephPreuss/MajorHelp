@@ -812,3 +812,437 @@ class LoginTest(TestCase):
         self.assertRedirects(response, reverse('MajorHelp:home'))  # Adjust if the redirect target is different
 
 
+class CollegeScorecardAPITests(TestCase):
+    """
+    Test suite for the College Scorecard API integration.
+    Tests the college_scorecard_api view including fuzzy matching, caching, and error handling.
+    """
+    
+    def setUp(self):
+        """Set up test fixtures."""
+        from unittest.mock import patch
+        from django.core.cache import cache
+        
+        # Clear cache before each test
+        cache.clear()
+        
+    def test_missing_api_key(self):
+        """Test that the view returns 500 when API key is not configured."""
+        from unittest.mock import patch
+        
+        with patch('MajorHelp.views.college_scorecard.API_KEY', None):
+            url = reverse('MajorHelp:college-scorecard-api', kwargs={'school_name': 'Harvard University'})
+            response = self.client.get(url)
+            
+            self.assertEqual(response.status_code, 500)
+            data = json.loads(response.content)
+            self.assertIn('error', data)
+            self.assertIn('API key', data['error'])
+    
+    def test_exact_school_match(self):
+        """Test successful API call with exact school name match."""
+        from unittest.mock import patch, Mock
+        
+        # Mock API responses
+        mock_search_response = Mock()
+        mock_search_response.json.return_value = {
+            'results': [
+                {
+                    'id': 166027,
+                    'school.name': 'Harvard University',
+                    'school.city': 'Cambridge',
+                    'school.state': 'MA'
+                }
+            ]
+        }
+        mock_search_response.raise_for_status = Mock()
+        
+        mock_detail_response = Mock()
+        mock_detail_response.json.return_value = {
+            'results': [
+                {
+                    'id': 166027,
+                    'school.name': 'Harvard University',
+                    'school.city': 'Cambridge',
+                    'school.state': 'MA',
+                    'school.zip': '02138',
+                    'school.school_url': 'www.harvard.edu',
+                    'school.operating': 1,
+                    'latest.student.size': 31145,
+                    'latest.admissions.admission_rate.overall': 0.05,
+                    'latest.admissions.sat_scores.average.overall': 1520,
+                    'latest.admissions.act_scores.midpoint.cumulative': 34,
+                    'latest.cost.tuition.in_state': 51904,
+                    'latest.cost.tuition.out_of_state': 51904,
+                    'latest.completion.completion_rate_4yr_150nt': 0.97,
+                    'latest.earnings.6_yrs_after_entry.median': 70000,
+                    'latest.earnings.8_yrs_after_entry.median_earnings': 95000,
+                    'latest.earnings.10_yrs_after_entry.median': 120000,
+                    'latest.aid.median_debt.completers.overall': 15000,
+                    'latest.aid.median_debt.noncompleters': 10000,
+                    'latest.aid.pell_grant_rate': 0.18,
+                    'latest.student.demographics.first_generation': 0.15
+                }
+            ]
+        }
+        mock_detail_response.raise_for_status = Mock()
+        
+        with patch('requests.get') as mock_get:
+            mock_get.side_effect = [mock_search_response, mock_detail_response]
+            
+            url = reverse('MajorHelp:college-scorecard-api', kwargs={'school_name': 'Harvard University'})
+            response = self.client.get(url)
+            
+            self.assertEqual(response.status_code, 200)
+            data = json.loads(response.content)
+            
+            # Check basic fields
+            self.assertEqual(data['school_name'], 'Harvard University')
+            self.assertEqual(data['school_id'], 166027)
+            self.assertEqual(data['city'], 'Cambridge')
+            self.assertEqual(data['state'], 'MA')
+            
+            # Check percentage conversion
+            self.assertEqual(data['admission_rate_percentage'], 5.0)
+            self.assertEqual(data['completion_rate_percentage'], 97.0)
+            self.assertEqual(data['pell_grant_rate_percentage'], 18.0)
+            
+            # Check numeric data
+            self.assertEqual(data['student_size'], 31145)
+            self.assertEqual(data['sat_average'], 1520)
+            self.assertEqual(data['tuition_in_state'], 51904)
+            
+            # Check match quality
+            self.assertEqual(data['match_quality'], 'exact')
+            self.assertFalse(data['_cached'])
+    
+    def test_fuzzy_school_match(self):
+        """Test fuzzy matching algorithm when school name is similar but not exact."""
+        from unittest.mock import patch, Mock
+        
+        mock_search_response = Mock()
+        mock_search_response.json.return_value = {
+            'results': [
+                {
+                    'id': 166027,
+                    'school.name': 'Harvard University',
+                    'school.city': 'Cambridge',
+                    'school.state': 'MA'
+                },
+                {
+                    'id': 999999,
+                    'school.name': 'Harvard College',
+                    'school.city': 'Boston',
+                    'school.state': 'MA'
+                }
+            ]
+        }
+        mock_search_response.raise_for_status = Mock()
+        
+        mock_detail_response = Mock()
+        mock_detail_response.json.return_value = {
+            'results': [
+                {
+                    'id': 166027,
+                    'school.name': 'Harvard University',
+                    'school.city': 'Cambridge',
+                    'school.state': 'MA',
+                    'school.zip': '02138',
+                    'school.school_url': 'www.harvard.edu',
+                    'school.operating': 1,
+                    'latest.student.size': 31145,
+                    'latest.admissions.admission_rate.overall': None,
+                    'latest.admissions.sat_scores.average.overall': None,
+                    'latest.admissions.act_scores.midpoint.cumulative': None,
+                    'latest.cost.tuition.in_state': None,
+                    'latest.cost.tuition.out_of_state': None,
+                    'latest.completion.completion_rate_4yr_150nt': None,
+                    'latest.earnings.6_yrs_after_entry.median': None,
+                    'latest.earnings.8_yrs_after_entry.median_earnings': None,
+                    'latest.earnings.10_yrs_after_entry.median': None,
+                    'latest.aid.median_debt.completers.overall': None,
+                    'latest.aid.median_debt.noncompleters': None,
+                    'latest.aid.pell_grant_rate': None,
+                    'latest.student.demographics.first_generation': None
+                }
+            ]
+        }
+        mock_detail_response.raise_for_status = Mock()
+        
+        with patch('requests.get') as mock_get:
+            mock_get.side_effect = [mock_search_response, mock_detail_response]
+            
+            # Search for slightly different name
+            url = reverse('MajorHelp:college-scorecard-api', kwargs={'school_name': 'Harvard Univ'})
+            response = self.client.get(url)
+            
+            self.assertEqual(response.status_code, 200)
+            data = json.loads(response.content)
+            
+            # Should match "Harvard University" as the best fuzzy match
+            self.assertEqual(data['school_name'], 'Harvard University')
+            self.assertEqual(data['match_quality'], 'fuzzy')
+            
+            # Check null handling
+            self.assertIsNone(data['admission_rate_percentage'])
+            self.assertIsNone(data['sat_average'])
+    
+    def test_no_school_found(self):
+        """Test 404 response when no schools are found."""
+        from unittest.mock import patch, Mock
+        
+        mock_response = Mock()
+        mock_response.json.return_value = {'results': []}
+        mock_response.raise_for_status = Mock()
+        
+        with patch('requests.get', return_value=mock_response):
+            url = reverse('MajorHelp:college-scorecard-api', kwargs={'school_name': 'Nonexistent University'})
+            response = self.client.get(url)
+            
+            self.assertEqual(response.status_code, 404)
+            data = json.loads(response.content)
+            self.assertIn('error', data)
+            self.assertIn('No schools found', data['error'])
+    
+    def test_poor_match_with_suggestions(self):
+        """Test that suggestions are provided when no good match is found."""
+        from unittest.mock import patch, Mock
+        
+        mock_response = Mock()
+        mock_response.json.return_value = {
+            'results': [
+                {
+                    'id': 1,
+                    'school.name': 'Completely Different School',
+                    'school.city': 'Boston',
+                    'school.state': 'MA'
+                },
+                {
+                    'id': 2,
+                    'school.name': 'Another Unrelated School',
+                    'school.city': 'Cambridge',
+                    'school.state': 'MA'
+                },
+                {
+                    'id': 3,
+                    'school.name': 'Third Different School',
+                    'school.city': 'Worcester',
+                    'school.state': 'MA'
+                },
+                {
+                    'id': 4,
+                    'school.name': 'Fourth School',
+                    'school.city': 'Springfield',
+                    'school.state': 'MA'
+                },
+                {
+                    'id': 5,
+                    'school.name': 'Fifth School',
+                    'school.city': 'Lowell',
+                    'school.state': 'MA'
+                },
+                {
+                    'id': 6,
+                    'school.name': 'Sixth School (Should Not Appear)',
+                    'school.city': 'Salem',
+                    'school.state': 'MA'
+                }
+            ]
+        }
+        mock_response.raise_for_status = Mock()
+        
+        with patch('requests.get', return_value=mock_response):
+            url = reverse('MajorHelp:college-scorecard-api', kwargs={'school_name': 'Harvard'})
+            response = self.client.get(url)
+            
+            self.assertEqual(response.status_code, 404)
+            data = json.loads(response.content)
+            self.assertIn('error', data)
+            self.assertIn('suggestions', data)
+            self.assertEqual(len(data['suggestions']), 5)  # Should show up to 5 suggestions (not 6)
+    
+    def test_api_request_exception(self):
+        """Test error handling when external API request fails."""
+        from unittest.mock import patch
+        import requests
+        
+        with patch('requests.get', side_effect=requests.exceptions.RequestException('Connection error')):
+            url = reverse('MajorHelp:college-scorecard-api', kwargs={'school_name': 'Harvard University'})
+            response = self.client.get(url)
+            
+            self.assertEqual(response.status_code, 500)
+            data = json.loads(response.content)
+            self.assertIn('error', data)
+            self.assertIn('API request failed', data['error'])
+    
+    def test_caching_behavior(self):
+        """Test that successful responses are cached and subsequent requests use cache."""
+        from unittest.mock import patch, Mock
+        from django.core.cache import cache
+        
+        # Mock API responses
+        mock_search_response = Mock()
+        mock_search_response.json.return_value = {
+            'results': [
+                {
+                    'id': 166027,
+                    'school.name': 'Harvard University',
+                    'school.city': 'Cambridge',
+                    'school.state': 'MA'
+                }
+            ]
+        }
+        mock_search_response.raise_for_status = Mock()
+        
+        mock_detail_response = Mock()
+        mock_detail_response.json.return_value = {
+            'results': [
+                {
+                    'id': 166027,
+                    'school.name': 'Harvard University',
+                    'school.city': 'Cambridge',
+                    'school.state': 'MA',
+                    'school.zip': '02138',
+                    'school.school_url': 'www.harvard.edu',
+                    'school.operating': 1,
+                    'latest.student.size': 31145,
+                    'latest.admissions.admission_rate.overall': 0.05,
+                    'latest.admissions.sat_scores.average.overall': 1520,
+                    'latest.admissions.act_scores.midpoint.cumulative': 34,
+                    'latest.cost.tuition.in_state': 51904,
+                    'latest.cost.tuition.out_of_state': 51904,
+                    'latest.completion.completion_rate_4yr_150nt': 0.97,
+                    'latest.earnings.6_yrs_after_entry.median': 70000,
+                    'latest.earnings.8_yrs_after_entry.median_earnings': 95000,
+                    'latest.earnings.10_yrs_after_entry.median': 120000,
+                    'latest.aid.median_debt.completers.overall': 15000,
+                    'latest.aid.median_debt.noncompleters': 10000,
+                    'latest.aid.pell_grant_rate': 0.18,
+                    'latest.student.demographics.first_generation': 0.15
+                }
+            ]
+        }
+        mock_detail_response.raise_for_status = Mock()
+        
+        url = reverse('MajorHelp:college-scorecard-api', kwargs={'school_name': 'Harvard University'})
+        
+        with patch('requests.get') as mock_get:
+            mock_get.side_effect = [mock_search_response, mock_detail_response]
+            
+            # First request - should call API
+            response1 = self.client.get(url)
+            self.assertEqual(response1.status_code, 200)
+            data1 = json.loads(response1.content)
+            self.assertFalse(data1['_cached'])
+            
+            # Verify API was called twice (search + detail)
+            self.assertEqual(mock_get.call_count, 2)
+        
+        # Second request - should use cache (no new mock needed)
+        response2 = self.client.get(url)
+        self.assertEqual(response2.status_code, 200)
+        data2 = json.loads(response2.content)
+        self.assertTrue(data2['_cached'])
+        
+        # Data should be identical (except _cached flag)
+        self.assertEqual(data1['school_name'], data2['school_name'])
+        self.assertEqual(data1['admission_rate_percentage'], data2['admission_rate_percentage'])
+    
+    def test_fuzzy_matching_algorithm(self):
+        """Test the find_best_school_match function directly."""
+        from MajorHelp.views.college_scorecard import find_best_school_match
+        
+        # Test exact match
+        results = [
+            {'school.name': 'Harvard University'},
+            {'school.name': 'Harvard College'}
+        ]
+        match = find_best_school_match('Harvard University', results)
+        self.assertEqual(match['school.name'], 'Harvard University')
+        
+        # Test fuzzy match
+        match = find_best_school_match('Harvard Univ', results)
+        self.assertEqual(match['school.name'], 'Harvard University')
+        
+        # Test no good match (below 60% threshold)
+        results = [
+            {'school.name': 'Yale University'},
+            {'school.name': 'Princeton University'}
+        ]
+        match = find_best_school_match('Harvard', results)
+        self.assertIsNone(match)
+        
+        # Test empty results
+        match = find_best_school_match('Harvard', [])
+        self.assertIsNone(match)
+    
+    def test_cache_key_normalization(self):
+        """Test that cache keys are normalized (case-insensitive, whitespace-trimmed)."""
+        from unittest.mock import patch, Mock
+        from django.core.cache import cache
+        
+        # Create mock responses
+        mock_search_response = Mock()
+        mock_search_response.json.return_value = {
+            'results': [
+                {
+                    'id': 166027,
+                    'school.name': 'New York University',
+                    'school.city': 'New York',
+                    'school.state': 'NY'
+                }
+            ]
+        }
+        mock_search_response.raise_for_status = Mock()
+        
+        mock_detail_response = Mock()
+        mock_detail_response.json.return_value = {
+            'results': [
+                {
+                    'id': 166027,
+                    'school.name': 'New York University',
+                    'school.city': 'New York',
+                    'school.state': 'NY',
+                    'school.zip': '10003',
+                    'school.school_url': 'www.nyu.edu',
+                    'school.operating': 1,
+                    'latest.student.size': 50000,
+                    'latest.admissions.admission_rate.overall': 0.21,
+                    'latest.admissions.sat_scores.average.overall': 1450,
+                    'latest.admissions.act_scores.midpoint.cumulative': 32,
+                    'latest.cost.tuition.in_state': 54880,
+                    'latest.cost.tuition.out_of_state': 54880,
+                    'latest.completion.completion_rate_4yr_150nt': 0.85,
+                    'latest.earnings.6_yrs_after_entry.median': 60000,
+                    'latest.earnings.8_yrs_after_entry.median_earnings': 75000,
+                    'latest.earnings.10_yrs_after_entry.median': 90000,
+                    'latest.aid.median_debt.completers.overall': 25000,
+                    'latest.aid.median_debt.noncompleters': 20000,
+                    'latest.aid.pell_grant_rate': 0.30,
+                    'latest.student.demographics.first_generation': 0.20
+                }
+            ]
+        }
+        mock_detail_response.raise_for_status = Mock()
+        
+        with patch('requests.get') as mock_get:
+            mock_get.side_effect = [mock_search_response, mock_detail_response]
+            
+            # First request with normal casing
+            url1 = reverse('MajorHelp:college-scorecard-api', kwargs={'school_name': 'New York University'})
+            response1 = self.client.get(url1)
+            self.assertEqual(response1.status_code, 200)
+            
+            # Verify API was called
+            self.assertEqual(mock_get.call_count, 2)
+        
+        # Second request with different casing and extra spaces - should hit cache
+        url2 = reverse('MajorHelp:college-scorecard-api', kwargs={'school_name': ' new york university '})
+        response2 = self.client.get(url2)
+        self.assertEqual(response2.status_code, 200)
+        data2 = json.loads(response2.content)
+        
+        # Should be cached (case and whitespace normalized)
+        self.assertTrue(data2['_cached'])
+
+
