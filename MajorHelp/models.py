@@ -64,7 +64,7 @@ class University(models.Model):
     )
 
     # Automatically populated slug
-    slug = models.SlugField(default="", editable=True, null=False, unique=True)
+    slug = models.SlugField(max_length=255, default="", editable=True, null=False, unique=True)
 
     applicableAids = models.ManyToManyField(FinancialAid, related_name="university", blank=True)
 
@@ -182,7 +182,7 @@ class Major(models.Model):
     )
     major_name = models.CharField(max_length=255, db_index=True)
     major_description = models.TextField(blank=True)
-    slug = models.SlugField(editable=False, null=False, unique=True)
+    slug = models.SlugField(max_length=255, editable=False, null=False, unique=True)
     department = models.CharField(max_length=50, choices=DEPARTMENT_CHOICES, db_index=True)
     in_state_min_tuition = models.IntegerField(
         validators=[MinValueValidator(0)],

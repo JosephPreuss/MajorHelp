@@ -84,8 +84,13 @@ WSGI_APPLICATION = 'pestopanini.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        # For PostgreSQL
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME" : "majorhelp_db",
+        "USER" : "majorhelp_user",
+        "PASSWORD" : "password",
+        "HOST" : "localhost",
+        "PORT" : "5432",
     }
 }
 

@@ -1,0 +1,14 @@
+services:
+  majorhelp-db:
+    image: postgres:18.1
+    restart: always
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_DB: majorhelp_db
+      POSTGRES_USER: majorhelp_user
+      POSTGRES_PASSWORD: password
+      PGDATA: /var/lib/postgres/data
+    volumes:
+      - ./db_postgres:/var/lib/postgres/data
+

@@ -371,6 +371,44 @@ deactivate
 
 <br>
 
+# Database
+
+A docker image using `docker-compose` is used with PostgreSQL to host the database.  This
+can either be run locally, or remotely.  If you choose to run this remotely, you must edit the following
+file:
+
+```
+pestopanini/settings.py:
+
+DATABASES = {
+    ...
+    "HOST" : "[address to host]",
+    "PORT" : "[port for host]",
+    ...
+}
+```
+
+If you choose to run the database on the same machine that runs the server, you don't need to do this step.
+
+Additionally, running the database requires a Linux machine since the database directory directly interacts with the Docker container.
+
+### Preparing the database directory
+
+There is a compressed tarball of the PostgreSQL data directory which contains the database.  This needs to be
+extracted with exact permissions and file owners to work with the docker container.
+
+```
+sudo tar xpvf db_postgres.tar.xz --numeric-owner
+```
+
+### Running the database
+
+As long as you have Docker installed, running the database should be as simple as running the following command:
+
+```
+docker-compose up
+```
+
 # Deployment
 For deployment, choose a hosting provider like Heroku, AWS, or DigitalOcean. Set up environment variables such as DJANGO_SECRET_KEY, DATABASE_URL, and other production-related variables. Migrate the database with python manage.py migrate --noinput, and collect static files using python manage.py collectstatic --noinput. Follow your hosting provider’s deployment steps, ensuring that sensitive credentials like passwords are not pushed to your Git repository.
 
