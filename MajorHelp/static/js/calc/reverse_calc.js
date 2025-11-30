@@ -8,8 +8,8 @@ let userLongitude;
 let userCity;
 let userState;
 
-    initMap(); 
-    map.setView([39.8283, -98.5795], 4);  // Show USA
+initMap(); 
+map.setView([39.8283, -98.5795], 4);  // Show USA
 
 
 // "Use my current location" button
